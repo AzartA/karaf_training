@@ -1,0 +1,45 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>ru.training</groupId>
+		<artifactId>karaf</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>
+	<artifactId>training-feature</artifactId>
+	<packaging>feature</packaging>
+
+	<dependencies>
+		<dependency>
+			<groupId>ru.training</groupId>
+			<artifactId>model-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>ru.training</groupId>
+			<artifactId>model</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>ru.training</groupId>
+			<artifactId>rest-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>ru.training</groupId>
+			<artifactId>rest</artifactId>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.karaf.tooling</groupId>
+				<artifactId>karaf-maven-plugin</artifactId>
+				<extensions>true</extensions>
+				<configuration>
+					<includeTransitiveDependency>true</includeTransitiveDependency>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>

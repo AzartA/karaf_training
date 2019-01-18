@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
+    <reference id="jpaTemplate" interface="org.apache.aries.jpa.template.JpaTemplate" filter="(osgi.unit.name=PU)"/>
+    <reference id="datasource" interface="javax.sql.DataSource"
+               filter="(osgi.jndi.service.name=jdbc/ru.training.model.model-datasource)" />
+    
+    <bean id="userRepo" class="ru.training.karaf.repo.UserRepoImpl">
+        <argument ref="jpaTemplate"/>
+    </bean>
+    <service ref="userRepo" interface="ru.training.karaf.repo.UserRepo"/>
+
+</blueprint>
