@@ -1,12 +1,12 @@
 package ru.training.karaf.model;
 
-import java.util.Set;
+import com.fasterxml.jackson.databind.JsonNode;
+import java.util.Date;
 
 public interface User {
-    String getFirstName();
-    String getLastName();
-    String getLogin();
-    Integer getAge();
-    String getAddress();
-    Set<String> getProperties();
+    UserName getUserName();
+    String getLibCard();
+    JsonNode getAddress();
+    Date getRegDate();
+    Avatar getAvatar();
 }
