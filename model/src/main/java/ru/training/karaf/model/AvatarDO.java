@@ -2,11 +2,16 @@ package ru.training.karaf.model;
 
 import java.util.Arrays;
 import java.util.Objects;
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Lob;
+import javax.persistence.Table;
 
+@Table(name = "AVATARDO")
 @Entity
 public class AvatarDO implements Avatar {
     @Id
@@ -15,6 +20,8 @@ public class AvatarDO implements Avatar {
     private Long id;
     
     @Column(name = "PICTURE")
+    @Lob
+    @Basic(fetch = FetchType.LAZY)
     private byte[] picture;
 
     public AvatarDO() {}

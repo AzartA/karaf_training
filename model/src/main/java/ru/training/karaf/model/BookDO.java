@@ -1,6 +1,9 @@
 package ru.training.karaf.model;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -8,7 +11,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
+@Table(name = "BOOKDO")
 @Entity
 public class BookDO implements Book {
     @Id
@@ -17,18 +23,42 @@ public class BookDO implements Book {
     private Long id;
     
     @Column(name = "TITLE")
-    String title;
+    private String title;
     
     @Column(name = "AUTHOR")
-    String author;
+    private String author;
     
     @Column(name = "RELEASE_YEAR")
-    Integer year;
+    private Integer year;
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "GENRE_ID", nullable = false)    
-    GenreDO genre;
+    private GenreDO genre;
+    
+    @OneToMany(cascade = CascadeType.ALL,
+            mappedBy = "book",
+            orphanRemoval = true)
+    private List<FeedbackDO> feedbacks = new ArrayList<>();
 
+    public void addFeedback(FeedbackDO feedback) {
+        feedbacks.add(feedback);
+        feedback.setBook(this);
+    }
+    
+    public void removeFeedback(FeedbackDO feedback) {
+        feedbacks.remove(feedback);
+        feedback.setBook(null);
+    }
+    
+    @Override
+    public List<FeedbackDO> getFeedbacks() {
+        return feedbacks;
+    }
+
+    public void setFeedbacks(List<FeedbackDO> feedbacks) {
+        this.feedbacks = feedbacks;
+    }
+    
     public Long getId() {
         return id;
     }
@@ -75,7 +105,7 @@ public class BookDO implements Book {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, author, year, genre);
+        return Objects.hash(id, title, author, year, genre, feedbacks);
     }
 
     @Override
@@ -102,6 +132,9 @@ public class BookDO implements Book {
         if (!Objects.equals(this.genre, other.genre)) {
             return false;
         }
+        if (!Objects.equals(this.feedbacks, other.feedbacks)) {
+            return false;
+        }
         return true;
     }
 
@@ -110,6 +143,4 @@ public class BookDO implements Book {
         return "BookDO{" + "id=" + id + ", title=" + title + ", author=" +
                 author + ", year=" + year + ", genre=" + genre + '}';
     }
-    
-    
 }

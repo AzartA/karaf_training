@@ -1,9 +1,12 @@
 package ru.training.karaf.model;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -15,10 +18,14 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+
+@Table(name = "USERDO")
 @Entity
 @NamedQueries({
     @NamedQuery(name = UserDO.GET_ALL, query = "SELECT u FROM UserDO AS u"),
@@ -56,16 +63,40 @@ public class UserDO implements User {
     @JoinTable(name = "USERDO_BOOKDO",
             joinColumns = @JoinColumn(name = "USER_ID"),
             inverseJoinColumns = @JoinColumn(name = "BOOK_ID"))
-    private List<BookDO> books;
+    private Set<BookDO> books = new HashSet<>();
+    
+    @OneToMany(cascade = CascadeType.ALL,
+            mappedBy = "user",
+            orphanRemoval = true)
+    private List<FeedbackDO> feedbacks = new ArrayList<>();
 
     public UserDO() {}
 
     @Override
-    public List<BookDO> getBooks() {
+    public List<FeedbackDO> getFeedbacks() {
+        return feedbacks;
+    }
+
+    public void setFeedbacks(List<FeedbackDO> feedbacks) {
+        this.feedbacks = feedbacks;
+    }
+    
+    public void addFeedback(FeedbackDO feedback) {
+        feedbacks.add(feedback);
+        feedback.setUser(this);
+    }
+    
+    public void removeFeedback(FeedbackDO feedback) {
+        feedbacks.remove(feedback);
+        feedback.setUser(null);
+    }
+    
+    @Override
+    public Set<BookDO> getBooks() {
         return books;
     }
 
-    public void setBooks(List<BookDO> books) {
+    public void setBooks(Set<BookDO> books) {
         this.books = books;
     }
     
@@ -124,7 +155,7 @@ public class UserDO implements User {
     
     @Override
     public int hashCode() {
-        return Objects.hash(id, userName, libCard, address, regDate);
+        return Objects.hash(id, userName, libCard, address, regDate, feedbacks);
     }
 
     @Override
@@ -157,6 +188,9 @@ public class UserDO implements User {
         if (!Objects.equals(this.books, other.books)) {
             return false;
         }
+        if (!Objects.equals(this.feedbacks, other.feedbacks)) {
+            return false;
+        }
         return true;
     } 
 
@@ -164,6 +198,6 @@ public class UserDO implements User {
     public String toString() {
         return "UserDO{" + "id=" + id + ", userName=" + userName + ", libCard="
                 + libCard + ", address=" + address + ", regDate=" + regDate +
-                ", avatar=" + avatar + ", books=" + books + '}';
+                ", avatar=" + avatar + '}';
     }
 }
