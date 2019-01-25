@@ -1,5 +1,6 @@
 package ru.training.karaf.model;
 
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
@@ -10,6 +11,8 @@ public class UserNameDO implements UserName {
     
     @Column(name = "LAST_NAME")
     private String lastName;
+
+    public UserNameDO() {}
     
     @Override
     public String getFirstName() {
@@ -27,5 +30,37 @@ public class UserNameDO implements UserName {
     
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(firstName, lastName);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final UserNameDO other = (UserNameDO) obj;
+        if (!Objects.equals(this.firstName, other.firstName)) {
+            return false;
+        }
+        if (!Objects.equals(this.lastName, other.lastName)) {
+            return false;
+        }
+        return true;
+    }
+    
+    @Override
+    public String toString() {
+        return "UserNameDO{" + "firstName=" + firstName + ", lastName=" +
+                lastName + '}';
     }
 }

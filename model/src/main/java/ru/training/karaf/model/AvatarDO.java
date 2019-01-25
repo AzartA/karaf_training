@@ -11,11 +11,14 @@ import javax.persistence.Id;
 public class AvatarDO implements Avatar {
     @Id
     @GeneratedValue
+    @Column(name = "ID")
     private Long id;
     
     @Column(name = "PICTURE")
     private byte[] picture;
-    
+
+    public AvatarDO() {}
+      
     @Override
     public byte[] getPicture() {
         return picture;
@@ -60,6 +63,4 @@ public class AvatarDO implements Avatar {
     public String toString() {
         return "AvatarDO{" + "id=" + id + '}';
     }
-    
-    
 }

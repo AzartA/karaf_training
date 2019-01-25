@@ -1,27 +1,20 @@
 package ru.training.karaf.model;
 
-import java.util.List;
 import java.util.Objects;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 
 @Entity
 public class GenreDO implements Genre {
     @Id
     @GeneratedValue
+    @Column(name = "ID")
     private Long id;
     
     @Column(name = "NAME")
     private String name;
-    
-    @OneToMany(cascade = CascadeType.ALL,
-            orphanRemoval = true,
-            mappedBy = "genre")
-    private List<BookDO> books;
     
     @Override
     public String getName() {
@@ -32,14 +25,6 @@ public class GenreDO implements Genre {
         this.name = name;
     }
     
-    public List<BookDO> getBooks() {
-        return books;
-    }
-    
-    public void setBooks(List<BookDO> books) {
-        this.books = books;
-    }
-    
     public Long getId() {
         return id;
     }
@@ -48,19 +33,9 @@ public class GenreDO implements Genre {
         this.id = id;
     }
     
-    public void addBook(BookDO book) {
-        books.add(book);
-        book.setGenre(this);
-    }
-    
-    public void removeBook(BookDO book) {
-        books.remove(book);
-        book.setGenre(null);
-    }
-
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, books);
+        return Objects.hash(id, name);
     }
 
     @Override
@@ -78,9 +53,11 @@ public class GenreDO implements Genre {
         if (!Objects.equals(this.name, other.name)) {
             return false;
         }
-        if (!Objects.equals(this.books, other.books)) {
-            return false;
-        }
         return true;
+    }
+
+    @Override
+    public String toString() {
+        return "GenreDO{" + "id=" + id + ", name=" + name + '}';
     }
 }

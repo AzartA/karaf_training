@@ -13,6 +13,7 @@ import javax.persistence.ManyToOne;
 public class BookDO implements Book {
     @Id
     @GeneratedValue
+    @Column(name = "ID")
     private Long id;
     
     @Column(name = "TITLE")
@@ -103,7 +104,12 @@ public class BookDO implements Book {
         }
         return true;
     }
-    
+
+    @Override
+    public String toString() {
+        return "BookDO{" + "id=" + id + ", title=" + title + ", author=" +
+                author + ", year=" + year + ", genre=" + genre + '}';
+    }
     
     
 }

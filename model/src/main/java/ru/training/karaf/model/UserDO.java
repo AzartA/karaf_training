@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import javax.persistence.CascadeType;
-
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -33,12 +32,13 @@ public class UserDO implements User {
     
     @Id
     @GeneratedValue
+    @Column(name = "ID")
     private Long id;
     
     @Embedded
     UserNameDO userName;
     
-    @Column(name = "LIB_CARD", nullable = false, unique=true)
+    @Column(name = "LIB_CARD", nullable = false, unique = true)
     private String libCard;
     
     @Column(name = "ADDRESS")
@@ -60,20 +60,13 @@ public class UserDO implements User {
 
     public UserDO() {}
 
+    @Override
     public List<BookDO> getBooks() {
         return books;
     }
 
     public void setBooks(List<BookDO> books) {
         this.books = books;
-    }
-
-    public void addBook(BookDO book) {
-        books.add(book);
-    }
-    
-    public void removeBook(BookDO book) {
-        books.remove(book);
     }
     
     public Long getId() {
@@ -133,59 +126,44 @@ public class UserDO implements User {
     public int hashCode() {
         return Objects.hash(id, userName, libCard, address, regDate);
     }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
-            return true;   
-        }          
+            return true;
+        }
         if (obj == null) {
             return false;
         }
         if (getClass() != obj.getClass()) {
             return false;
         }
-        UserDO other = (UserDO) obj;
-        if (address == null) {
-            if (other.address != null) {
-                return false;
-            }
-        } else if (!address.equals(other.address)) {
-            return false;   
+        final UserDO other = (UserDO) obj;
+        if (!Objects.equals(this.libCard, other.libCard)) {
+            return false;
         }
-        if (userName == null) {
-            if (other.userName != null) {
-                return false;
-            }
-        } else if (!userName.equals(other.userName)) {
-            return false;   
+        if (!Objects.equals(this.userName, other.userName)) {
+            return false;
         }
-        if (libCard == null) {
-            if (other.libCard != null) {
-                return false;
-            }
-        } else if (!libCard.equals(other.libCard)) {
-            return false;   
+        if (!Objects.equals(this.address, other.address)) {
+            return false;
         }
-        if (regDate == null) {
-            if (other.regDate != null) {
-                return false;
-            }
-        } else if (!regDate.equals(other.regDate)) {
-            return false;   
+        if (!Objects.equals(this.regDate, other.regDate)) {
+            return false;
         }
-        if (avatar == null) {
-            if (other.avatar != null) {
-                return false;
-            }
-        } else if (!avatar.equals(other.avatar)) {
-            return false;   
+        if (!Objects.equals(this.avatar, other.avatar)) {
+            return false;
+        }
+        if (!Objects.equals(this.books, other.books)) {
+            return false;
         }
         return true;
-    }
+    } 
+
     @Override
     public String toString() {
-        return "UserDO [id=" + id + ", firstName=" + userName.getFirstName() +
-                ", lastName=" + userName.getLastName() + ", libCard=" + libCard
-                + ", address=" + address + ", regDate" + regDate + "]";
+        return "UserDO{" + "id=" + id + ", userName=" + userName + ", libCard="
+                + libCard + ", address=" + address + ", regDate=" + regDate +
+                ", avatar=" + avatar + ", books=" + books + '}';
     }
 }
