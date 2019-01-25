@@ -1,135 +1,146 @@
 package ru.training.karaf.rest.dto;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 import java.util.Set;
-
+import ru.training.karaf.model.Avatar;
+import ru.training.karaf.model.Book;
+import ru.training.karaf.model.Feedback;
 import ru.training.karaf.model.User;
+import ru.training.karaf.model.UserName;
 
 public class UserDTO implements User {
-
-    private String login;
-    private String firstName;
-    private String lastName;
-    private Integer age;
-    private String address;
-    private Set<String> properties;
+    private UserName userName;
+    private String libCard;
+    private JsonNode address;
+    private Date regDate;
+    private Avatar avatar;
+    private Set<? extends Book> books;
+    private List<? extends Feedback> feedbacks;
 
     public UserDTO() {}
     
     public UserDTO(User user) {
-        login = user.getLogin();
-        firstName = user.getFirstName();
-        lastName = user.getLastName();
-        age = user.getAge();
-        address = user.getAddress();
-        properties = user.getProperties();
+        this.userName = user.getUserName();
+        this.libCard = user.getLibCard();
+        this.address = user.getAddress();
+        this.regDate = user.getRegDate();
+        this.avatar = user.getAvatar();
+        this.books = user.getBooks();
+        this.feedbacks = user.getFeedbacks();
     }
 
-    public String getLogin() {
-        return login;
+    @Override
+    public UserName getUserName() {
+        return userName;
     }
 
-    public void setLogin(String login) {
-        this.login = login;
+    public void setUserName(UserName userName) {
+        this.userName = userName;
     }
 
-    public String getFirstName() {
-        return firstName;
+    @Override
+    public String getLibCard() {
+        return libCard;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
+    public void setLibCard(String libCard) {
+        this.libCard = libCard;
     }
 
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public Integer getAge() {
-        return age;
-    }
-
-    public void setAge(Integer age) {
-        this.age = age;
-    }
-
-    public String getAddress() {
+    @Override
+    public JsonNode getAddress() {
         return address;
     }
 
-    public void setAddress(String address) {
+    public void setAddress(JsonNode address) {
         this.address = address;
     }
 
-    public Set<String> getProperties() {
-        return properties;
+    @Override
+    public Date getRegDate() {
+        return regDate;
     }
 
-    public void setProperties(Set<String> properties) {
-        this.properties = properties;
+    public void setRegDate(Date regDate) {
+        this.regDate = regDate;
+    }
+
+    @Override
+    public Avatar getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(Avatar avatar) {
+        this.avatar = avatar;
+    }
+
+    @Override
+    public Set<? extends Book> getBooks() {
+        return books;
+    }
+
+    public void setBooks(Set<? extends Book> books) {
+        this.books = books;
+    }
+
+    @Override
+    public List<? extends Feedback> getFeedbacks() {
+        return feedbacks;
+    }
+
+    public void setFeedbacks(List<? extends Feedback> feedbacks) {
+        this.feedbacks = feedbacks;
     }
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((address == null) ? 0 : address.hashCode());
-        result = prime * result + ((age == null) ? 0 : age.hashCode());
-        result = prime * result + ((firstName == null) ? 0 : firstName.hashCode());
-        result = prime * result + ((lastName == null) ? 0 : lastName.hashCode());
-        result = prime * result + ((login == null) ? 0 : login.hashCode());
-        result = prime * result + ((properties == null) ? 0 : properties.hashCode());
-        return result;
+        return Objects.hash(userName, libCard, address,
+                regDate, avatar, books, feedbacks);
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
-        UserDTO other = (UserDTO) obj;
-        if (address == null) {
-            if (other.address != null)
-                return false;
-        } else if (!address.equals(other.address))
+        }
+        final UserDTO other = (UserDTO) obj;
+        if (!Objects.equals(this.libCard, other.libCard)) {
             return false;
-        if (age == null) {
-            if (other.age != null)
-                return false;
-        } else if (!age.equals(other.age))
+        }
+        if (!Objects.equals(this.userName, other.userName)) {
             return false;
-        if (firstName == null) {
-            if (other.firstName != null)
-                return false;
-        } else if (!firstName.equals(other.firstName))
+        }
+        if (!Objects.equals(this.address, other.address)) {
             return false;
-        if (lastName == null) {
-            if (other.lastName != null)
-                return false;
-        } else if (!lastName.equals(other.lastName))
+        }
+        if (!Objects.equals(this.regDate, other.regDate)) {
             return false;
-        if (login == null) {
-            if (other.login != null)
-                return false;
-        } else if (!login.equals(other.login))
+        }
+        if (!Objects.equals(this.avatar, other.avatar)) {
             return false;
-        if (properties == null) {
-            if (other.properties != null)
-                return false;
-        } else if (!properties.equals(other.properties))
+        }
+        if (!Objects.equals(this.books, other.books)) {
             return false;
+        }
+        if (!Objects.equals(this.feedbacks, other.feedbacks)) {
+            return false;
+        }
         return true;
     }
 
     @Override
     public String toString() {
-        return "UserDTO [login=" + login + ", firstName=" + firstName + ", lastName=" + lastName + ", age=" + age
-                + ", address=" + address + ", properties=" + properties + "]";
+        return "UserDTO{" + "userName=" + userName + ", libCard=" + libCard +
+                ", address=" + address + ", regDate=" + regDate + ", avatar="
+                + avatar + '}';
     }
 }
