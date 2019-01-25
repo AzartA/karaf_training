@@ -30,12 +30,18 @@ import javax.persistence.TemporalType;
 @NamedQueries({
     @NamedQuery(name = UserDO.GET_ALL, query = "SELECT u FROM UserDO AS u"),
     @NamedQuery(name = UserDO.GET_BY_LIB_CARD,
-            query = "SELECT u FROM UserDO AS u WHERE u.libCard = :libCard")
+            query = "SELECT u FROM UserDO AS u WHERE u.libCard = :libCard"),
+    
+    // TODO: Write join query
+    @NamedQuery(name = UserDO.GET_USER_BOOKS, query = "SELECT b FROM BookDO b"),
+    @NamedQuery(name = UserDO.GET_USER_FEEDBACKS, query = "SELECT f FROM FeedbackDO f")
 })
 
 public class UserDO implements User {
-    public static final String GET_ALL = "Users.getAll";
+    public static final String GET_ALL = "Users.getAllUsers";
     public static final String GET_BY_LIB_CARD = "Users.getByLibCard";
+    public static final String GET_USER_BOOKS = "Users.getUserBooks";
+    public static final String GET_USER_FEEDBACKS = "Users.getUserFeedbacks";
     
     @Id
     @GeneratedValue
