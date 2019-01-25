@@ -28,9 +28,9 @@ import javax.persistence.TemporalType;
 @Table(name = "USERDO")
 @Entity
 @NamedQueries({
-    @NamedQuery(name = UserDO.GET_ALL, query = "SELECT u FROM UserDO AS u"),
+    @NamedQuery(name = UserDO.GET_ALL, query = "SELECT u FROM USERDO AS u"),
     @NamedQuery(name = UserDO.GET_BY_LIB_CARD,
-            query = "SELECT u FROM UserDO AS u WHERE u.libCard = :libCard")
+            query = "SELECT u FROM USERDO AS u WHERE u.libCard = :libCard")
 })
 
 public class UserDO implements User {
