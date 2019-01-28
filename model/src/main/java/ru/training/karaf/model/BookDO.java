@@ -22,7 +22,7 @@ public class BookDO implements Book {
     @Column(name = "ID")
     private Long id;
     
-    @Column(name = "TITLE")
+    @Column(name = "TITLE", unique = true)
     private String title;
     
     @Column(name = "AUTHOR")
