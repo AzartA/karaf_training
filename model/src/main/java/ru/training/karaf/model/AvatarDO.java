@@ -9,11 +9,15 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 @Table(name = "AVATARDO")
 @Entity
+@NamedQuery(name = AvatarDO.GET_ALL_AVATARS, query = "SELECT a FROM AvatarDO a")
 public class AvatarDO implements Avatar {
+    public static final String GET_ALL_AVATARS = "AvatarDO.getAllAvatars";
+    
     @Id
     @GeneratedValue
     @Column(name = "ID")

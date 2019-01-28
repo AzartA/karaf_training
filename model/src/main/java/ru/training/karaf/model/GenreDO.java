@@ -5,11 +5,22 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 @Table(name = "GENREDO")
 @Entity
+@NamedQueries({
+    @NamedQuery(name = GenreDO.GET_ALL_GENRES,
+            query = "SELECT g FROM GenreDO g"),
+    @NamedQuery(name = GenreDO.GET_GENRE_BY_NAME,
+            query = "SELECT g FROM GenreDO g WHERE g.name = :name")
+})
 public class GenreDO implements Genre {
+    public static final String GET_ALL_GENRES = "GenreDO.getAll";
+    public static final String GET_GENRE_BY_NAME = "GenreDO.getByName";
+    
     @Id
     @GeneratedValue
     @Column(name = "ID")
