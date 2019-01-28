@@ -32,7 +32,7 @@ public class BookDO implements Book {
     private Integer year;
     
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "GENRE_ID", nullable = false)    
+    @JoinColumn(name = "GENRE_ID", nullable = false)
     private GenreDO genre;
     
     @OneToMany(cascade = CascadeType.ALL,
