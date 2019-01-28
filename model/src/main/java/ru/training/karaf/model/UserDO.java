@@ -49,7 +49,7 @@ public class UserDO implements User {
     private String libCard;
     
     @Column(name = "ADDRESS")
-    private JsonNode address;
+    private String address;
     
     @Column(name = "REG_DATE")
     @Temporal(TemporalType.TIMESTAMP)
@@ -118,11 +118,11 @@ public class UserDO implements User {
     }
     
     @Override
-    public JsonNode getAddress() {
+    public String getAddress() {
         return address;
     }
     
-    public void setAddress(JsonNode address) {
+    public void setAddress(String address) {
         this.address = address;
     }
     
