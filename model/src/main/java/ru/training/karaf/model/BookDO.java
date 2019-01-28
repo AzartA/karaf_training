@@ -51,6 +51,8 @@ public class BookDO implements Book {
             orphanRemoval = true)
     private List<FeedbackDO> feedbacks = new ArrayList<>();
 
+    public BookDO() {}
+    
     public void addFeedback(FeedbackDO feedback) {
         feedbacks.add(feedback);
         feedback.setBook(this);

@@ -41,6 +41,8 @@ public class FeedbackDO implements Feedback {
     @JoinColumn(name = "BOOK_ID")
     private BookDO book;
 
+    public FeedbackDO() {}
+    
     public Long getId() {
         return id;
     }

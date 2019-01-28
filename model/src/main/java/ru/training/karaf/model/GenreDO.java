@@ -28,6 +28,8 @@ public class GenreDO implements Genre {
     
     @Column(name = "NAME", unique = true)
     private String name;
+
+    public GenreDO() {}
     
     @Override
     public String getName() {
