@@ -105,7 +105,7 @@ public class BookDO implements Book {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, author, year, genre, feedbacks);
+        return Objects.hash(id, title, author, year, genre);
     }
 
     @Override
@@ -130,9 +130,6 @@ public class BookDO implements Book {
             return false;
         }
         if (!Objects.equals(this.genre, other.genre)) {
-            return false;
-        }
-        if (!Objects.equals(this.feedbacks, other.feedbacks)) {
             return false;
         }
         return true;

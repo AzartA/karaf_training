@@ -30,18 +30,12 @@ import javax.persistence.TemporalType;
 @NamedQueries({
     @NamedQuery(name = UserDO.GET_ALL, query = "SELECT u FROM UserDO AS u"),
     @NamedQuery(name = UserDO.GET_BY_LIB_CARD,
-            query = "SELECT u FROM UserDO AS u WHERE u.libCard = :libCard"),
-    
-    // TODO: Write join query
-    @NamedQuery(name = UserDO.GET_USER_BOOKS, query = "SELECT b FROM BookDO b"),
-    @NamedQuery(name = UserDO.GET_USER_FEEDBACKS, query = "SELECT f FROM FeedbackDO f")
+            query = "SELECT u FROM UserDO AS u WHERE u.libCard = :libCard")
 })
 
 public class UserDO implements User {
-    public static final String GET_ALL = "Users.getAllUsers";
+    public static final String GET_ALL = "Users.getAll";
     public static final String GET_BY_LIB_CARD = "Users.getByLibCard";
-    public static final String GET_USER_BOOKS = "Users.getUserBooks";
-    public static final String GET_USER_FEEDBACKS = "Users.getUserFeedbacks";
     
     @Id
     @GeneratedValue
@@ -61,7 +55,7 @@ public class UserDO implements User {
     @Temporal(TemporalType.TIMESTAMP)
     private Date regDate;
     
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "AVATAR_ID")
     private AvatarDO avatar;
     
@@ -161,7 +155,7 @@ public class UserDO implements User {
     
     @Override
     public int hashCode() {
-        return Objects.hash(id, userName, libCard, address, regDate, feedbacks);
+        return Objects.hash(id, avatar, userName, libCard, address, regDate);
     }
 
     @Override
@@ -189,12 +183,6 @@ public class UserDO implements User {
             return false;
         }
         if (!Objects.equals(this.avatar, other.avatar)) {
-            return false;
-        }
-        if (!Objects.equals(this.books, other.books)) {
-            return false;
-        }
-        if (!Objects.equals(this.feedbacks, other.feedbacks)) {
             return false;
         }
         return true;

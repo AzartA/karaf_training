@@ -29,11 +29,11 @@ public class FeedbackDO implements Feedback {
     private String message;
     
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "USER_ID", nullable = false)
+    @JoinColumn(name = "USER_ID")
     private UserDO user;
     
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "BOOK_ID", nullable = false)
+    @JoinColumn(name = "BOOK_ID")
     private BookDO book;
 
     public Long getId() {
