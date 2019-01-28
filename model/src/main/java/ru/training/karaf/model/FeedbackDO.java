@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
@@ -17,7 +18,11 @@ import javax.persistence.UniqueConstraint;
         uniqueConstraints = { @UniqueConstraint(columnNames =
                 {"USER_ID", "BOOK_ID"})} )
 @Entity
+@NamedQuery(name = FeedbackDO.GET_ALL_FEEDBACKS,
+        query = "SELECT f FROM FeedbackDO f")
 public class FeedbackDO implements Feedback {
+    public static final String GET_ALL_FEEDBACKS = "FeedbackDO.getAllFeedbacks";    
+    
     @Id
     @GeneratedValue
     @Column(name = "ID")
