@@ -21,12 +21,12 @@ import javax.persistence.Table;
 @NamedQueries({
     @NamedQuery(name = BookDO.GET_ALL_BOOKS,
             query = "SELECT b FROM BookDO b"),
-    @NamedQuery(name = BookDO.GTY_BOOK_BY_TITLE,
+    @NamedQuery(name = BookDO.GET_BOOK_BY_TITLE,
             query = "SELECT b FROM BookDO b WHERE b.title = :title")
 })
 public class BookDO implements Book {
     public static final String GET_ALL_BOOKS = "Books.getAll";
-    public static final String GTY_BOOK_BY_TITLE = "Books.getByTitle";
+    public static final String GET_BOOK_BY_TITLE = "Books.getByTitle";
     
     @Id
     @GeneratedValue
