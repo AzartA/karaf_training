@@ -2,11 +2,9 @@ package ru.training.karaf.rest;
 
 import java.util.List;
 import java.util.stream.Collectors;
-
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
 import ru.training.karaf.repo.UserRepo;
 import ru.training.karaf.rest.dto.UserDTO;
 
@@ -19,30 +17,35 @@ public class UserRestServiceImpl implements UserRestService {
     }
 
     @Override
-    public List<UserDTO> getAll() {
-        List<UserDTO> result = repo.getAll().stream().map(u -> new UserDTO(u)).collect(Collectors.toList());
-        return result;
+    public List<UserDTO> getAllUsers() {
+       return repo
+                .getAllUsers()
+                .stream()
+                .map(u -> new UserDTO(u))
+                .collect(Collectors.toList());
     }
 
     @Override
-    public void create(UserDTO user) {
-        repo.create(user); 
+    public void createUser(UserDTO user) {
+        repo.createUser(user); 
     }
 
     @Override
-    public void update(String login, UserDTO user) {
-        repo.update(login, user);
+    public void updateUser(String libCard, UserDTO user) {
+        repo.updateUser(libCard, user);
     }
 
     @Override
-    public UserDTO get(String login) {
-        return repo.get(login).map(u -> new UserDTO(u))
-                .orElseThrow(() -> new NotFoundException(Response.status(Response.Status.NOT_FOUND)
+    public UserDTO getUser(String libCard) {
+        return repo.getUser(libCard)
+                .map(u -> new UserDTO(u))
+                .orElseThrow(() -> new NotFoundException(Response.status
+                    (Response.Status.NOT_FOUND)
                         .type(MediaType.TEXT_HTML).entity("User not found").build()));
     }
 
     @Override
-    public void delete(String login) {
-        repo.delete(login);
+    public void deleteUser(String libCard) {
+        repo.deleteUser(libCard);
     }
 }

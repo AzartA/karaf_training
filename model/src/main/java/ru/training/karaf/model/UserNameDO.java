@@ -1,11 +1,12 @@
 package ru.training.karaf.model;
 
+import java.io.Serializable;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 @Embeddable
-public class UserNameDO implements UserName {
+public class UserNameDO implements UserName, Serializable {
     @Column(name = "FIRST_NAME")
     private String firstName;
     

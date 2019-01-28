@@ -1,7 +1,6 @@
 package ru.training.karaf.rest;
 
 import java.util.List;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -11,7 +10,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-
 import ru.training.karaf.rest.dto.UserDTO;
 
 @Path("users")
@@ -20,20 +18,20 @@ import ru.training.karaf.rest.dto.UserDTO;
 public interface UserRestService {
     
     @GET
-    List<UserDTO> getAll();
+    List<UserDTO> getAllUsers();
     
     @POST
-    void create(UserDTO user);
+    void createUser(UserDTO user);
     
     @PUT
-    @Path("{login}")
-    void update(@PathParam("login") String login, UserDTO user);
+    @Path("{libCard}")
+    void updateUser(@PathParam("libCard") String libCard, UserDTO user);
     
     @GET
-    @Path("{login}")
-    UserDTO get(@PathParam("login") String login);
+    @Path("{libCard}")
+    UserDTO getUser(@PathParam("libCard") String libCard);
     
     @DELETE
-    @Path("{login}")
-    void delete(@PathParam("login") String login);
+    @Path("{libCard}")
+    void deleteUser(@PathParam("libCard") String libCard);
 }

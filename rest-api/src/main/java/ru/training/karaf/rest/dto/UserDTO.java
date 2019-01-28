@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import javax.xml.bind.annotation.XmlTransient;
 import ru.training.karaf.model.Avatar;
 import ru.training.karaf.model.Book;
 import ru.training.karaf.model.Feedback;
@@ -14,10 +15,14 @@ import ru.training.karaf.model.UserName;
 public class UserDTO implements User {
     private UserName userName;
     private String libCard;
-    private JsonNode address;
+    private String address;
     private Date regDate;
     private Avatar avatar;
+    
+    @XmlTransient
     private Set<? extends Book> books;
+    
+    @XmlTransient
     private List<? extends Feedback> feedbacks;
 
     public UserDTO() {}
@@ -51,11 +56,11 @@ public class UserDTO implements User {
     }
 
     @Override
-    public JsonNode getAddress() {
+    public String getAddress() {
         return address;
     }
 
-    public void setAddress(JsonNode address) {
+    public void setAddress(String address) {
         this.address = address;
     }
 
@@ -97,8 +102,7 @@ public class UserDTO implements User {
 
     @Override
     public int hashCode() {
-        return Objects.hash(userName, libCard, address,
-                regDate, avatar, books, feedbacks);
+        return Objects.hash(userName, libCard, address, regDate, avatar);
     }
 
     @Override
@@ -126,12 +130,6 @@ public class UserDTO implements User {
             return false;
         }
         if (!Objects.equals(this.avatar, other.avatar)) {
-            return false;
-        }
-        if (!Objects.equals(this.books, other.books)) {
-            return false;
-        }
-        if (!Objects.equals(this.feedbacks, other.feedbacks)) {
             return false;
         }
         return true;

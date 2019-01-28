@@ -2,6 +2,7 @@ package ru.training.karaf.rest.dto;
 
 import java.util.List;
 import java.util.Objects;
+import javax.xml.bind.annotation.XmlTransient;
 import ru.training.karaf.model.Book;
 import ru.training.karaf.model.Feedback;
 import ru.training.karaf.model.Genre;
@@ -11,6 +12,8 @@ public class BookDTO implements Book {
     private String author;
     private Integer year;
     private Genre genre;
+    
+    @XmlTransient
     private List<? extends Feedback> feedbacks;
 
     public BookDTO() {}
@@ -70,7 +73,7 @@ public class BookDTO implements Book {
 
     @Override
     public int hashCode() {
-        return Objects.hash(title, author, year, genre, feedbacks);
+        return Objects.hash(title, author, year, genre);
     }
 
     @Override
@@ -95,9 +98,6 @@ public class BookDTO implements Book {
             return false;
         }
         if (!Objects.equals(this.genre, other.genre)) {
-            return false;
-        }
-        if (!Objects.equals(this.feedbacks, other.feedbacks)) {
             return false;
         }
         return true;

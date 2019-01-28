@@ -1,6 +1,7 @@
 package ru.training.karaf.rest.dto;
 
 import java.util.Objects;
+import javax.xml.bind.annotation.XmlTransient;
 import ru.training.karaf.model.Book;
 import ru.training.karaf.model.Feedback;
 import ru.training.karaf.model.User;

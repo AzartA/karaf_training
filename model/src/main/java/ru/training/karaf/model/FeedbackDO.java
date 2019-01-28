@@ -1,5 +1,6 @@
 package ru.training.karaf.model;
 
+import java.io.Serializable;
 import java.util.Objects;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -20,7 +21,7 @@ import javax.persistence.UniqueConstraint;
 @Entity
 @NamedQuery(name = FeedbackDO.GET_ALL_FEEDBACKS,
         query = "SELECT f FROM FeedbackDO f")
-public class FeedbackDO implements Feedback {
+public class FeedbackDO implements Feedback, Serializable {
     public static final String GET_ALL_FEEDBACKS = "FeedbackDO.getAllFeedbacks";    
     
     @Id

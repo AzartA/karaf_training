@@ -53,13 +53,11 @@ public class UserRepoImpl implements UserRepo {
         admin.setAddress("Admin's address");
         admin.setLibCard("Admin's lib card");
         admin.setRegDate(new Date());
-        admin.setAvatar(avatar);
+        //admin.setAvatar(avatar);
         admin.setUserName(name);
         admin.addFeedback(feedback);
         admin.setBooks(books);
         //admin.setFeedbacks(feedbacks);
-        
-        System.err.println(admin);
         
         template.tx(em -> em.persist(admin));
     }
@@ -67,7 +65,7 @@ public class UserRepoImpl implements UserRepo {
     @Override
     public List<? extends User> getAllUsers() {
         return template.txExpr(em -> em.createNamedQuery
-            (UserDO.GET_ALL, UserDO.class).getResultList());
+            (UserDO.GET_ALL_USERS, UserDO.class).getResultList());
     }
 
     @Override
@@ -87,7 +85,7 @@ public class UserRepoImpl implements UserRepo {
     @Override
     public void updateUser(String libCard, User user) {
         template.tx(em -> {
-            getByLibCard(libCard, em).ifPresent(userToUpdate -> {
+            getUserByLibCard(libCard, em).ifPresent(userToUpdate -> {
                 userToUpdate.setAddress(user.getAddress());
                 userToUpdate.setAvatar((AvatarDO)user.getAvatar());
                 userToUpdate.setBooks((Set<BookDO>)user.getBooks());
@@ -103,17 +101,17 @@ public class UserRepoImpl implements UserRepo {
 
     @Override
     public Optional<? extends User> getUser(String libCard) {
-        return template.txExpr(em -> getByLibCard(libCard, em));
+        return template.txExpr(em -> getUserByLibCard(libCard, em));
     }
 
     @Override
     public void deleteUser(String libCard) {
-        template.tx(em -> getByLibCard(libCard, em).ifPresent(em::remove));
+        template.tx(em -> getUserByLibCard(libCard, em).ifPresent(em::remove));
     }
 
-    private Optional<UserDO> getByLibCard(String libCard, EntityManager em) {
+    private Optional<UserDO> getUserByLibCard(String libCard, EntityManager em) {
         try {
-            return Optional.of(em.createNamedQuery(UserDO.GET_BY_LIB_CARD,
+            return Optional.of(em.createNamedQuery(UserDO.GET_USER_BY_LIB_CARD,
                     UserDO.class).setParameter("libCard", libCard)
                     .getSingleResult());
         } catch (NoResultException e) {

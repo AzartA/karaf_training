@@ -1,6 +1,7 @@
 package ru.training.karaf.model;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -28,14 +29,14 @@ import javax.persistence.TemporalType;
 @Table(name = "USERDO")
 @Entity
 @NamedQueries({
-    @NamedQuery(name = UserDO.GET_ALL, query = "SELECT u FROM UserDO AS u"),
-    @NamedQuery(name = UserDO.GET_BY_LIB_CARD,
+    @NamedQuery(name = UserDO.GET_ALL_USERS, query = "SELECT u FROM UserDO AS u"),
+    @NamedQuery(name = UserDO.GET_USER_BY_LIB_CARD,
             query = "SELECT u FROM UserDO AS u WHERE u.libCard = :libCard")
 })
 
-public class UserDO implements User {
-    public static final String GET_ALL = "Users.getAll";
-    public static final String GET_BY_LIB_CARD = "Users.getByLibCard";
+public class UserDO implements User, Serializable {
+    public static final String GET_ALL_USERS = "Users.getAllUsers";
+    public static final String GET_USER_BY_LIB_CARD = "Users.getUserByLibCard";
     
     @Id
     @GeneratedValue

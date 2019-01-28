@@ -6,6 +6,13 @@ import ru.training.karaf.model.UserName;
 public class UserNameDTO implements UserName {
     private String firstName;
     private String lastName;
+
+    public UserNameDTO() {}
+    
+    public UserNameDTO(String firstName, String lastName) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
     
     @Override
     public String getFirstName() {

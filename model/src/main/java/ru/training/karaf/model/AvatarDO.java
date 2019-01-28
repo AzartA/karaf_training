@@ -1,5 +1,6 @@
 package ru.training.karaf.model;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Objects;
 import javax.persistence.Basic;
@@ -15,7 +16,7 @@ import javax.persistence.Table;
 @Table(name = "AVATARDO")
 @Entity
 @NamedQuery(name = AvatarDO.GET_ALL_AVATARS, query = "SELECT a FROM AvatarDO a")
-public class AvatarDO implements Avatar {
+public class AvatarDO implements Avatar, Serializable {
     public static final String GET_ALL_AVATARS = "AvatarDO.getAllAvatars";
     
     @Id
