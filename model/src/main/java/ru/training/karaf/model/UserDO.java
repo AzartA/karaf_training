@@ -10,6 +10,7 @@ import java.util.Objects;
 import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -49,8 +50,9 @@ public class UserDO implements User, Serializable {
     @Column(name = "LIB_CARD", nullable = false, unique = true)
     private String libCard;
     
-    @Column(name = "ADDRESS")
-    private String address;
+    @Column(name = "ADDRESS", columnDefinition = "jsonb")
+    @Convert(converter = ru.training.karaf.converter.JsonConverter.class)
+    private JsonNode address;
     
     @Column(name = "REG_DATE")
     @Temporal(TemporalType.TIMESTAMP)
@@ -119,11 +121,11 @@ public class UserDO implements User, Serializable {
     }
     
     @Override
-    public String getAddress() {
+    public JsonNode getAddress() {
         return address;
     }
     
-    public void setAddress(String address) {
+    public void setAddress(JsonNode address) {
         this.address = address;
     }
     

@@ -8,7 +8,7 @@ import java.util.Set;
 public interface User {
     public UserName getUserName();
     public String getLibCard();
-    public String getAddress();
+    public JsonNode getAddress();
     public Date getRegDate();
     public Avatar getAvatar();
     public Set<? extends Book> getBooks();

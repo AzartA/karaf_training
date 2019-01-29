@@ -15,7 +15,7 @@ import ru.training.karaf.model.UserName;
 public class UserDTO implements User {
     private UserName userName;
     private String libCard;
-    private String address;
+    private JsonNode address;
     private Date regDate;
     private Avatar avatar;
     
@@ -56,11 +56,11 @@ public class UserDTO implements User {
     }
 
     @Override
-    public String getAddress() {
+    public JsonNode getAddress() {
         return address;
     }
 
-    public void setAddress(String address) {
+    public void setAddress(JsonNode address) {
         this.address = address;
     }
 

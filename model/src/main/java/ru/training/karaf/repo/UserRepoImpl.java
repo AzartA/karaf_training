@@ -1,5 +1,8 @@
 package ru.training.karaf.repo;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -24,13 +27,17 @@ public class UserRepoImpl implements UserRepo {
         this.template = template;
     }
 
-    public void init() {
+    public void init() throws IOException {
         AvatarDO avatar = new AvatarDO();
         avatar.setPicture("Admin's avatar".getBytes());
         
         UserNameDO name = new UserNameDO();
         name.setFirstName("Admin's first name");
         name.setLastName("Admin's last name");
+        
+        String stringAddress = "{\"country\":\"russia\",\"city\":\"moscow\"}";
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode address = mapper.readTree(stringAddress);
                
         FeedbackDO feedback = new FeedbackDO();
         feedback.setMessage("Admin's feedback");
@@ -50,15 +57,14 @@ public class UserRepoImpl implements UserRepo {
         books.add(book);
         
         UserDO admin = new UserDO();
-        admin.setAddress("Admin's address");
+        admin.setAddress(address);
         admin.setLibCard("Admin's lib card");
         admin.setRegDate(new Date());
-        //admin.setAvatar(avatar);
+        admin.setAvatar(avatar);
         admin.setUserName(name);
         admin.addFeedback(feedback);
         admin.setBooks(books);
-        //admin.setFeedbacks(feedbacks);
-        
+
         template.tx(em -> em.persist(admin));
     }
     
