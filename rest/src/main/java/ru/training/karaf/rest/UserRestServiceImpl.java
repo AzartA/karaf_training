@@ -6,6 +6,7 @@ import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import ru.training.karaf.repo.UserRepo;
+import ru.training.karaf.rest.dto.FeedbackDTO;
 import ru.training.karaf.rest.dto.UserDTO;
 
 public class UserRestServiceImpl implements UserRestService {

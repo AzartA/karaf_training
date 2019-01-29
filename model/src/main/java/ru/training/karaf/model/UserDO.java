@@ -74,6 +74,14 @@ public class UserDO implements User, Serializable {
     private List<FeedbackDO> feedbacks = new ArrayList<>();
 
     public UserDO() {}
+    
+    public UserDO(User user) {
+        this.address = user.getAddress();
+        this.avatar = new AvatarDO(user.getAvatar());
+        this.libCard = user.getLibCard();
+        this.regDate = user.getRegDate();
+        this.userName = new UserNameDO(user.getUserName());
+    }
 
     @Override
     public List<FeedbackDO> getFeedbacks() {
@@ -112,7 +120,7 @@ public class UserDO implements User, Serializable {
     }
     
     @Override
-    public UserName getUserName() {
+    public UserNameDO getUserName() {
         return userName;
     }
     
@@ -148,7 +156,7 @@ public class UserDO implements User, Serializable {
     }
     
     @Override
-    public Avatar getAvatar() {
+    public AvatarDO getAvatar() {
         return avatar;
     }
     

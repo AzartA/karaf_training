@@ -15,6 +15,11 @@ public class UserNameDO implements UserName, Serializable {
 
     public UserNameDO() {}
     
+    public UserNameDO(UserName userName) {
+        this.firstName = userName.getFirstName();
+        this.lastName = userName.getLastName();
+    }
+    
     @Override
     public String getFirstName() {
         return firstName;

@@ -13,36 +13,34 @@ import ru.training.karaf.model.User;
 import ru.training.karaf.model.UserName;
 
 public class UserDTO implements User {
-    private UserName userName;
+    private UserNameDTO userName;
     private String libCard;
     private JsonNode address;
     private Date regDate;
-    private Avatar avatar;
+    private AvatarDTO avatar;
     
     @XmlTransient
-    private Set<? extends Book> books;
+    private Set<BookDTO> books;
     
     @XmlTransient
-    private List<? extends Feedback> feedbacks;
+    private List<FeedbackDTO> feedbacks;
 
     public UserDTO() {}
     
     public UserDTO(User user) {
-        this.userName = user.getUserName();
-        this.libCard = user.getLibCard();
         this.address = user.getAddress();
+        this.avatar = new AvatarDTO(user.getAvatar());
+        this.libCard = user.getLibCard();
         this.regDate = user.getRegDate();
-        this.avatar = user.getAvatar();
-        this.books = user.getBooks();
-        this.feedbacks = user.getFeedbacks();
+        this.userName = new UserNameDTO(user.getUserName());
     }
 
     @Override
-    public UserName getUserName() {
+    public UserNameDTO getUserName() {
         return userName;
     }
 
-    public void setUserName(UserName userName) {
+    public void setUserName(UserNameDTO userName) {
         this.userName = userName;
     }
 
@@ -74,29 +72,29 @@ public class UserDTO implements User {
     }
 
     @Override
-    public Avatar getAvatar() {
+    public AvatarDTO getAvatar() {
         return avatar;
     }
 
-    public void setAvatar(Avatar avatar) {
+    public void setAvatar(AvatarDTO avatar) {
         this.avatar = avatar;
     }
 
     @Override
-    public Set<? extends Book> getBooks() {
+    public Set<BookDTO> getBooks() {
         return books;
     }
 
-    public void setBooks(Set<? extends Book> books) {
+    public void setBooks(Set<BookDTO> books) {
         this.books = books;
     }
 
     @Override
-    public List<? extends Feedback> getFeedbacks() {
+    public List<FeedbackDTO> getFeedbacks() {
         return feedbacks;
     }
 
-    public void setFeedbacks(List<? extends Feedback> feedbacks) {
+    public void setFeedbacks(List<FeedbackDTO> feedbacks) {
         this.feedbacks = feedbacks;
     }
 

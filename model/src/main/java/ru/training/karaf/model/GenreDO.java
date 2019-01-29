@@ -32,6 +32,10 @@ public class GenreDO implements Genre, Serializable {
 
     public GenreDO() {}
     
+    public GenreDO(Genre genre) {
+        this.name = genre.getName();
+    }
+    
     @Override
     public String getName() {
         return name;

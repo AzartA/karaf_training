@@ -8,15 +8,19 @@ import ru.training.karaf.model.User;
 
 public class FeedbackDTO implements Feedback {
     private String message;
-    private User user;
-    private Book book;
+    
+    @XmlTransient
+    private UserDTO user;
+    
+    @XmlTransient
+    private BookDTO book;
 
     public FeedbackDTO() {}
     
     public FeedbackDTO(Feedback feedback) {
         this.message = feedback.getMessage();
-        this.user = feedback.getUser();
-        this.book = feedback.getBook();
+        this.user = new UserDTO(feedback.getUser());
+        this.book = new BookDTO(feedback.getBook());
     }
     
     @Override
@@ -29,20 +33,20 @@ public class FeedbackDTO implements Feedback {
     }
 
     @Override
-    public User getUser() {
+    public UserDTO getUser() {
         return user;
     }
     
-    public void setUser(User user) {
+    public void setUser(UserDTO user) {
         this.user = user;
     }
 
     @Override
-    public Book getBook() {
+    public BookDTO getBook() {
         return book;
     }
     
-    public void setBook(Book book) {
+    public void setBook(BookDTO book) {
         this.book = book;
     }
 

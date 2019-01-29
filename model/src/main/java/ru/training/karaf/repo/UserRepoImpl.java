@@ -29,28 +29,28 @@ public class UserRepoImpl implements UserRepo {
 
     public void init() throws IOException {
         AvatarDO avatar = new AvatarDO();
-        avatar.setPicture("Admin's avatar".getBytes());
+        avatar.setPicture("aa".getBytes());
         
         UserNameDO name = new UserNameDO();
-        name.setFirstName("Admin's first name");
-        name.setLastName("Admin's last name");
+        name.setFirstName("afn");
+        name.setLastName("aln");
         
         String stringAddress = "{\"country\":\"russia\",\"city\":\"moscow\"}";
         ObjectMapper mapper = new ObjectMapper();
         JsonNode address = mapper.readTree(stringAddress);
                
         FeedbackDO feedback = new FeedbackDO();
-        feedback.setMessage("Admin's feedback");
+        feedback.setMessage("af");
         List<FeedbackDO> feedbacks = new ArrayList<>();
         feedbacks.add(feedback);
         
         GenreDO genre = new GenreDO();
-        genre.setName("Admin's book genre");
+        genre.setName("ag");
 
         BookDO book = new BookDO();
-        book.setAuthor("Admin's book author");
+        book.setAuthor("aba");
         book.setGenre(genre);
-        book.setTitle("Admin's book title");
+        book.setTitle("abt");
         book.setYear(2000);
         book.addFeedback(feedback);
         Set<BookDO> books = new HashSet<>();
@@ -58,7 +58,7 @@ public class UserRepoImpl implements UserRepo {
         
         UserDO admin = new UserDO();
         admin.setAddress(address);
-        admin.setLibCard("Admin's lib card");
+        admin.setLibCard("alc");
         admin.setRegDate(new Date());
         admin.setAvatar(avatar);
         admin.setUserName(name);
@@ -76,14 +76,7 @@ public class UserRepoImpl implements UserRepo {
 
     @Override
     public void createUser(User user) {
-        UserDO userToCreate = new UserDO();
-        userToCreate.setAddress(user.getAddress());
-        userToCreate.setAvatar((AvatarDO)user.getAvatar());
-        userToCreate.setBooks((Set<BookDO>)user.getBooks());
-        userToCreate.setFeedbacks((List<FeedbackDO>)user.getFeedbacks());
-        userToCreate.setLibCard(user.getLibCard());
-        userToCreate.setRegDate(user.getRegDate());
-        userToCreate.setUserName((UserNameDO)user.getUserName());
+        UserDO userToCreate = new UserDO(user);
 
         template.tx(em -> em.persist(userToCreate));
     }
@@ -93,12 +86,10 @@ public class UserRepoImpl implements UserRepo {
         template.tx(em -> {
             getUserByLibCard(libCard, em).ifPresent(userToUpdate -> {
                 userToUpdate.setAddress(user.getAddress());
-                userToUpdate.setAvatar((AvatarDO)user.getAvatar());
-                userToUpdate.setBooks((Set<BookDO>)user.getBooks());
-                userToUpdate.setFeedbacks((List<FeedbackDO>)user.getFeedbacks());
+                userToUpdate.getAvatar().setPicture(user.getAvatar().getPicture());
                 userToUpdate.setLibCard(user.getLibCard());
                 userToUpdate.setRegDate(user.getRegDate());
-                userToUpdate.setUserName((UserNameDO)user.getUserName());
+                userToUpdate.setUserName(new UserNameDO(user.getUserName()));
                 
                 em.merge(userToUpdate);
             });

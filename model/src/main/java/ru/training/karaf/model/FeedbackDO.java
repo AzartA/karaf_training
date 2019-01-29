@@ -44,6 +44,12 @@ public class FeedbackDO implements Feedback, Serializable {
 
     public FeedbackDO() {}
     
+    public FeedbackDO(Feedback feedback) {
+        this.message = feedback.getMessage();
+        this.user = new UserDO(feedback.getUser());
+        this.book = new BookDO(feedback.getBook());
+    }
+    
     public Long getId() {
         return id;
     }
@@ -62,7 +68,7 @@ public class FeedbackDO implements Feedback, Serializable {
     }
 
     @Override
-    public User getUser() {
+    public UserDO getUser() {
         return user;
     }
 
@@ -71,7 +77,7 @@ public class FeedbackDO implements Feedback, Serializable {
     }
     
     @Override
-    public Book getBook() {
+    public BookDO getBook() {
         return book;
     }
     

@@ -11,10 +11,10 @@ public class BookDTO implements Book {
     private String title;
     private String author;
     private Integer year;
-    private Genre genre;
+    private GenreDTO genre;
     
     @XmlTransient
-    private List<? extends Feedback> feedbacks;
+    private List<FeedbackDTO> feedbacks;
 
     public BookDTO() {}
     
@@ -22,8 +22,7 @@ public class BookDTO implements Book {
         this.title = book.getTitle();
         this.author = book.getAuthor();
         this.year = book.getYear();
-        this.genre = book.getGenre();
-        this.feedbacks = book.getFeedbacks();
+        this.genre = new GenreDTO(book.getGenre());
     }
     
     @Override
@@ -54,20 +53,20 @@ public class BookDTO implements Book {
     }
 
     @Override
-    public Genre getGenre() {
+    public GenreDTO getGenre() {
         return genre;
     }
 
-    public void setGenre(Genre genre) {
+    public void setGenre(GenreDTO genre) {
         this.genre = genre;
     }
 
     @Override
-    public List<? extends Feedback> getFeedbacks() {
+    public List<FeedbackDTO> getFeedbacks() {
         return feedbacks;
     }
 
-    public void setFeedbacks(List<? extends Feedback> feedbacks) {
+    public void setFeedbacks(List<FeedbackDTO> feedbacks) {
         this.feedbacks = feedbacks;
     }
 
