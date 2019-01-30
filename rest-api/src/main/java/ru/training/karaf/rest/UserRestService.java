@@ -1,6 +1,7 @@
 package ru.training.karaf.rest;
 
 import java.util.List;
+import java.util.Set;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -10,6 +11,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import ru.training.karaf.rest.dto.BookDTO;
+import ru.training.karaf.rest.dto.FeedbackDTO;
 import ru.training.karaf.rest.dto.UserDTO;
 
 @Path("users")
@@ -34,4 +37,12 @@ public interface UserRestService {
     @DELETE
     @Path("{libCard}")
     void deleteUser(@PathParam("libCard") String libCard);
+    
+    @GET
+    @Path("{libCard}/books")
+    Set<BookDTO> getUserBooks(@PathParam("libCard") String libCard);
+    
+    @GET
+    @Path("{libCard}/feedbacks")
+    List<FeedbackDTO> getUserFeedbacks(@PathParam("libCard") String libCard);
 }

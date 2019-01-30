@@ -13,7 +13,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import org.apache.aries.jpa.template.JpaTemplate;
 import ru.training.karaf.model.AvatarDO;
+import ru.training.karaf.model.Book;
 import ru.training.karaf.model.BookDO;
+import ru.training.karaf.model.Feedback;
 import ru.training.karaf.model.FeedbackDO;
 import ru.training.karaf.model.GenreDO;
 import ru.training.karaf.model.User;
@@ -104,6 +106,26 @@ public class UserRepoImpl implements UserRepo {
     @Override
     public void deleteUser(String libCard) {
         template.tx(em -> getUserByLibCard(libCard, em).ifPresent(em::remove));
+    }
+
+    @Override
+    public Set<? extends Book> getUserBooks(String libCard) {
+        Optional<UserDO> user = template.txExpr(em -> getUserByLibCard(libCard, em));
+        if (user.isPresent()) {
+            System.out.println("User: " + user.get());
+            return user.get().getBooks();
+        }
+        return null;
+    }
+
+    @Override
+    public List<? extends Feedback> getUserFeedbacks(String libCard) {
+        Optional<UserDO> user = template.txExpr(em -> getUserByLibCard(libCard, em));
+        if (user.isPresent()) {
+            System.out.println("User: " + user.get());
+            return user.get().getFeedbacks();
+        }
+        return null;
     }
 
     private Optional<UserDO> getUserByLibCard(String libCard, EntityManager em) {
