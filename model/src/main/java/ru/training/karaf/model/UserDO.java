@@ -1,149 +1,208 @@
 package ru.training.karaf.model;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
 import java.util.Set;
-
-import javax.persistence.CollectionTable;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
+import javax.persistence.Convert;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
+
+@Table(name = "USERDO")
 @Entity
 @NamedQueries({
-    @NamedQuery(name = UserDO.GET_ALL, query = "SELECT u FROM UserDO AS u"),
-    @NamedQuery(name = UserDO.GET_BY_LOGIN, query = "SELECT u FROM UserDO AS u WHERE u.login = :login")
+    @NamedQuery(name = UserDO.GET_ALL_USERS, query = "SELECT u FROM UserDO AS u"),
+    @NamedQuery(name = UserDO.GET_USER_BY_LIB_CARD,
+            query = "SELECT u FROM UserDO AS u WHERE u.libCard = :libCard")
 })
-public class UserDO implements User {
-    public static final String GET_ALL = "Users.getAll";
-    public static final String GET_BY_LOGIN = "Users.getByLogin";
+
+public class UserDO implements User, Serializable {
+    public static final String GET_ALL_USERS = "Users.getAllUsers";
+    public static final String GET_USER_BY_LIB_CARD = "Users.getUserByLibCard";
     
     @Id
     @GeneratedValue
+    @Column(name = "ID")
     private Long id;
-    @Column(name = "first_name")
-    private String firstName;
-    @Column(name = "last_name")
-    private String lastName;
-    @Column(name = "login", nullable = false, unique=true)
-    private String login;
-    private Integer age;
-    private String address;
-
-    @ElementCollection
-    @CollectionTable(name = "user_properties",
-            joinColumns = @JoinColumn(name = "user_id"))
-    private Set<String> properties;
+    
+    @Embedded
+    UserNameDO userName;
+    
+    @Column(name = "LIB_CARD", nullable = false, unique = true)
+    private String libCard;
+    
+    @Column(name = "ADDRESS", columnDefinition = "jsonb")
+    @Convert(converter = ru.training.karaf.converter.JsonConverter.class)
+    private JsonNode address;
+    
+    @Column(name = "REG_DATE")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date regDate;
+    
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "AVATAR_ID")
+    private AvatarDO avatar;
+    
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(name = "USERDO_BOOKDO",
+            joinColumns = @JoinColumn(name = "USER_ID"),
+            inverseJoinColumns = @JoinColumn(name = "BOOK_ID"))
+    private Set<BookDO> books = new HashSet<>();
+    
+    @OneToMany(cascade = CascadeType.ALL,
+            mappedBy = "user",
+            orphanRemoval = true)
+    private List<FeedbackDO> feedbacks = new ArrayList<>();
 
     public UserDO() {}
+    
+    public UserDO(User user) {
+        this.address = user.getAddress();
+        this.avatar = new AvatarDO(user.getAvatar());
+        this.libCard = user.getLibCard();
+        this.regDate = user.getRegDate();
+        this.userName = new UserNameDO(user.getUserName());
+    }
 
+    @Override
+    public List<FeedbackDO> getFeedbacks() {
+        return feedbacks;
+    }
+
+    public void setFeedbacks(List<FeedbackDO> feedbacks) {
+        this.feedbacks = feedbacks;
+    }
+    
+    public void addFeedback(FeedbackDO feedback) {
+        feedbacks.add(feedback);
+        feedback.setUser(this);
+    }
+    
+    public void removeFeedback(FeedbackDO feedback) {
+        feedbacks.remove(feedback);
+        feedback.setUser(null);
+    }
+    
+    @Override
+    public Set<BookDO> getBooks() {
+        return books;
+    }
+
+    public void setBooks(Set<BookDO> books) {
+        this.books = books;
+    }
+    
     public Long getId() {
         return id;
     }
+    
     public void setId(Long id) {
         this.id = id;
     }
-    public String getFirstName() {
-        return firstName;
+    
+    @Override
+    public UserNameDO getUserName() {
+        return userName;
     }
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
+    
+    public void setUserName(UserNameDO userName) {
+        this.userName = userName;
     }
-    public String getLastName() {
-        return lastName;
-    }
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-    public String getLogin() {
-        return login;
-    }
-    public void setLogin(String login) {
-        this.login = login;
-    }
-    public Integer getAge() {
-        return age;
-    }
-    public void setAge(Integer age) {
-        this.age = age;
-    }
-    public String getAddress() {
+    
+    @Override
+    public JsonNode getAddress() {
         return address;
     }
-    public void setAddress(String address) {
+    
+    public void setAddress(JsonNode address) {
         this.address = address;
     }
-    public Set<String> getProperties() {
-        return properties;
+    
+    @Override
+    public String getLibCard() {
+        return libCard;
     }
-    public void setProperties(Set<String> properties) {
-        this.properties = properties;
+    
+    public void setLibCard(String libCard) {
+        this.libCard = libCard;
     }
+    
+    @Override
+    public Date getRegDate() {
+        return regDate;
+    }
+    
+    public void setRegDate(Date regDate) {
+        this.regDate = regDate;
+    }
+    
+    @Override
+    public AvatarDO getAvatar() {
+        return avatar;
+    }
+    
+    public void setAvatar(AvatarDO avatar) {
+        this.avatar = avatar;
+    }
+    
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((address == null) ? 0 : address.hashCode());
-        result = prime * result + ((age == null) ? 0 : age.hashCode());
-        result = prime * result + ((firstName == null) ? 0 : firstName.hashCode());
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + ((lastName == null) ? 0 : lastName.hashCode());
-        result = prime * result + ((login == null) ? 0 : login.hashCode());
-        result = prime * result + ((properties == null) ? 0 : properties.hashCode());
-        return result;
+        return Objects.hash(id, avatar, userName, libCard, address, regDate);
     }
+
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
-        UserDO other = (UserDO) obj;
-        if (address == null) {
-            if (other.address != null)
-                return false;
-        } else if (!address.equals(other.address))
+        }
+        final UserDO other = (UserDO) obj;
+        if (!Objects.equals(this.libCard, other.libCard)) {
             return false;
-        if (age == null) {
-            if (other.age != null)
-                return false;
-        } else if (!age.equals(other.age))
+        }
+        if (!Objects.equals(this.userName, other.userName)) {
             return false;
-        if (firstName == null) {
-            if (other.firstName != null)
-                return false;
-        } else if (!firstName.equals(other.firstName))
+        }
+        if (!Objects.equals(this.address, other.address)) {
             return false;
-        if (id == null) {
-            if (other.id != null)
-                return false;
-        } else if (!id.equals(other.id))
+        }
+        if (!Objects.equals(this.regDate, other.regDate)) {
             return false;
-        if (lastName == null) {
-            if (other.lastName != null)
-                return false;
-        } else if (!lastName.equals(other.lastName))
+        }
+        if (!Objects.equals(this.avatar, other.avatar)) {
             return false;
-        if (login == null) {
-            if (other.login != null)
-                return false;
-        } else if (!login.equals(other.login))
-            return false;
-        if (properties == null) {
-            if (other.properties != null)
-                return false;
-        } else if (!properties.equals(other.properties))
-            return false;
+        }
         return true;
-    }
+    } 
+
     @Override
     public String toString() {
-        return "UserDO [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", login=" + login
-                + ", age=" + age + ", address=" + address + ", properties=" + properties + "]";
+        return "UserDO{" + "id=" + id + ", userName=" + userName + ", libCard="
+                + libCard + ", address=" + address + ", regDate=" + regDate +
+                ", avatar=" + avatar + '}';
     }
 }
