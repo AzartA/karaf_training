@@ -8,11 +8,19 @@
     <bean id="userRestServiceBean" class="ru.training.karaf.rest.UserRestServiceImpl">
         <property name="repo"  ref="userRepo"/>
     </bean>
+    
+    
+    <reference id="bookRepo" interface="ru.training.karaf.repo.BookRepo"/>
+
+    <bean id="bookRestServiceBean" class="ru.training.karaf.rest.BookRestServiceImpl">
+        <property name="repo"  ref="bookRepo"/>
+    </bean>
 
     <!-- CXF -->
     <jaxrs:server id="restServer" address="/rest">
         <jaxrs:serviceBeans>
             <ref component-id="userRestServiceBean"/>
+            <ref component-id="bookRestServiceBean" />
         </jaxrs:serviceBeans>
                 <jaxrs:providers>
             <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider"/>

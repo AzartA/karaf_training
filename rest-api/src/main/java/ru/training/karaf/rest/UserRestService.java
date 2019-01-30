@@ -10,6 +10,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import ru.training.karaf.rest.dto.BookDTO;
 import ru.training.karaf.rest.dto.FeedbackDTO;
@@ -42,7 +43,26 @@ public interface UserRestService {
     @Path("{libCard}/books")
     Set<BookDTO> getUserBooks(@PathParam("libCard") String libCard);
     
+    @POST
+    @Path("{libCard}/books")
+    void addBook(@PathParam("libCard") String libCard, BookDTO book);
+    
+    @DELETE
+    @Path("{libCard}/books")
+    void removeBook(@PathParam("libCard") String libCard,
+            @QueryParam("title") String title);   
+    
     @GET
     @Path("{libCard}/feedbacks")
     List<FeedbackDTO> getUserFeedbacks(@PathParam("libCard") String libCard);
+    
+    @POST
+    @Path("{libCard}/feedbacks")
+    void addFeedback(@PathParam("libCard") String libCard,
+            FeedbackDTO feedback);
+    
+    @DELETE
+    @Path("{libCard}/feedbacks")
+    void removeFeedback(@PathParam("libCard") String libCard,
+            @QueryParam("title") String title);
 }

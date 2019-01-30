@@ -8,11 +8,7 @@ import ru.training.karaf.model.User;
 
 public class FeedbackDTO implements Feedback {
     private String message;
-    
-    @XmlTransient
     private UserDTO user;
-    
-    @XmlTransient
     private BookDTO book;
 
     public FeedbackDTO() {}

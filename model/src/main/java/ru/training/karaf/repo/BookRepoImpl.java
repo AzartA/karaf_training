@@ -4,9 +4,11 @@ import java.util.List;
 import java.util.Optional;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
+import org.apache.aries.jpa.template.EmConsumer;
 import org.apache.aries.jpa.template.JpaTemplate;
 import ru.training.karaf.model.Book;
 import ru.training.karaf.model.BookDO;
+import ru.training.karaf.model.Feedback;
 import ru.training.karaf.model.FeedbackDO;
 import ru.training.karaf.model.GenreDO;
 
@@ -26,14 +28,16 @@ public class BookRepoImpl implements BookRepo {
 
     @Override
     public void createBook(Book book) {
-        BookDO bookToCreate = new BookDO();
-        bookToCreate.setAuthor(book.getAuthor());
-        bookToCreate.setFeedbacks((List<FeedbackDO>)book.getFeedbacks());
-        bookToCreate.setGenre((GenreDO)book.getGenre());
-        bookToCreate.setTitle(book.getTitle());
-        bookToCreate.setYear(book.getYear());
-        
-        template.tx(em -> em.persist(bookToCreate));
+        try {
+            GenreDO genre = template.txExpr(em -> em.createNamedQuery
+            (GenreDO.GET_GENRE_BY_NAME, GenreDO.class).setParameter("name", book.getGenre().getName()).getSingleResult());
+            System.out.println("Genre: " + genre);
+            BookDO bookToCreate = new BookDO(book);
+            bookToCreate.setGenre(genre);
+            template.tx(em -> em.merge(bookToCreate));
+        } catch (NoResultException e) {
+            System.err.println("Genre bot found: " + e);
+        }
     }
 
     @Override
@@ -41,8 +45,7 @@ public class BookRepoImpl implements BookRepo {
         template.tx(em -> {
             getByTitle(title, em).ifPresent(bookToUpdate -> {
                 bookToUpdate.setAuthor(book.getAuthor());
-                bookToUpdate.setFeedbacks((List<FeedbackDO>)book.getFeedbacks());
-                bookToUpdate.setGenre((GenreDO)book.getGenre());
+                bookToUpdate.getGenre().setName(book.getGenre().getName());
                 bookToUpdate.setTitle(book.getTitle());
                 bookToUpdate.setYear(book.getYear());
                 
@@ -72,5 +75,13 @@ public class BookRepoImpl implements BookRepo {
             return Optional.empty();
         }
     }
-    
+
+    @Override
+    public List<? extends Feedback> getBookFeedbacks(String title) {
+        Optional<BookDO> book = template.txExpr(em -> getByTitle(title, em));
+        if (book.isPresent()) {
+            return book.get().getFeedbacks();
+        }
+        return null;
+    }    
 }

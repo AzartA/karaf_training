@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import org.apache.aries.jpa.template.JpaTemplate;
@@ -79,7 +81,6 @@ public class UserRepoImpl implements UserRepo {
     @Override
     public void createUser(User user) {
         UserDO userToCreate = new UserDO(user);
-
         template.tx(em -> em.persist(userToCreate));
     }
 
@@ -112,21 +113,113 @@ public class UserRepoImpl implements UserRepo {
     public Set<? extends Book> getUserBooks(String libCard) {
         Optional<UserDO> user = template.txExpr(em -> getUserByLibCard(libCard, em));
         if (user.isPresent()) {
-            System.out.println("User: " + user.get());
             return user.get().getBooks();
         }
         return null;
     }
 
     @Override
+    public void addBook(String libCard, Book requestedBook) {
+        try {
+            BookDO book = template.txExpr(em ->
+                    em.createNamedQuery(BookDO.GET_BOOK_BY_TITLE, BookDO.class)
+                            .setParameter("title", requestedBook.getTitle())
+                            .getSingleResult());
+            
+            UserDO user = template.txExpr(em -> getUserByLibCard(libCard, em)).get();
+            user.getBooks().add(book);
+            template.tx(em -> em.merge(user));
+            
+        } catch (NoResultException ex) {
+            System.err.println("Book not found: " + ex);
+        } catch (NoSuchElementException ex) {
+            System.err.println("User not found: " + ex);
+        }
+    }
+
+    @Override
+    public void removeBook(String libCard, String title) {
+        try {
+            BookDO book = template.txExpr(em ->
+                    em.createNamedQuery(BookDO.GET_BOOK_BY_TITLE, BookDO.class)
+                            .setParameter("title", title)
+                            .getSingleResult());
+            
+            UserDO user = template.txExpr(em -> getUserByLibCard(libCard, em)).get();
+            if (user.getBooks().remove(book)) {
+                template.tx(em -> em.merge(user));
+            } else {
+                System.out.println("User doens't have this book");
+            }
+        } catch (NoResultException ex) {
+            System.err.println("Book not found: " + ex);
+        } catch (NoSuchElementException ex) {
+            System.err.println("User not found: " + ex);
+        }
+    }
+
+    @Override
     public List<? extends Feedback> getUserFeedbacks(String libCard) {
         Optional<UserDO> user = template.txExpr(em -> getUserByLibCard(libCard, em));
         if (user.isPresent()) {
-            System.out.println("User: " + user.get());
             return user.get().getFeedbacks();
         }
         return null;
     }
+
+    
+    // TODO: Check if user's feedback already exists
+    @Override
+    public void addFeedback(String libCard, Feedback feedback) {
+        try {
+            BookDO book = template.txExpr(em ->
+                    em.createNamedQuery(BookDO.GET_BOOK_BY_TITLE, BookDO.class)
+                            .setParameter("title", feedback.getBook().getTitle())
+                            .getSingleResult());
+            
+            UserDO user = template.txExpr(em -> getUserByLibCard(libCard, em)).get();
+            if (user.getBooks().contains(book)) {
+                FeedbackDO fb = new FeedbackDO();
+                fb.setMessage(feedback.getMessage());
+                book.addFeedback(fb);
+                user.addFeedback(fb);
+                template.tx(em -> em.merge(user));
+            } else {
+                System.err.println("User doesn't have this book");
+            }
+        } catch (NoResultException ex) {
+            System.err.println("Book not found: " + ex);
+        } catch (NoSuchElementException ex) {
+            System.err.println("User not found: " + ex);
+        }
+    }
+
+    @Override
+    public void removeFeedback(String libCard, String title) {
+         try {
+            BookDO book = template.txExpr(em ->
+                    em.createNamedQuery(BookDO.GET_BOOK_BY_TITLE, BookDO.class)
+                            .setParameter("title", title)
+                            .getSingleResult());
+            
+            UserDO user = template.txExpr(em -> getUserByLibCard(libCard, em)).get();
+            Iterator<FeedbackDO> it = user.getFeedbacks().iterator();
+            while (it.hasNext()) {
+                FeedbackDO f = it.next();
+                if (f.getBook().equals(book)) {
+                    book.removeFeedback(f);
+                    it.remove();
+                    template.tx(em -> em.merge(book));
+                    template.tx(em -> em.merge(user));
+                    break;
+                }
+            }
+        } catch (NoResultException ex) {
+            System.err.println("Book not found: " + ex);
+        } catch (NoSuchElementException ex) {
+            System.err.println("User not found: " + ex);
+        }
+    }    
 
     private Optional<UserDO> getUserByLibCard(String libCard, EntityManager em) {
         try {

@@ -2,7 +2,6 @@ package ru.training.karaf.rest;
 
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.MediaType;
@@ -62,10 +61,30 @@ public class UserRestServiceImpl implements UserRestService {
     }
 
     @Override
+    public void addBook(String libCard, BookDTO book) {
+        repo.addBook(libCard, book);
+    }
+
+    @Override
+    public void removeBook(String libCard, String title) {
+        repo.removeBook(libCard, title);
+    }
+    
+    @Override
     public List<FeedbackDTO> getUserFeedbacks(String libCard) {
         return repo.getUserFeedbacks(libCard)
                 .stream()
                 .map(f -> new FeedbackDTO(f))
                 .collect(Collectors.toList());
+    }
+    
+    @Override
+    public void addFeedback(String libCard, FeedbackDTO feedback) {
+        repo.addFeedback(libCard, feedback);
+    }
+
+    @Override
+    public void removeFeedback(String libCard, String title) {
+        repo.removeFeedback(libCard, title);
     }
 }
