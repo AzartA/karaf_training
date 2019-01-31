@@ -13,5 +13,10 @@
         <argument ref="jpaTemplate"/>
     </bean>
     <service ref="bookRepo" interface="ru.training.karaf.repo.BookRepo"/>
+    
+    <bean id="genreRepo" class="ru.training.karaf.repo.GenreRepoImpl">
+        <argument ref="jpaTemplate"/>
+    </bean>
+    <service ref="genreRepo" interface="ru.training.karaf.repo.GenreRepo"/>
 
 </blueprint>

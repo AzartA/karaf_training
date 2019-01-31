@@ -45,8 +45,6 @@ public class UserRepoImpl implements UserRepo {
                
         FeedbackDO feedback = new FeedbackDO();
         feedback.setMessage("af");
-        List<FeedbackDO> feedbacks = new ArrayList<>();
-        feedbacks.add(feedback);
         
         GenreDO genre = new GenreDO();
         genre.setName("ag");
@@ -69,6 +67,7 @@ public class UserRepoImpl implements UserRepo {
         admin.addFeedback(feedback);
         admin.setBooks(books);
 
+        template.tx(em -> em.persist(genre));
         template.tx(em -> em.persist(admin));
     }
     
@@ -78,6 +77,8 @@ public class UserRepoImpl implements UserRepo {
             (UserDO.GET_ALL_USERS, UserDO.class).getResultList());
     }
 
+    
+    // TODO: verify if passed libCard is unique
     @Override
     public void createUser(User user) {
         UserDO userToCreate = new UserDO(user);

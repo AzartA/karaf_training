@@ -1,6 +1,7 @@
 package ru.training.karaf.repo;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -23,21 +24,30 @@ public class GenreRepoImpl implements GenreRepo {
 
     @Override
     public void createGenre(Genre genre) {
-        GenreDO genreToCreate = new GenreDO();
-        genreToCreate.setName(genre.getName());
-        
-        template.tx(em -> em.persist(genreToCreate));
+        try {
+            template.txExpr(em ->
+                    getGenreByName(genre.getName(), em)).get();
+            System.err.println("Genre already exists");
+        } catch(NoSuchElementException ex) {
+            GenreDO genreToCreate = new GenreDO(genre);
+            template.tx(em -> em.persist(genreToCreate));
+        }
     }
 
     @Override
     public void updateGenre(String name, Genre genre) {
-        template.tx(em -> {
-            getGenreByName(name, em).ifPresent(genreToUpdate -> {
-                genreToUpdate.setName(genre.getName());
-                
-                em.merge(genreToUpdate);
-            });
-        });
+        try {
+            template.txExpr(em -> getGenreByName(genre.getName(), em)).get();
+            System.err.println("Genre with specified name already exists");
+        } catch(NoSuchElementException ex) {
+            template.tx(em -> {
+                getGenreByName(name, em).ifPresent(genreToUpdate -> {
+                    genreToUpdate.setName(genre.getName());
+
+                    em.merge(genreToUpdate);
+                });
+            });            
+        }
     }
 
     @Override
@@ -56,8 +66,7 @@ public class GenreRepoImpl implements GenreRepo {
                     GenreDO.class).setParameter("name", name)
                     .getSingleResult());
         } catch (NoResultException e) {
-            System.err.println("Exception occurred while retrieving genre"
-                    + "from db: " + e);
+            System.err.println("Genre not found: " + e);
             return Optional.empty();
         }
     }
