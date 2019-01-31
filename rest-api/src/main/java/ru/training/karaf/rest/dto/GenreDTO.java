@@ -11,6 +11,10 @@ public class GenreDTO implements Genre {
     public GenreDTO(Genre genre) {
         this.name = genre.getName();
     }
+
+    public GenreDTO(String name) {
+        this.name = name;
+    }
     
     @Override
     public String getName() {

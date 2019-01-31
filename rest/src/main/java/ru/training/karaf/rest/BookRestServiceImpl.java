@@ -47,11 +47,11 @@ public class BookRestServiceImpl implements BookRestService {
 
     @Override
     public void createBook(BookDTO book) {
-        if (!genreRepo.getGenre(book.getGenre().getName()).isPresent()) {
+        if (bookRepo.getBook(book.getTitle()).isPresent()) {
             throw new WebApplicationException(Response
                     .status(Response.Status.CONFLICT)
                     .type(MediaType.TEXT_PLAIN)
-                    .entity("Genre not found")
+                    .entity("Book with specified title already exists")
                     .build());
         }
         bookRepo.createBook(book);
@@ -59,25 +59,11 @@ public class BookRestServiceImpl implements BookRestService {
 
     @Override
     public void updateBook(String title, BookDTO book) {
-        if (!bookRepo.getBook(title).isPresent()) {
+        if (!title.equals(book.getTitle())) {
             throw new WebApplicationException(Response
-                    .status(Response.Status.NOT_FOUND)
+                    .status(Response.Status.BAD_REQUEST)
                     .type(MediaType.TEXT_PLAIN)
-                    .entity("Book not found")
-                    .build());
-        }
-        if (bookRepo.getBook(book.getTitle()).isPresent()) {
-            throw new WebApplicationException(Response
-                    .status(Response.Status.CONFLICT)
-                    .type(MediaType.TEXT_PLAIN)
-                    .entity("A book with specified title already exists")
-                    .build());
-        }
-        if (!genreRepo.getGenre(book.getGenre().getName()).isPresent()) {
-            throw new WebApplicationException(Response
-                    .status(Response.Status.CONFLICT)
-                    .type(MediaType.TEXT_PLAIN)
-                    .entity("Genre not found")
+                    .entity("Book's title cannot be changed")
                     .build());
         }
         bookRepo.updateBook(title, book);

@@ -6,8 +6,10 @@ import javax.ws.rs.NotFoundException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import ru.training.karaf.model.Genre;
 import ru.training.karaf.repo.BookRepo;
 import ru.training.karaf.repo.GenreRepo;
+import ru.training.karaf.rest.dto.BookDTO;
 import ru.training.karaf.rest.dto.GenreDTO;
 
 public class GenreRestServiceImpl implements GenreRestService {
@@ -57,6 +59,9 @@ public class GenreRestServiceImpl implements GenreRestService {
 
     @Override
     public void updateGenre(String name, GenreDTO genre) {
+        if (name.equals(Genre.DEFAULT_GENRE)) {
+            return;
+        }
         if (genreRepo.getGenre(genre.getName()).isPresent()) {
             throw new WebApplicationException(Response
                     .status(Response.Status.CONFLICT)
@@ -69,9 +74,13 @@ public class GenreRestServiceImpl implements GenreRestService {
 
     @Override
     public void deleteGenre(String name) {
+        if (name.equals(Genre.DEFAULT_GENRE)) {
+            return;
+        }
         bookRepo.getAllBooks().forEach(b -> {
             if (b.getGenre().getName().equals(name)) {
-                bookRepo.deleteBook(b.getTitle());
+                bookRepo.updateBook(b.getTitle(), new BookDTO(b.getTitle(),
+                        b.getAuthor(), b.getYear(), new GenreDTO(Genre.DEFAULT_GENRE)));
             }
         });
         genreRepo.deleteGenre(name);

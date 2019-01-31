@@ -14,6 +14,12 @@ public class GenreRepoImpl implements GenreRepo {
     public GenreRepoImpl(JpaTemplate template) {
         this.template = template;
     }
+    
+    public void init() {
+        GenreDO defaultGenre = new GenreDO();
+        defaultGenre.setName(Genre.DEFAULT_GENRE);
+        template.tx(em -> em.persist(defaultGenre));
+    }
 
     @Override
     public List<? extends Genre> getAllGenres() {

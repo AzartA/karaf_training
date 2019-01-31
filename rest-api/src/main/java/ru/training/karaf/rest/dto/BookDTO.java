@@ -24,6 +24,13 @@ public class BookDTO implements Book {
         this.year = book.getYear();
         this.genre = new GenreDTO(book.getGenre());
     }
+
+    public BookDTO(String title, String author, Integer year, GenreDTO genre) {
+        this.title = title;
+        this.author = author;
+        this.year = year;
+        this.genre = genre;
+    }
     
     @Override
     public String getTitle() {

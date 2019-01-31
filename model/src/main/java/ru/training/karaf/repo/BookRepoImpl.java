@@ -60,15 +60,43 @@ public class BookRepoImpl implements BookRepo {
     // Cacade not persisting
     @Override
     public void createBook(Book book) {
-        BookDO bookToCreate = new BookDO(book);
-        template.tx(em -> em.persist(bookToCreate));
+        try {
+            BookDO bookToCreate = new BookDO();
+            GenreDO bookGenre = template.txExpr(enMan ->
+                    enMan.createNamedQuery(GenreDO.GET_GENRE_BY_NAME, GenreDO.class)
+                            .setParameter("name", book.getGenre().getName())
+                            .getSingleResult());
+            template.tx(em -> {
+                bookToCreate.setAuthor(book.getAuthor());
+                bookToCreate.setTitle(book.getTitle());
+                bookToCreate.setYear(book.getYear());
+                bookToCreate.setGenre(bookGenre);
+                em.persist(bookToCreate);
+            });
+        } catch (NoResultException e) {
+            System.err.println("Genre not found");
+        }
     }
 
     @Override
     public void updateBook(String title, Book book) {
-        BookDO bookToUpdate = new BookDO(book);
-        bookToUpdate.setGenre(book.getGenre());
-        template.tx(em -> em.merge(bookToUpdate));
+        try {
+            template.tx(em -> {
+                getByTitle(title, em).ifPresent(bookToUpdate -> {
+                bookToUpdate.setAuthor(book.getAuthor());
+                bookToUpdate.setTitle(book.getTitle());
+                bookToUpdate.setYear(book.getYear());
+                GenreDO bookGenre = em.createNamedQuery(GenreDO.GET_GENRE_BY_NAME,
+                        GenreDO.class)
+                        .setParameter("name", book.getGenre().getName())
+                        .getSingleResult();
+                bookToUpdate.setGenre(bookGenre);
+                em.merge(bookToUpdate);
+                });
+            });
+        } catch(NoResultException ex) {
+            System.err.println("Genre not found");
+        }
     }
 
     @Override
@@ -107,12 +135,12 @@ public class BookRepoImpl implements BookRepo {
         }
     }
 
-//    @Override
-//    public List<? extends Feedback> getBookFeedbacks(String title) {
-//        Optional<BookDO> book = template.txExpr(em -> getByTitle(title, em));
-//        if (book.isPresent()) {
-//            return book.get().getFeedbacks();
-//        }
-//        return null;
-//    }    
+    @Override
+    public List<? extends Feedback> getBookFeedbacks(String title) {
+        Optional<BookDO> book = template.txExpr(em -> getByTitle(title, em));
+        if (book.isPresent()) {
+            return book.get().getFeedbacks();
+        }
+        return null;
+    }
 }
