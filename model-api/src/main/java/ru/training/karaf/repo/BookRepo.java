@@ -11,5 +11,5 @@ public interface BookRepo {
     void updateBook(String title, Book book);
     Optional<? extends Book> getBook(String title);
     void deleteBook(String title);
-    List<? extends Feedback> getBookFeedbacks(String title);
+    //List<? extends Feedback> getBookFeedbacks(String title);
 }

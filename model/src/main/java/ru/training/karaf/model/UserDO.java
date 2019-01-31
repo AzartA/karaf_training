@@ -77,7 +77,9 @@ public class UserDO implements User, Serializable {
     
     public UserDO(User user) {
         this.address = user.getAddress();
-        this.avatar = new AvatarDO(user.getAvatar());
+        if (user.getAvatar() != null) {
+            this.avatar = new AvatarDO(user.getAvatar());
+        }
         this.libCard = user.getLibCard();
         this.regDate = user.getRegDate();
         this.userName = new UserNameDO(user.getUserName());

@@ -57,53 +57,18 @@ public class BookRepoImpl implements BookRepo {
             (BookDO.GET_ALL_BOOKS, BookDO.class).getResultList());
     }
 
+    // Cacade not persisting
     @Override
     public void createBook(Book book) {
-        try {
-            GenreDO genre = template.txExpr(em -> em.createNamedQuery
-            (GenreDO.GET_GENRE_BY_NAME, GenreDO.class)
-                    .setParameter("name", book.getGenre().getName())
-                    .getSingleResult());
-            
-            BookDO bookToCreate = new BookDO(book);
-            bookToCreate.setGenre(genre);
-            template.tx(em -> em.persist(bookToCreate));
-        } catch (NoResultException e) {
-            System.err.println("Cannot create book: genre bot found: " + e);
-        }
+        BookDO bookToCreate = new BookDO(book);
+        template.tx(em -> em.persist(bookToCreate));
     }
 
     @Override
     public void updateBook(String title, Book book) {
-        try {
-            BookDO bookToUpdate = template.txExpr(em ->
-                    getByTitle(title, em))
-                    .get();
-            
-            if (!bookToUpdate.getTitle().equals(book.getTitle())) {
-                System.err.println("You cannot change book's title");
-                return;
-            }
-            if (!bookToUpdate.getGenre().equals(book.getGenre())) {
-                GenreDO genre = template.txExpr(em ->
-                        em.createNamedQuery(GenreDO.GET_GENRE_BY_NAME,
-                                GenreDO.class).setParameter("name",
-                                        book.getGenre().getName())
-                                .getSingleResult());
-                
-                bookToUpdate.setGenre(genre);
-            }
-            bookToUpdate.setAuthor(book.getAuthor());
-            bookToUpdate.setTitle(book.getTitle());
-            bookToUpdate.setYear(book.getYear());
-            
-            template.tx(em -> em.merge(bookToUpdate));
-            
-        } catch(NoResultException ex) {
-            System.err.println("Genre not found: " + ex);
-        } catch(NoSuchElementException ex) {
-            System.err.println("Book not found: " + ex);
-        }
+        BookDO bookToUpdate = new BookDO(book);
+        bookToUpdate.setGenre(book.getGenre());
+        template.tx(em -> em.merge(bookToUpdate));
     }
 
     @Override
@@ -142,12 +107,12 @@ public class BookRepoImpl implements BookRepo {
         }
     }
 
-    @Override
-    public List<? extends Feedback> getBookFeedbacks(String title) {
-        Optional<BookDO> book = template.txExpr(em -> getByTitle(title, em));
-        if (book.isPresent()) {
-            return book.get().getFeedbacks();
-        }
-        return null;
-    }    
+//    @Override
+//    public List<? extends Feedback> getBookFeedbacks(String title) {
+//        Optional<BookDO> book = template.txExpr(em -> getByTitle(title, em));
+//        if (book.isPresent()) {
+//            return book.get().getFeedbacks();
+//        }
+//        return null;
+//    }    
 }

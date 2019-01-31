@@ -4,6 +4,8 @@
 >
 
     <reference id="userRepo" interface="ru.training.karaf.repo.UserRepo"/>
+    
+    <reference id="genreRepo" interface="ru.training.karaf.repo.GenreRepo"/>
 
     <bean id="userRestServiceBean" class="ru.training.karaf.rest.UserRestServiceImpl">
         <property name="repo"  ref="userRepo"/>
@@ -13,13 +15,13 @@
     <reference id="bookRepo" interface="ru.training.karaf.repo.BookRepo"/>
 
     <bean id="bookRestServiceBean" class="ru.training.karaf.rest.BookRestServiceImpl">
-        <property name="repo"  ref="bookRepo"/>
+        <property name="bookRepo"  ref="bookRepo"/>
+        <property name="genreRepo"  ref="genreRepo"/>
     </bean>
-    
-    <reference id="genreRepo" interface="ru.training.karaf.repo.GenreRepo"/>
 
     <bean id="genreRestServiceBean" class="ru.training.karaf.rest.GenreRestServiceImpl">
-        <property name="repo"  ref="genreRepo"/>
+        <property name="genreRepo"  ref="genreRepo"/>
+        <property name="bookRepo"  ref="bookRepo"/>
     </bean>
 
     <!-- CXF -->
