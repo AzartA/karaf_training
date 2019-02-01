@@ -11,6 +11,10 @@ public class AvatarDTO implements Avatar {
     public AvatarDTO(Avatar avatar) {
         this.picture = avatar.getPicture();
     }
+
+    public AvatarDTO(byte[] picture) {
+        this.picture = picture;
+    }
     
     @Override
     public byte[] getPicture() {

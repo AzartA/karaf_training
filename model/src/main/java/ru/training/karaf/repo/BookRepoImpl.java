@@ -5,12 +5,10 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
-import org.apache.aries.jpa.template.EmConsumer;
 import org.apache.aries.jpa.template.JpaTemplate;
 import ru.training.karaf.model.Book;
 import ru.training.karaf.model.BookDO;
 import ru.training.karaf.model.Feedback;
-import ru.training.karaf.model.FeedbackDO;
 import ru.training.karaf.model.GenreDO;
 import ru.training.karaf.model.UserDO;
 
@@ -43,11 +41,6 @@ public class BookRepoImpl implements BookRepo {
         
         genre.setName("changed");
         template.tx(em -> em.merge(genre));
-        
-        // Remove all the books to remove genre 
-//        template.tx(em -> em.remove(em.merge(book)));
-//        template.tx(em -> em.remove(em.merge(book1)));
-//        template.tx(em -> em.remove(em.merge(genre)));
     }
     
     
@@ -86,7 +79,8 @@ public class BookRepoImpl implements BookRepo {
                 bookToUpdate.setAuthor(book.getAuthor());
                 bookToUpdate.setTitle(book.getTitle());
                 bookToUpdate.setYear(book.getYear());
-                GenreDO bookGenre = em.createNamedQuery(GenreDO.GET_GENRE_BY_NAME,
+                GenreDO bookGenre = em.createNamedQuery(
+                        GenreDO.GET_GENRE_BY_NAME,
                         GenreDO.class)
                         .setParameter("name", book.getGenre().getName())
                         .getSingleResult();

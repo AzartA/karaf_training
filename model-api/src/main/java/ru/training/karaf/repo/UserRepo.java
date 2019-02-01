@@ -13,10 +13,10 @@ public interface UserRepo {
     void updateUser(String libCard, User user);
     Optional<? extends User> getUser(String libCard);
     void deleteUser(String libCard);
-    Set<? extends Book> getUserBooks(String libCard);
-    void addBook(String libCard, Book requestedBook);
-    void removeBook(String libCard, String title);
-    List<? extends Feedback> getUserFeedbacks(String libCard);
+    //Set<? extends Book> getUserBooks(String libCard);
+    //void addBook(String libCard, Book requestedBook);
+    //void removeBook(String libCard, String title);
+    //List<? extends Feedback> getUserFeedbacks(String libCard);
     void addFeedback(String libCard, Feedback feedback);
     void removeFeedback(String libCard, String title);
 }

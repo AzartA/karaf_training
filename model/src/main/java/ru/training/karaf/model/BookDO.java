@@ -61,6 +61,13 @@ public class BookDO implements Book, Serializable {
         this.genre = new GenreDO(book.getGenre());
     }
     
+    public BookDO(String title, String author, Integer year, GenreDO genre) {
+        this.title = title;
+        this.author = author;
+        this.year = year;
+        this.genre = genre;
+    }
+    
     public void addFeedback(FeedbackDO feedback) {
         feedbacks.add(feedback);
         feedback.setBook(this);

@@ -79,8 +79,12 @@ public class GenreRestServiceImpl implements GenreRestService {
         }
         bookRepo.getAllBooks().forEach(b -> {
             if (b.getGenre().getName().equals(name)) {
-                bookRepo.updateBook(b.getTitle(), new BookDTO(b.getTitle(),
-                        b.getAuthor(), b.getYear(), new GenreDTO(Genre.DEFAULT_GENRE)));
+                bookRepo.updateBook(
+                        b.getTitle(),
+                        new BookDTO(b.getTitle(),
+                        b.getAuthor(),
+                        b.getYear(),
+                        new GenreDTO(Genre.DEFAULT_GENRE)));
             }
         });
         genreRepo.deleteGenre(name);

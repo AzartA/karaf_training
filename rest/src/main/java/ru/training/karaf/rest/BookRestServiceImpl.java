@@ -7,21 +7,15 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import ru.training.karaf.repo.BookRepo;
-import ru.training.karaf.repo.GenreRepo;
 import ru.training.karaf.rest.dto.BookDTO;
 import ru.training.karaf.rest.dto.FeedbackDTO;
 
 public class BookRestServiceImpl implements BookRestService {
     
     private BookRepo bookRepo;
-    private GenreRepo genreRepo;
     
     public void setBookRepo(BookRepo bookRepo) {
         this.bookRepo = bookRepo;
-    }
-    
-    public void setGenreRepo(GenreRepo genreRepo) {
-        this.genreRepo = genreRepo;
     }
 
     @Override

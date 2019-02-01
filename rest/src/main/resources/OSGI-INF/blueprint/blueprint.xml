@@ -6,22 +6,26 @@
     <reference id="userRepo" interface="ru.training.karaf.repo.UserRepo"/>
     
     <reference id="genreRepo" interface="ru.training.karaf.repo.GenreRepo"/>
-
-    <bean id="userRestServiceBean" class="ru.training.karaf.rest.UserRestServiceImpl">
-        <property name="repo"  ref="userRepo"/>
-    </bean>
-    
     
     <reference id="bookRepo" interface="ru.training.karaf.repo.BookRepo"/>
 
+    <bean id="userRestServiceBean" class="ru.training.karaf.rest.UserRestServiceImpl">
+        <property name="userRepo"  ref="userRepo"/>
+        <property name="bookRepo"  ref="bookRepo"/>
+    </bean>
+
+
     <bean id="bookRestServiceBean" class="ru.training.karaf.rest.BookRestServiceImpl">
         <property name="bookRepo"  ref="bookRepo"/>
-        <property name="genreRepo"  ref="genreRepo"/>
     </bean>
 
     <bean id="genreRestServiceBean" class="ru.training.karaf.rest.GenreRestServiceImpl">
         <property name="genreRepo"  ref="genreRepo"/>
         <property name="bookRepo"  ref="bookRepo"/>
+    </bean>
+    
+    <bean id="avatarRestServiceBean" class="ru.training.karaf.rest.AvatarRestServiceImpl">
+        <property name="repo"  ref="userRepo"/>
     </bean>
 
     <!-- CXF -->
@@ -30,6 +34,7 @@
             <ref component-id="userRestServiceBean"/>
             <ref component-id="bookRestServiceBean" />
             <ref component-id="genreRestServiceBean" />
+            <ref component-id="avatarRestServiceBean" />
         </jaxrs:serviceBeans>
                 <jaxrs:providers>
             <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider"/>
