@@ -2,7 +2,9 @@ package ru.training.karaf.repo;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -10,7 +12,6 @@ import java.util.Set;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import org.apache.aries.jpa.template.JpaTemplate;
@@ -32,8 +33,12 @@ public class UserRepoImpl implements UserRepo {
     }
 
     public void init() throws IOException {
+        InputStream in = new FileInputStream("C:\\PROJECTS\\Java_Projects\\karaf_training\\a.png");
+        byte[] picture = new byte[in.available()];
+        in.read(picture);
+        
         AvatarDO avatar = new AvatarDO();
-        avatar.setPicture("aa".getBytes());
+        avatar.setPicture(picture);
         
         UserNameDO name = new UserNameDO();
         name.setFirstName("afn");
@@ -89,7 +94,9 @@ public class UserRepoImpl implements UserRepo {
             getUserByLibCard(libCard, em).ifPresent(userToUpdate -> {
                 userToUpdate.setAddress(user.getAddress());
                 // Avatar is not presented
-                //userToUpdate.getAvatar().setPicture(user.getAvatar().getPicture());
+                if (userToUpdate.getAvatar() != null) {
+                    userToUpdate.getAvatar().setPicture(user.getAvatar().getPicture());
+                }
                 userToUpdate.setLibCard(user.getLibCard());
                 userToUpdate.setRegDate(user.getRegDate());
                 userToUpdate.setUserName(new UserNameDO(user.getUserName()));

@@ -1,8 +1,10 @@
 package ru.training.karaf.rest;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
@@ -18,7 +20,11 @@ public interface AvatarRestService {
     Response getAvatar(@QueryParam("libCard") String libCard);
     
     @POST
+    @PUT
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     Response uploadAvatar(@QueryParam("libCard") String libCard,
-            @Multipart(value = "avatar", type = "image/png") Attachment avatar);
+            @Multipart("avatar") Attachment avatar);
+    
+    @DELETE
+    Response deleteAvatar(@QueryParam("libCard") String libCard);
 }

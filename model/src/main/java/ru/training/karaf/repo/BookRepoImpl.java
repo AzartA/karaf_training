@@ -8,7 +8,6 @@ import javax.persistence.NoResultException;
 import org.apache.aries.jpa.template.JpaTemplate;
 import ru.training.karaf.model.Book;
 import ru.training.karaf.model.BookDO;
-import ru.training.karaf.model.Feedback;
 import ru.training.karaf.model.GenreDO;
 import ru.training.karaf.model.UserDO;
 
@@ -50,7 +49,6 @@ public class BookRepoImpl implements BookRepo {
             (BookDO.GET_ALL_BOOKS, BookDO.class).getResultList());
     }
 
-    // Cacade not persisting
     @Override
     public void createBook(Book book) {
         try {
@@ -127,14 +125,5 @@ public class BookRepoImpl implements BookRepo {
             System.err.println("Book not found: " + ex);
             return Optional.empty();
         }
-    }
-
-    @Override
-    public List<? extends Feedback> getBookFeedbacks(String title) {
-        Optional<BookDO> book = template.txExpr(em -> getByTitle(title, em));
-        if (book.isPresent()) {
-            return book.get().getFeedbacks();
-        }
-        return null;
     }
 }

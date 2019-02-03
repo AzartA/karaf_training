@@ -16,6 +16,11 @@ public class GenreRepoImpl implements GenreRepo {
     }
     
     public void init() {
+        
+       /* Default genre is used when the book doesn't have an actual genre
+        * (e.g. genre was deleted). This is necessary in sake of non-nullable
+        * constraint (book's genre cannot be be null) */
+        
         GenreDO defaultGenre = new GenreDO();
         defaultGenre.setName(Genre.DEFAULT_GENRE);
         template.tx(em -> em.persist(defaultGenre));
@@ -56,11 +61,12 @@ public class GenreRepoImpl implements GenreRepo {
     private Optional<GenreDO> getGenreByName(String name, EntityManager em) {
         try {
             return Optional.of(em.createNamedQuery(GenreDO.GET_GENRE_BY_NAME,
-                    GenreDO.class).setParameter("name", name)
+                    GenreDO.class)
+                    .setParameter("name", name)
                     .getSingleResult());
         } catch (NoResultException e) {
-            System.err.println(GenreRepoImpl.class.getName()
-                    + ".getGenreByName: genre not found: " + e);
+            System.err.println(getClass().getName() +
+                    ".getGenreByName: genre not found: " + e);
             return Optional.empty();
         }
     }

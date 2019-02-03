@@ -1,11 +1,13 @@
 package ru.training.karaf.rest;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import ru.training.karaf.model.Book;
 import ru.training.karaf.repo.BookRepo;
 import ru.training.karaf.rest.dto.BookDTO;
 import ru.training.karaf.rest.dto.FeedbackDTO;
@@ -70,9 +72,18 @@ public class BookRestServiceImpl implements BookRestService {
 
     @Override
     public List<FeedbackDTO> getBookFeedbacks(String title) {
-        return bookRepo.getBookFeedbacks(title)
-                .stream()
-                .map(f -> new FeedbackDTO(f))
-                .collect(Collectors.toList());
+        try {
+            Book book = bookRepo.getBook(title).get();
+            return book.getFeedbacks()
+                    .stream()
+                    .map(f -> new FeedbackDTO(f))
+                    .collect(Collectors.toList());
+        } catch (NoSuchElementException e) {
+            throw new NotFoundException(Response.status(Response
+                                .Status.NOT_FOUND)
+                                .type(MediaType.TEXT_PLAIN)
+                                .entity("Book not found")
+                                .build());
+        }
     }
 }

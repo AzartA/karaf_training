@@ -8,6 +8,8 @@
     <reference id="genreRepo" interface="ru.training.karaf.repo.GenreRepo"/>
     
     <reference id="bookRepo" interface="ru.training.karaf.repo.BookRepo"/>
+    
+    <reference id="avatarRepo" interface="ru.training.karaf.repo.AvatarRepo"/>
 
     <bean id="userRestServiceBean" class="ru.training.karaf.rest.UserRestServiceImpl">
         <property name="userRepo"  ref="userRepo"/>
@@ -25,7 +27,8 @@
     </bean>
     
     <bean id="avatarRestServiceBean" class="ru.training.karaf.rest.AvatarRestServiceImpl">
-        <property name="repo"  ref="userRepo"/>
+        <property name="userRepo"  ref="userRepo"/>
+        <property name="avatarRepo"  ref="avatarRepo"/>
     </bean>
 
     <!-- CXF -->

@@ -34,6 +34,10 @@ public class AvatarDO implements Avatar, Serializable {
     public AvatarDO(Avatar avatar) {
         this.picture = avatar.getPicture();
     }
+
+    public AvatarDO(byte[] picture) {
+        this.picture = picture;
+    }
       
     @Override
     public byte[] getPicture() {

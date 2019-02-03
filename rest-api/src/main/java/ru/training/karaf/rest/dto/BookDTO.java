@@ -1,11 +1,10 @@
 package ru.training.karaf.rest.dto;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import javax.xml.bind.annotation.XmlTransient;
 import ru.training.karaf.model.Book;
-import ru.training.karaf.model.Feedback;
-import ru.training.karaf.model.Genre;
 
 public class BookDTO implements Book {
     private String title;
@@ -14,7 +13,7 @@ public class BookDTO implements Book {
     private GenreDTO genre;
     
     @XmlTransient
-    private List<FeedbackDTO> feedbacks;
+    private List<FeedbackDTO> feedbacks = new ArrayList<>();
 
     public BookDTO() {}
     
@@ -23,6 +22,13 @@ public class BookDTO implements Book {
         this.author = book.getAuthor();
         this.year = book.getYear();
         this.genre = new GenreDTO(book.getGenre());
+//        book.getFeedbacks().forEach(f -> {
+//            FeedbackDTO fb = new FeedbackDTO();
+//            fb.setBook(this);
+//            fb.setMessage(f.getMessage());
+//            fb.setUser(new UserDTO(f.getUser()));
+//            feedbacks.add(fb);
+//        });
     }
 
     public BookDTO(String title, String author, Integer year, GenreDTO genre) {

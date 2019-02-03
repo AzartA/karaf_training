@@ -13,6 +13,11 @@ public class UserNameDTO implements UserName {
         this.firstName = user.getFirstName();
         this.lastName = user.getLastName();
     }
+
+    public UserNameDTO(String firstName, String lastName) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
     
     @Override
     public String getFirstName() {

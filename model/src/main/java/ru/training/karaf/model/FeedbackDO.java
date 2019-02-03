@@ -15,9 +15,8 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-@Table(name = "FEEDBACKDO",
-        uniqueConstraints = { @UniqueConstraint(columnNames =
-                {"USER_ID", "BOOK_ID"})} )
+@Table(name = "FEEDBACKDO", uniqueConstraints =
+        {@UniqueConstraint(columnNames = {"USER_ID", "BOOK_ID"})})
 @Entity
 @NamedQuery(name = FeedbackDO.GET_ALL_FEEDBACKS,
         query = "SELECT f FROM FeedbackDO f")
