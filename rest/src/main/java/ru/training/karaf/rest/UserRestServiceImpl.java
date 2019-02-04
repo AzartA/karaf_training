@@ -82,14 +82,8 @@ public class UserRestServiceImpl implements UserRestService {
 
     @Override
     public Set<BookDTO> getUserBooks(String libCard) {
-//        return userRepo.getUserBooks(libCard)
-//                .stream()
-//                .map(b -> new BookDTO(b))
-//                .collect(Collectors.toSet());
         try {
             User user = userRepo.getUser(libCard).get();
-            System.err.println(user.getFeedbacks().size());
-            System.err.println(user.getFeedbacks());
             return user.getBooks()
                     .stream()
                     .map(b -> new BookDTO(b))
@@ -105,12 +99,14 @@ public class UserRestServiceImpl implements UserRestService {
 
     @Override
     public void addBook(String libCard, BookDTO book) {
-        //repo.addBook(libCard, book);
         try {
             User user = userRepo.getUser(libCard).get();
-            bookRepo.getBook(book.getTitle());
+            BookDTO bookToAdd =
+                    new BookDTO(bookRepo.getBook(book.getTitle()).get());
             UserDTO userToUpdate = new UserDTO(user);
-            userToUpdate.getBooks().add(book);
+            //System.err.println("before: " + userToUpdate.getBooks());            
+            userToUpdate.getBooks().add(bookToAdd);
+            //System.err.println("After: " + userToUpdate.getBooks());
             userRepo.updateUser(libCard, userToUpdate);
         } catch (NoSuchElementException ex) {
             throw new WebApplicationException(Response
@@ -123,17 +119,19 @@ public class UserRestServiceImpl implements UserRestService {
 
     @Override
     public void removeBook(String libCard, String title) {
-        //userRepo.removeBook(libCard, title);
         try {
             User user = userRepo.getUser(libCard).get();
             BookDTO book = new BookDTO(bookRepo.getBook(title).get());
             UserDTO userToUpdate = new UserDTO(user);
-            System.err.println("before: " + userToUpdate.getBooks());
+            //System.err.println("before: " + userToUpdate.getBooks());
             if (userToUpdate.getBooks().remove(book)) {
-                System.err.println("Book removed");
+                //System.err.println("Book was removed");
+                userRepo.updateUser(libCard, userToUpdate);
+            } else {
+                //System.err.println("Book was not removed ");
+                throw new NoSuchElementException("User does not have this book");
             }
-            System.err.println("After: " + userToUpdate.getBooks());
-            userRepo.updateUser(libCard, userToUpdate);
+            //System.err.println("After: " + userToUpdate.getBooks());
         } catch (NoSuchElementException ex) {
             throw new WebApplicationException(Response
                     .status(Response.Status.NOT_FOUND)
@@ -170,7 +168,19 @@ public class UserRestServiceImpl implements UserRestService {
             User user = userRepo.getUser(libCard).get();
             Book book = bookRepo.getBook(feedback.getBook().getTitle()).get();
             if (user.getBooks().contains(book)) {
+                user.getFeedbacks().forEach(f -> {
+                    if (f.getBook().equals(book)) {
+                        System.err.println("User's feedback already exists");
+                        // TODO: throw an exception
+                    }
+                });
+                
                 UserDTO userToUpdate = new UserDTO(user);
+                userToUpdate.getFeedbacks().add(feedback);
+                //feedback.setUser(userToUpdate);
+                userRepo.updateUser(libCard, userToUpdate);
+            } else {
+                System.err.println("User does not have this book");
             }
         } catch (NoSuchElementException ex) {
             throw new WebApplicationException(Response
@@ -179,11 +189,28 @@ public class UserRestServiceImpl implements UserRestService {
                     .entity("User/book not found")
                     .build());
         }
-//userRepo.addFeedback(libCard, feedback);
     }
 
     @Override
     public void removeFeedback(String libCard, String title) {
-        userRepo.removeFeedback(libCard, title);
+        //userRepo.removeFeedback(libCard, title);
+        try {
+            User user = userRepo.getUser(libCard).get();
+            Book book = bookRepo.getBook(title).get();
+            user.getFeedbacks().forEach(f -> {
+                if (f.getBook().equals(book)) {
+                    UserDTO userToUpdate = new UserDTO(user);
+                    userToUpdate.getFeedbacks().remove(f);
+                    userRepo.updateUser(libCard, userToUpdate);
+                    // TODO: return
+                }
+            });
+        } catch (NoSuchElementException e) {
+            throw new WebApplicationException(Response
+                    .status(Response.Status.NOT_FOUND)
+                    .type(MediaType.TEXT_PLAIN)
+                    .entity("User/book not found")
+                    .build());
+        }
     }
 }

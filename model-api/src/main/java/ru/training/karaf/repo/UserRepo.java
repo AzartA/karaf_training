@@ -17,6 +17,6 @@ public interface UserRepo {
     //void addBook(String libCard, Book requestedBook);
     //void removeBook(String libCard, String title);
     //List<? extends Feedback> getUserFeedbacks(String libCard);
-    void addFeedback(String libCard, Feedback feedback);
-    void removeFeedback(String libCard, String title);
+    //void addFeedback(String libCard, Feedback feedback);
+    //void removeFeedback(String libCard, String title);
 }

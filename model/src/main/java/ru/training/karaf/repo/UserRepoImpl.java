@@ -5,20 +5,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import org.apache.aries.jpa.template.JpaTemplate;
 import ru.training.karaf.model.AvatarDO;
-import ru.training.karaf.model.Book;
 import ru.training.karaf.model.BookDO;
-import ru.training.karaf.model.Feedback;
 import ru.training.karaf.model.FeedbackDO;
 import ru.training.karaf.model.GenreDO;
 import ru.training.karaf.model.User;
@@ -33,7 +31,7 @@ public class UserRepoImpl implements UserRepo {
     }
 
     public void init() throws IOException {
-        InputStream in = new FileInputStream("C:\\PROJECTS\\Java_Projects\\karaf_training\\a.png");
+        InputStream in = new FileInputStream("C:\\Projects\\karaf_training\\a.png");
         byte[] picture = new byte[in.available()];
         in.read(picture);
         
@@ -93,48 +91,60 @@ public class UserRepoImpl implements UserRepo {
         template.tx(em -> {
             getUserByLibCard(libCard, em).ifPresent(userToUpdate -> {
                 userToUpdate.setAddress(user.getAddress());
-                // Avatar is not presented
+                // TODO: fix this issue
                 if (userToUpdate.getAvatar() != null) {
-                    userToUpdate.getAvatar().setPicture(user.getAvatar().getPicture());
+                    if (user.getAvatar() != null) {
+                        userToUpdate.getAvatar().setPicture(user.getAvatar().getPicture());
+                    } else {
+                        userToUpdate.setAvatar(null);
+                    }
                 }
                 userToUpdate.setLibCard(user.getLibCard());
                 userToUpdate.setRegDate(user.getRegDate());
                 userToUpdate.setUserName(new UserNameDO(user.getUserName()));
-                Set<BookDO> temp = new HashSet<>();
-                for (Book b: user.getBooks()) {
-                    temp.add(em.createNamedQuery(BookDO.GET_BOOK_BY_TITLE,
+                Set<BookDO> books = new HashSet<>();
+                user.getBooks().forEach(b -> {
+                    books.add(em.createNamedQuery(BookDO.GET_BOOK_BY_TITLE,
                             BookDO.class)
                             .setParameter("title", b.getTitle())
                             .getSingleResult());
-                }
-//                userToUpdate.setBooks(user
-//                        .getBooks()
-//                        .stream()
-//                        .map(b ->
-//                        new BookDO(b))
-//                        .collect(Collectors.toSet()));
-                userToUpdate.setBooks(temp);
-                
-//                userToUpdate.getBooks().forEach(b -> em.createNamedQuery(
-//                            BookDO.GET_BOOK_BY_TITLE, BookDO.class)
-//                            .setParameter("title", b.getTitle())
+                });
+                //List<FeedbackDO> feedbacks = new ArrayList<>();
+//                user.getFeedbacks().forEach(f -> {
+//                    FeedbackDO fb = new FeedbackDO();
+//                    fb.setBook(em.createNamedQuery(BookDO.GET_BOOK_BY_TITLE,
+//                            BookDO.class)
+//                            .setParameter("title", f.getBook().getTitle())
 //                            .getSingleResult());
-//                userToUpdate.getBooks().forEach(b -> {
-//                    b.setGenre(em.createNamedQuery(
-//                                        GenreDO.GET_GENRE_BY_NAME,
-//                                        GenreDO.class)
-//                                .setParameter("name", b.getGenre().getName())
-//                                .getSingleResult());
+//                    fb.setMessage(f.getMessage());
+//                    fb.setUser(userToUpdate);
+//                    em.merge(fb);
+//                    feedbacks.add(fb);
 //                });
-//                System.err.println("updateUser: " + user.getBooks());
-//                for (Book b: user.getBooks()) {
-//                    BookDO book = em.createNamedQuery(
-//                            BookDO.GET_BOOK_BY_TITLE, BookDO.class)
-//                            .setParameter("title", b.getTitle())
-//                            .getSingleResult();
-//                    userToUpdate.getBooks().add(book);
-//                }
-                //System.err.println("userToUpdate: " + userToUpdate.getBooks().size());
+                List<String> existingFeedbacks = userToUpdate.getFeedbacks()
+                        .stream()
+                        .map(f -> f.getBook().getTitle())
+                        .collect(Collectors.toList());
+                
+                List<String> changedFeedbacks = user.getFeedbacks()
+                        .stream()
+                        .map(f -> f.getBook().getTitle())
+                        .filter(t -> !existingFeedbacks.contains(t))
+                        .collect(Collectors.toList());
+                
+                user.getFeedbacks().forEach(f -> {
+                    if (changedFeedbacks.contains(f.getBook().getTitle())) {
+                        FeedbackDO fb = new FeedbackDO();
+                        fb.setMessage(f.getMessage());
+                        fb.setBook(em.createNamedQuery(BookDO.GET_BOOK_BY_TITLE,
+                            BookDO.class)
+                            .setParameter("title", f.getBook().getTitle())
+                            .getSingleResult());
+                        userToUpdate.addFeedback(fb);
+                    }
+                });
+                //userToUpdate.setFeedbacks(feedbacks);
+                userToUpdate.setBooks(books);
                 em.merge(userToUpdate);
             });
         });
@@ -149,15 +159,6 @@ public class UserRepoImpl implements UserRepo {
     public void deleteUser(String libCard) {
         template.tx(em -> getUserByLibCard(libCard, em).ifPresent(em::remove));
     }
-
-//    @Override
-//    public Set<? extends Book> getUserBooks(String libCard) {
-//        Optional<UserDO> user = template.txExpr(em -> getUserByLibCard(libCard, em));
-//        if (user.isPresent()) {
-//            return user.get().getBooks();
-//        }
-//        return null;
-//    }
 
 //    @Override
 //    public void addBook(String libCard, Book requestedBook) {
@@ -199,68 +200,59 @@ public class UserRepoImpl implements UserRepo {
 //        }
 //    }
 
+    
+//    // TODO: Check if user's feedback already exists
 //    @Override
-//    public List<? extends Feedback> getUserFeedbacks(String libCard) {
-//        Optional<UserDO> user = template.txExpr(em -> getUserByLibCard(libCard, em));
-//        if (user.isPresent()) {
-//            return user.get().getFeedbacks();
+//    public void addFeedback(String libCard, Feedback feedback) {
+//        try {
+//            BookDO book = template.txExpr(em ->
+//                    em.createNamedQuery(BookDO.GET_BOOK_BY_TITLE, BookDO.class)
+//                            .setParameter("title", feedback.getBook().getTitle())
+//                            .getSingleResult());
+//            
+//            UserDO user = template.txExpr(em -> getUserByLibCard(libCard, em)).get();
+//            if (user.getBooks().contains(book)) {
+//                FeedbackDO fb = new FeedbackDO();
+//                fb.setMessage(feedback.getMessage());
+//                book.addFeedback(fb);
+//                user.addFeedback(fb);
+//                template.tx(em -> em.merge(user));
+//            } else {
+//                System.err.println("User doesn't have this book");
+//            }
+//        } catch (NoResultException ex) {
+//            System.err.println("Book not found: " + ex);
+//        } catch (NoSuchElementException ex) {
+//            System.err.println("User not found: " + ex);
 //        }
-//        return null;
 //    }
 
-    
-    // TODO: Check if user's feedback already exists
-    @Override
-    public void addFeedback(String libCard, Feedback feedback) {
-        try {
-            BookDO book = template.txExpr(em ->
-                    em.createNamedQuery(BookDO.GET_BOOK_BY_TITLE, BookDO.class)
-                            .setParameter("title", feedback.getBook().getTitle())
-                            .getSingleResult());
-            
-            UserDO user = template.txExpr(em -> getUserByLibCard(libCard, em)).get();
-            if (user.getBooks().contains(book)) {
-                FeedbackDO fb = new FeedbackDO();
-                fb.setMessage(feedback.getMessage());
-                book.addFeedback(fb);
-                user.addFeedback(fb);
-                template.tx(em -> em.merge(user));
-            } else {
-                System.err.println("User doesn't have this book");
-            }
-        } catch (NoResultException ex) {
-            System.err.println("Book not found: " + ex);
-        } catch (NoSuchElementException ex) {
-            System.err.println("User not found: " + ex);
-        }
-    }
-
-    @Override
-    public void removeFeedback(String libCard, String title) {
-         try {
-            BookDO book = template.txExpr(em ->
-                    em.createNamedQuery(BookDO.GET_BOOK_BY_TITLE, BookDO.class)
-                            .setParameter("title", title)
-                            .getSingleResult());
-            
-            UserDO user = template.txExpr(em -> getUserByLibCard(libCard, em)).get();
-            Iterator<FeedbackDO> it = user.getFeedbacks().iterator();
-            while (it.hasNext()) {
-                FeedbackDO f = it.next();
-                if (f.getBook().equals(book)) {
-                    book.removeFeedback(f);
-                    it.remove();
-                    template.tx(em -> em.merge(book));
-                    template.tx(em -> em.merge(user));
-                    break;
-                }
-            }
-        } catch (NoResultException ex) {
-            System.err.println("Book not found: " + ex);
-        } catch (NoSuchElementException ex) {
-            System.err.println("User not found: " + ex);
-        }
-    }    
+//    @Override
+//    public void removeFeedback(String libCard, String title) {
+//         try {
+//            BookDO book = template.txExpr(em ->
+//                    em.createNamedQuery(BookDO.GET_BOOK_BY_TITLE, BookDO.class)
+//                            .setParameter("title", title)
+//                            .getSingleResult());
+//            
+//            UserDO user = template.txExpr(em -> getUserByLibCard(libCard, em)).get();
+//            Iterator<FeedbackDO> it = user.getFeedbacks().iterator();
+//            while (it.hasNext()) {
+//                FeedbackDO f = it.next();
+//                if (f.getBook().equals(book)) {
+//                    book.removeFeedback(f);
+//                    it.remove();
+//                    template.tx(em -> em.merge(book));
+//                    template.tx(em -> em.merge(user));
+//                    break;
+//                }
+//            }
+//        } catch (NoResultException ex) {
+//            System.err.println("Book not found: " + ex);
+//        } catch (NoSuchElementException ex) {
+//            System.err.println("User not found: " + ex);
+//        }
+//    }    
 
     private Optional<UserDO> getUserByLibCard(String libCard, EntityManager em) {
         try {

@@ -61,10 +61,16 @@ public class AvatarRestServiceImpl implements AvatarRestService {
                 userToUpdate.setAvatar(null);
                 userRepo.updateUser(libCard, userToUpdate);
                 //avatarRepo.deleteAvatar(user.getAvatar().getId());
+                return Response
+                        .ok("Successfully removed", MediaType.TEXT_PLAIN)
+                        .build();
+            } else {
+                return Response
+                        .status(Response.Status.NOT_FOUND)
+                        .type(MediaType.TEXT_PLAIN)
+                        .entity("User doesn't have an avatar")
+                        .build();
             }
-            return Response
-                    .ok("Successfully removed", MediaType.TEXT_PLAIN)
-                    .build();
         } catch (NoSuchElementException ex) {
                 return Response
                         .status(Response.Status.NOT_FOUND)
