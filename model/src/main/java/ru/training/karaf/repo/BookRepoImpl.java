@@ -106,7 +106,10 @@ public class BookRepoImpl implements BookRepo {
                     .setParameter(1, book.getId())
                     .executeUpdate());
 
-            template.tx(em -> em.remove(em.merge(book)));
+            template.tx(em -> {
+                em.remove(em.merge(book));
+                em.getEntityManagerFactory().getCache().evictAll();
+            });
             
         } catch(NoSuchElementException ex) {
             System.err.println("Book not found: " + ex);

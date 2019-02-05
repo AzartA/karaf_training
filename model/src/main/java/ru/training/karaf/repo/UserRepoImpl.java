@@ -267,11 +267,14 @@ public class UserRepoImpl implements UserRepo {
                     .setParameter("title", title)
                     .getSingleResult());
             
-            template.tx(em -> em
-                    .createNamedQuery(UserDO.ADD_BOOK)
-                    .setParameter(1, user.getId())
-                    .setParameter(2, book.getId())
-                    .executeUpdate());
+            template.tx(em -> {
+                em.createNamedQuery(UserDO.ADD_BOOK)
+                  .setParameter(1, user.getId())
+                  .setParameter(2, book.getId())
+                  .executeUpdate();
+                
+                em.getEntityManagerFactory().getCache().evictAll();
+            });
 
             // TODO: check if user already has this book
 //            template.tx(em -> em
