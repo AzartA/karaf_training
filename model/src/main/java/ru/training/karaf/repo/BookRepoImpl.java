@@ -8,8 +8,8 @@ import javax.persistence.NoResultException;
 import org.apache.aries.jpa.template.JpaTemplate;
 import ru.training.karaf.model.Book;
 import ru.training.karaf.model.BookDO;
+import ru.training.karaf.model.FeedbackDO;
 import ru.training.karaf.model.GenreDO;
-import ru.training.karaf.model.UserDO;
 
 public class BookRepoImpl implements BookRepo {
     private JpaTemplate template;
@@ -20,26 +20,27 @@ public class BookRepoImpl implements BookRepo {
     
     public void init() {
         GenreDO genre = new GenreDO();
-        genre.setName("testgenre");
+        genre.setName("g1");
+        
         BookDO book = new BookDO();
-        book.setAuthor("testauthor");
+        book.setAuthor("a1");
         book.setGenre(genre);
-        book.setTitle("testtitle");
+        book.setTitle("t1");
         book.setYear(2000);
+        
+        BookDO book1 = new BookDO();
+        book1.setAuthor("a2");
+        book1.setGenre(genre);
+        book1.setTitle("t2");
+        book1.setYear(1500);
+        
+        FeedbackDO f = new FeedbackDO();
+        f.setMessage("f1");
+        book1.addFeedback(f);
         
         template.tx(em -> em.persist(genre));
         template.tx(em -> em.persist(book));
-        
-        BookDO book1 = new BookDO();
-        book1.setAuthor("testauthor1");
-        book1.setGenre(genre);
-        book1.setTitle("testtitle1");
-        book1.setYear(1500);
-        
         template.tx(em -> em.persist(book1));
-        
-        genre.setName("changed");
-        template.tx(em -> em.merge(genre));
     }
     
     
@@ -51,44 +52,33 @@ public class BookRepoImpl implements BookRepo {
 
     @Override
     public void createBook(Book book) {
-        try {
-            BookDO bookToCreate = new BookDO();
-            GenreDO bookGenre = template.txExpr(enMan ->
-                    enMan.createNamedQuery(GenreDO.GET_GENRE_BY_NAME, GenreDO.class)
-                            .setParameter("name", book.getGenre().getName())
-                            .getSingleResult());
-            template.tx(em -> {
-                bookToCreate.setAuthor(book.getAuthor());
-                bookToCreate.setTitle(book.getTitle());
-                bookToCreate.setYear(book.getYear());
-                bookToCreate.setGenre(bookGenre);
-                em.persist(bookToCreate);
-            });
-        } catch (NoResultException e) {
-            System.err.println("Genre not found");
-        }
+        BookDO bookToCreate = new BookDO();
+        template.tx(em -> {
+            bookToCreate.setAuthor(book.getAuthor());
+            bookToCreate.setTitle(book.getTitle());
+            bookToCreate.setYear(book.getYear());
+            bookToCreate.setGenre(em
+                    .createNamedQuery(GenreDO.GET_GENRE_BY_NAME, GenreDO.class)
+                    .setParameter("name", book.getGenre().getName())
+                    .getSingleResult());
+            em.persist(bookToCreate);
+        });
     }
 
     @Override
     public void updateBook(String title, Book book) {
-        try {
-            template.tx(em -> {
-                getByTitle(title, em).ifPresent(bookToUpdate -> {
-                bookToUpdate.setAuthor(book.getAuthor());
-                bookToUpdate.setTitle(book.getTitle());
-                bookToUpdate.setYear(book.getYear());
-                GenreDO bookGenre = em.createNamedQuery(
-                        GenreDO.GET_GENRE_BY_NAME,
-                        GenreDO.class)
-                        .setParameter("name", book.getGenre().getName())
-                        .getSingleResult();
-                bookToUpdate.setGenre(bookGenre);
-                em.merge(bookToUpdate);
-                });
+        template.tx(em -> {
+            getByTitle(title, em).ifPresent(bookToUpdate -> {
+            bookToUpdate.setAuthor(book.getAuthor());
+            bookToUpdate.setTitle(book.getTitle());
+            bookToUpdate.setYear(book.getYear());
+            bookToUpdate.setGenre(em
+                    .createNamedQuery(GenreDO.GET_GENRE_BY_NAME, GenreDO.class)
+                    .setParameter("name", book.getGenre().getName())
+                    .getSingleResult());
+            //em.merge(bookToUpdate);
             });
-        } catch(NoResultException ex) {
-            System.err.println("Genre not found");
-        }
+        });
     }
 
     @Override
@@ -100,17 +90,24 @@ public class BookRepoImpl implements BookRepo {
     public void deleteBook(String title) {
         try {
             BookDO book = template.txExpr(em -> getByTitle(title, em)).get();
-            List<UserDO> users = template.txExpr(em ->
-                    em.createNamedQuery(UserDO.GET_ALL_USERS)
-                            .getResultList());
-            if (users != null && !users.isEmpty()) {
-                users.forEach(u -> {
-                    if (u.getBooks().remove(book)) {
-                        template.tx(em -> em.merge(u));
-                    }
-                });
-            }
+//            List<UserDO> users = template.txExpr(em -> em
+//                    .createNamedQuery(UserDO.GET_ALL_USERS, UserDO.class)
+//                    .getResultList());
+//            
+//            if (users != null && !users.isEmpty()) {
+//                users.forEach(u -> {
+//                    if (u.getBooks().remove(book)) {
+//                        template.tx(em -> em.merge(u));
+//                    }
+//                });
+//            }
+            template.tx(em -> em
+                    .createNamedQuery(BookDO.RESET_OWNERSHIP)
+                    .setParameter(1, book.getId())
+                    .executeUpdate());
+
             template.tx(em -> em.remove(em.merge(book)));
+            
         } catch(NoSuchElementException ex) {
             System.err.println("Book not found: " + ex);
         }

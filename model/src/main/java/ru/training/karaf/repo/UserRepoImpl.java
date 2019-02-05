@@ -5,15 +5,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.HashSet;
-import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
+import javax.persistence.Query;
 import org.apache.aries.jpa.template.JpaTemplate;
 import ru.training.karaf.model.AvatarDO;
 import ru.training.karaf.model.BookDO;
@@ -95,20 +94,24 @@ public class UserRepoImpl implements UserRepo {
                 if (userToUpdate.getAvatar() != null) {
                     if (user.getAvatar() != null) {
                         userToUpdate.getAvatar().setPicture(user.getAvatar().getPicture());
-                    } else {
+                    } /*else {
                         userToUpdate.setAvatar(null);
-                    }
+                    }*/
                 }
                 userToUpdate.setLibCard(user.getLibCard());
                 userToUpdate.setRegDate(user.getRegDate());
-                userToUpdate.setUserName(new UserNameDO(user.getUserName()));
-                Set<BookDO> books = new HashSet<>();
-                user.getBooks().forEach(b -> {
-                    books.add(em.createNamedQuery(BookDO.GET_BOOK_BY_TITLE,
-                            BookDO.class)
-                            .setParameter("title", b.getTitle())
-                            .getSingleResult());
-                });
+                userToUpdate.getUserName().setFirstName(user.getUserName().getFirstName());
+                userToUpdate.getUserName().setLastName(user.getUserName().getLastName());
+                
+                //em.merge(userToUpdate);
+
+//                Set<BookDO> books = new HashSet<>();
+//                user.getBooks().forEach(b -> {
+//                    books.add(em.createNamedQuery(BookDO.GET_BOOK_BY_TITLE,
+//                            BookDO.class)
+//                            .setParameter("title", b.getTitle())
+//                            .getSingleResult());
+//                });
                 //List<FeedbackDO> feedbacks = new ArrayList<>();
 //                user.getFeedbacks().forEach(f -> {
 //                    FeedbackDO fb = new FeedbackDO();
@@ -121,31 +124,30 @@ public class UserRepoImpl implements UserRepo {
 //                    em.merge(fb);
 //                    feedbacks.add(fb);
 //                });
-                List<String> existingFeedbacks = userToUpdate.getFeedbacks()
-                        .stream()
-                        .map(f -> f.getBook().getTitle())
-                        .collect(Collectors.toList());
-                
-                List<String> changedFeedbacks = user.getFeedbacks()
-                        .stream()
-                        .map(f -> f.getBook().getTitle())
-                        .filter(t -> !existingFeedbacks.contains(t))
-                        .collect(Collectors.toList());
-                
-                user.getFeedbacks().forEach(f -> {
-                    if (changedFeedbacks.contains(f.getBook().getTitle())) {
-                        FeedbackDO fb = new FeedbackDO();
-                        fb.setMessage(f.getMessage());
-                        fb.setBook(em.createNamedQuery(BookDO.GET_BOOK_BY_TITLE,
-                            BookDO.class)
-                            .setParameter("title", f.getBook().getTitle())
-                            .getSingleResult());
-                        userToUpdate.addFeedback(fb);
-                    }
-                });
+//                List<String> existingFeedbacks = userToUpdate.getFeedbacks()
+//                        .stream()
+//                        .map(f -> f.getBook().getTitle())
+//                        .collect(Collectors.toList());
+//                
+//                List<String> changedFeedbacks = user.getFeedbacks()
+//                        .stream()
+//                        .map(f -> f.getBook().getTitle())
+//                        .filter(t -> !existingFeedbacks.contains(t))
+//                        .collect(Collectors.toList());
+//                
+//                user.getFeedbacks().forEach(f -> {
+//                    if (changedFeedbacks.contains(f.getBook().getTitle())) {
+//                        FeedbackDO fb = new FeedbackDO();
+//                        fb.setMessage(f.getMessage());
+//                        fb.setBook(em.createNamedQuery(BookDO.GET_BOOK_BY_TITLE,
+//                            BookDO.class)
+//                            .setParameter("title", f.getBook().getTitle())
+//                            .getSingleResult());
+//                        userToUpdate.addFeedback(fb);
+//                    }
+//                });
                 //userToUpdate.setFeedbacks(feedbacks);
-                userToUpdate.setBooks(books);
-                em.merge(userToUpdate);
+                //userToUpdate.setBooks(books);
             });
         });
     }
@@ -252,7 +254,32 @@ public class UserRepoImpl implements UserRepo {
 //        } catch (NoSuchElementException ex) {
 //            System.err.println("User not found: " + ex);
 //        }
-//    }    
+    
+    
+    @Override
+    public void addBook(String libCard, String title) {
+        try {
+            UserDO user = template.txExpr(em -> em
+                    .createNamedQuery(UserDO.GET_USER_BY_LIB_CARD, UserDO.class)
+                    .setParameter("libCard", libCard)
+                    .getSingleResult());
+            BookDO book = template.txExpr(em -> em
+                    .createNamedQuery(BookDO.GET_BOOK_BY_TITLE, BookDO.class)
+                    .setParameter("title", title)
+                    .getSingleResult());
+            
+            // TODO: check if user already has this book
+            template.tx(em -> em
+                    .createNativeQuery(UserDO.ADD_BOOK)
+                    .setParameter(1, user.getId())
+                    .setParameter(2, book.getId())
+                    .executeUpdate());
+            
+        } catch (NoResultException e) {
+            System.err.println("User/book not found");
+        }
+
+    }
 
     private Optional<UserDO> getUserByLibCard(String libCard, EntityManager em) {
         try {
@@ -260,8 +287,7 @@ public class UserRepoImpl implements UserRepo {
                     UserDO.class).setParameter("libCard", libCard)
                     .getSingleResult());
         } catch (NoResultException e) {
-            System.err.println("Exception occurred while retrieving user"
-                    + "from db: " + e);
+            System.err.println("User not found: " + e);
             return Optional.empty();
         }
     }

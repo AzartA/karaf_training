@@ -12,6 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedNativeQuery;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -25,9 +26,14 @@ import javax.persistence.Table;
     @NamedQuery(name = BookDO.GET_BOOK_BY_TITLE,
             query = "SELECT b FROM BookDO b WHERE b.title = :title")
 })
+@NamedNativeQuery(name = BookDO.RESET_OWNERSHIP,
+            query = "DELETE FROM USERDO_BOOKDO WHERE BOOK_ID = ?")
+
 public class BookDO implements Book, Serializable {
     public static final String GET_ALL_BOOKS = "Books.getAll";
     public static final String GET_BOOK_BY_TITLE = "Books.getByTitle";
+    public static final String RESET_OWNERSHIP = "Books.resetOwnership";
+    
     
     @Id
     @GeneratedValue

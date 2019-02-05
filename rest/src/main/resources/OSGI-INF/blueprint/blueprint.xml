@@ -19,6 +19,7 @@
 
     <bean id="bookRestServiceBean" class="ru.training.karaf.rest.BookRestServiceImpl">
         <property name="bookRepo"  ref="bookRepo"/>
+        <property name="genreRepo"  ref="genreRepo"/>
     </bean>
 
     <bean id="genreRestServiceBean" class="ru.training.karaf.rest.GenreRestServiceImpl">

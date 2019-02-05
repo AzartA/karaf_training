@@ -19,7 +19,7 @@ public class UserDTO implements User {
     @XmlTransient
     private AvatarDTO avatar;
     
-    //@XmlTransient
+    @XmlTransient
     private Set<BookDTO> books = new HashSet<>();
     
     @XmlTransient

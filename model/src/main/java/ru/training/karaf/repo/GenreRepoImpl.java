@@ -43,7 +43,11 @@ public class GenreRepoImpl implements GenreRepo {
         template.tx(em -> {
             getGenreByName(name, em).ifPresent(genreToUpdate -> {
                 genreToUpdate.setName(genre.getName());
-                em.merge(genreToUpdate);
+                
+                /* Entity Manager automatically detects changes
+                 * and flushes them on commit */
+                
+                //em.merge(genreToUpdate);
             });
         });
     }
@@ -65,8 +69,7 @@ public class GenreRepoImpl implements GenreRepo {
                     .setParameter("name", name)
                     .getSingleResult());
         } catch (NoResultException e) {
-            System.err.println(getClass().getName() +
-                    ".getGenreByName: genre not found: " + e);
+            System.err.println("Genre not found: " + e);
             return Optional.empty();
         }
     }

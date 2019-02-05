@@ -89,7 +89,7 @@ public class UserRestServiceImpl implements UserRestService {
                     .map(b -> new BookDTO(b))
                     .collect(Collectors.toSet());
         } catch (NoSuchElementException ex) {
-            throw new WebApplicationException(Response
+            throw new NotFoundException(Response
                     .status(Response.Status.NOT_FOUND)
                     .type(MediaType.TEXT_PLAIN)
                     .entity("User not found")
@@ -99,22 +99,21 @@ public class UserRestServiceImpl implements UserRestService {
 
     @Override
     public void addBook(String libCard, BookDTO book) {
-        try {
-            User user = userRepo.getUser(libCard).get();
-            BookDTO bookToAdd =
-                    new BookDTO(bookRepo.getBook(book.getTitle()).get());
-            UserDTO userToUpdate = new UserDTO(user);
-            //System.err.println("before: " + userToUpdate.getBooks());            
-            userToUpdate.getBooks().add(bookToAdd);
-            //System.err.println("After: " + userToUpdate.getBooks());
-            userRepo.updateUser(libCard, userToUpdate);
-        } catch (NoSuchElementException ex) {
-            throw new WebApplicationException(Response
-                    .status(Response.Status.NOT_FOUND)
-                    .type(MediaType.TEXT_PLAIN)
-                    .entity("User/book not found")
-                    .build());
-        }
+        userRepo.addBook(libCard, book.getTitle());
+//        try {
+//            User user = userRepo.getUser(libCard).get();
+//            BookDTO bookToAdd =
+//                    new BookDTO(bookRepo.getBook(book.getTitle()).get());
+//            UserDTO userToUpdate = new UserDTO(user);
+//            userToUpdate.getBooks().add(bookToAdd);
+//            userRepo.updateUser(libCard, userToUpdate);
+//        } catch (NoSuchElementException ex) {
+//            throw new NotFoundException(Response
+//                    .status(Response.Status.NOT_FOUND)
+//                    .type(MediaType.TEXT_PLAIN)
+//                    .entity("User/book not found")
+//                    .build());
+//        }
     }
 
     @Override
@@ -133,7 +132,7 @@ public class UserRestServiceImpl implements UserRestService {
             }
             //System.err.println("After: " + userToUpdate.getBooks());
         } catch (NoSuchElementException ex) {
-            throw new WebApplicationException(Response
+            throw new NotFoundException(Response
                     .status(Response.Status.NOT_FOUND)
                     .type(MediaType.TEXT_PLAIN)
                     .entity("User/book not found")
