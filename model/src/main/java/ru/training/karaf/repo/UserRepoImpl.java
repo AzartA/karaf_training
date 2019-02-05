@@ -12,7 +12,6 @@ import java.util.Set;
 import java.util.HashSet;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
-import javax.persistence.Query;
 import org.apache.aries.jpa.template.JpaTemplate;
 import ru.training.karaf.model.AvatarDO;
 import ru.training.karaf.model.BookDO;
@@ -30,7 +29,7 @@ public class UserRepoImpl implements UserRepo {
     }
 
     public void init() throws IOException {
-        InputStream in = new FileInputStream("C:\\Projects\\karaf_training\\a.png");
+        InputStream in = new FileInputStream("C:\\PROJECTS\\Java_Projects\\karaf_training\\a.png");
         byte[] picture = new byte[in.available()];
         in.read(picture);
         
@@ -268,12 +267,18 @@ public class UserRepoImpl implements UserRepo {
                     .setParameter("title", title)
                     .getSingleResult());
             
-            // TODO: check if user already has this book
             template.tx(em -> em
-                    .createNativeQuery(UserDO.ADD_BOOK)
+                    .createNamedQuery(UserDO.ADD_BOOK)
                     .setParameter(1, user.getId())
                     .setParameter(2, book.getId())
                     .executeUpdate());
+
+            // TODO: check if user already has this book
+//            template.tx(em -> em
+//                    .createNativeQuery(UserDO.ADD_BOOK)
+//                    .setParameter(1, user.getId())
+//                    .setParameter(2, book.getId())
+//                    .executeUpdate());
             
         } catch (NoResultException e) {
             System.err.println("User/book not found");
