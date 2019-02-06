@@ -8,7 +8,6 @@ import javax.ws.rs.NotFoundException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import ru.training.karaf.model.Book;
 import ru.training.karaf.model.User;
 import ru.training.karaf.repo.BookRepo;
 import ru.training.karaf.repo.UserRepo;
@@ -50,17 +49,34 @@ public class UserRestServiceImpl implements UserRestService {
         userRepo.createUser(user); 
     }
 
+    
     @Override
-    public void updateUser(String libCard, UserDTO user) {
-        if (userRepo.getUser(user.getLibCard()).isPresent()
-                && !libCard.equals(user.getLibCard())) {
+    public void updateUser(String libCard, UserDTO updatedUser) {
+        try {
+            if (userRepo.getUser(updatedUser.getLibCard()).isPresent()
+                    && !libCard.equals(updatedUser.getLibCard())) {
             throw new WebApplicationException(Response
                     .status(Response.Status.CONFLICT)
                     .type(MediaType.TEXT_PLAIN)
                     .entity("Lib card is already taken")
                     .build());
+            }
+            
+            User user = userRepo.getUser(libCard).get();
+            if (user.getBooks() != null) {
+                user.getBooks().forEach(b -> {
+                    BookDTO book = new BookDTO(b);
+                    updatedUser.getBooks().add(book);
+                });
+            }
+            userRepo.updateUser(libCard, updatedUser);
+        } catch (NoSuchElementException e) {
+            throw new NotFoundException(Response
+                    .status(Response.Status.NOT_FOUND)
+                    .type(MediaType.TEXT_PLAIN)
+                    .entity("User not found")
+                    .build());
         }
-        userRepo.updateUser(libCard, user);
     }
 
     @Override
@@ -98,22 +114,21 @@ public class UserRestServiceImpl implements UserRestService {
     }
 
     @Override
-    public void addBook(String libCard, BookDTO book) {
-        userRepo.addBook(libCard, book.getTitle());
-//        try {
-//            User user = userRepo.getUser(libCard).get();
-//            BookDTO bookToAdd =
-//                    new BookDTO(bookRepo.getBook(book.getTitle()).get());
-//            UserDTO userToUpdate = new UserDTO(user);
-//            userToUpdate.getBooks().add(bookToAdd);
-//            userRepo.updateUser(libCard, userToUpdate);
-//        } catch (NoSuchElementException ex) {
-//            throw new NotFoundException(Response
-//                    .status(Response.Status.NOT_FOUND)
-//                    .type(MediaType.TEXT_PLAIN)
-//                    .entity("User/book not found")
-//                    .build());
-//        }
+    public void addBook(String libCard, String title) {
+        try {
+            User user = userRepo.getUser(libCard).get();
+            BookDTO bookToAdd =
+                    new BookDTO(bookRepo.getBook(title).get());
+            UserDTO userToUpdate = new UserDTO(user);
+            userToUpdate.getBooks().add(bookToAdd);
+            userRepo.updateUser(libCard, userToUpdate);
+        } catch (NoSuchElementException ex) {
+            throw new NotFoundException(Response
+                    .status(Response.Status.NOT_FOUND)
+                    .type(MediaType.TEXT_PLAIN)
+                    .entity("User/book not found")
+                    .build());
+        }
     }
 
     @Override
@@ -122,15 +137,11 @@ public class UserRestServiceImpl implements UserRestService {
             User user = userRepo.getUser(libCard).get();
             BookDTO book = new BookDTO(bookRepo.getBook(title).get());
             UserDTO userToUpdate = new UserDTO(user);
-            //System.err.println("before: " + userToUpdate.getBooks());
             if (userToUpdate.getBooks().remove(book)) {
-                //System.err.println("Book was removed");
                 userRepo.updateUser(libCard, userToUpdate);
             } else {
-                //System.err.println("Book was not removed ");
                 throw new NoSuchElementException("User does not have this book");
             }
-            //System.err.println("After: " + userToUpdate.getBooks());
         } catch (NoSuchElementException ex) {
             throw new NotFoundException(Response
                     .status(Response.Status.NOT_FOUND)
@@ -155,61 +166,13 @@ public class UserRestServiceImpl implements UserRestService {
                     .entity("User not found")
                     .build());
         }
-//        return userRepo.getUserFeedbacks(libCard)
-//                .stream()
-//                .map(f -> new FeedbackDTO(f))
-//                .collect(Collectors.toList());
     }
     
     @Override
     public void addFeedback(String libCard, FeedbackDTO feedback) {
-        try {
-            User user = userRepo.getUser(libCard).get();
-            Book book = bookRepo.getBook(feedback.getBook().getTitle()).get();
-            if (user.getBooks().contains(book)) {
-                user.getFeedbacks().forEach(f -> {
-                    if (f.getBook().equals(book)) {
-                        System.err.println("User's feedback already exists");
-                        // TODO: throw an exception
-                    }
-                });
-                
-                UserDTO userToUpdate = new UserDTO(user);
-                userToUpdate.getFeedbacks().add(feedback);
-                //feedback.setUser(userToUpdate);
-                userRepo.updateUser(libCard, userToUpdate);
-            } else {
-                System.err.println("User does not have this book");
-            }
-        } catch (NoSuchElementException ex) {
-            throw new WebApplicationException(Response
-                    .status(Response.Status.NOT_FOUND)
-                    .type(MediaType.TEXT_PLAIN)
-                    .entity("User/book not found")
-                    .build());
-        }
     }
 
     @Override
     public void removeFeedback(String libCard, String title) {
-        //userRepo.removeFeedback(libCard, title);
-        try {
-            User user = userRepo.getUser(libCard).get();
-            Book book = bookRepo.getBook(title).get();
-            user.getFeedbacks().forEach(f -> {
-                if (f.getBook().equals(book)) {
-                    UserDTO userToUpdate = new UserDTO(user);
-                    userToUpdate.getFeedbacks().remove(f);
-                    userRepo.updateUser(libCard, userToUpdate);
-                    // TODO: return
-                }
-            });
-        } catch (NoSuchElementException e) {
-            throw new WebApplicationException(Response
-                    .status(Response.Status.NOT_FOUND)
-                    .type(MediaType.TEXT_PLAIN)
-                    .entity("User/book not found")
-                    .build());
-        }
     }
 }

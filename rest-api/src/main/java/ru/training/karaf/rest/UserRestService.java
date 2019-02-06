@@ -45,7 +45,8 @@ public interface UserRestService {
     
     @POST
     @Path("{libCard}/books")
-    void addBook(@PathParam("libCard") String libCard, BookDTO book);
+    void addBook(@PathParam("libCard") String libCard,
+            @QueryParam("title") String title);
     
     @DELETE
     @Path("{libCard}/books")

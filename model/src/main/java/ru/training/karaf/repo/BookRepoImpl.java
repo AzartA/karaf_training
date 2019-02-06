@@ -1,5 +1,6 @@
 package ru.training.karaf.repo;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -10,6 +11,7 @@ import ru.training.karaf.model.Book;
 import ru.training.karaf.model.BookDO;
 import ru.training.karaf.model.FeedbackDO;
 import ru.training.karaf.model.GenreDO;
+import ru.training.karaf.model.UserDO;
 
 public class BookRepoImpl implements BookRepo {
     private JpaTemplate template;
@@ -38,9 +40,11 @@ public class BookRepoImpl implements BookRepo {
         f.setMessage("f1");
         book1.addFeedback(f);
         
-        template.tx(em -> em.persist(genre));
-        template.tx(em -> em.persist(book));
-        template.tx(em -> em.persist(book1));
+        template.tx(em -> {
+            em.persist(genre);
+            em.persist(book);
+            em.persist(book1);
+        });
     }
     
     
@@ -89,28 +93,27 @@ public class BookRepoImpl implements BookRepo {
     @Override
     public void deleteBook(String title) {
         try {
-            BookDO book = template.txExpr(em -> getByTitle(title, em)).get();
-//            List<UserDO> users = template.txExpr(em -> em
-//                    .createNamedQuery(UserDO.GET_ALL_USERS, UserDO.class)
-//                    .getResultList());
-//            
-//            if (users != null && !users.isEmpty()) {
-//                users.forEach(u -> {
-//                    if (u.getBooks().remove(book)) {
-//                        template.tx(em -> em.merge(u));
-//                    }
-//                });
-//            }
-            template.tx(em -> em
-                    .createNamedQuery(BookDO.RESET_OWNERSHIP)
-                    .setParameter(1, book.getId())
-                    .executeUpdate());
-
             template.tx(em -> {
-                em.remove(em.merge(book));
-                em.getEntityManagerFactory().getCache().evictAll();
+                BookDO book = getByTitle(title, em).get();
+                List<UserDO> users = em
+                        .createNamedQuery(UserDO.GET_ALL_USERS, UserDO.class)
+                        .getResultList();
+                if (users != null && !users.isEmpty()) {
+                    users.forEach(u -> {
+                        u.getBooks().remove(book);
+                        Iterator<FeedbackDO> it = u.getFeedbacks().iterator();
+                        while(it.hasNext()) {
+                            FeedbackDO fb = it.next();
+                            if (fb.getBook().equals(book)) {
+                                it.remove();
+                                break;
+                            }
+                        }
+                    });
+                }
+                em.remove(book);
             });
-            
+
         } catch(NoSuchElementException ex) {
             System.err.println("Book not found: " + ex);
         }

@@ -10,6 +10,4 @@ public interface UserRepo {
     void updateUser(String libCard, User user);
     Optional<? extends User> getUser(String libCard);
     void deleteUser(String libCard);
-    
-    void addBook(String libCard, String title);
 }
