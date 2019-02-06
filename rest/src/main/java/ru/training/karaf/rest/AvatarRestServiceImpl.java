@@ -54,57 +54,59 @@ public class AvatarRestServiceImpl implements AvatarRestService {
 
     @Override
     public Response deleteAvatar(String libCard) {
-        try {
-            User user = userRepo.getUser(libCard).get();
-            if (user.getAvatar() != null) {
-                UserDTO userToUpdate = new UserDTO(user);
-                userToUpdate.setAvatar(null);
-                userRepo.updateUser(libCard, userToUpdate);
-                //avatarRepo.deleteAvatar(user.getAvatar().getId());
-                return Response
-                        .ok("Successfully removed", MediaType.TEXT_PLAIN)
-                        .build();
-            } else {
-                return Response
-                        .status(Response.Status.NOT_FOUND)
-                        .type(MediaType.TEXT_PLAIN)
-                        .entity("User doesn't have an avatar")
-                        .build();
-            }
-        } catch (NoSuchElementException ex) {
-                return Response
-                        .status(Response.Status.NOT_FOUND)
-                        .type(MediaType.TEXT_PLAIN)
-                        .entity("User not found")
-                        .build();
-        }
+//        try {
+//            User user = userRepo.getUser(libCard).get();
+//            if (user.getAvatar() != null) {
+//                UserDTO userToUpdate = new UserDTO(user);
+//                userToUpdate.setAvatar(null);
+//                userRepo.updateUser(libCard, userToUpdate);
+//                //avatarRepo.deleteAvatar(user.getAvatar().getId());
+//                return Response
+//                        .ok("Successfully removed", MediaType.TEXT_PLAIN)
+//                        .build();
+//            } else {
+//                return Response
+//                        .status(Response.Status.NOT_FOUND)
+//                        .type(MediaType.TEXT_PLAIN)
+//                        .entity("User doesn't have an avatar")
+//                        .build();
+//            }
+//        } catch (NoSuchElementException ex) {
+//                return Response
+//                        .status(Response.Status.NOT_FOUND)
+//                        .type(MediaType.TEXT_PLAIN)
+//                        .entity("User not found")
+//                        .build();
+//        }
+return null;
     }
      
     @Override
     public Response uploadAvatar(String libCard, Attachment avatar) {
-        try {
-            User user = userRepo.getUser(libCard).get();
-            InputStream attachment = avatar.getObject(InputStream.class);
-            byte[] picture = new byte[attachment.available()];
-            attachment.read(picture);
-            UserDTO userToUpdate = new UserDTO(user);
-            userToUpdate.setAvatar(new AvatarDTO(picture));
-            userRepo.updateUser(libCard, userToUpdate);
-        } catch(NoSuchElementException ex) {
-            return Response
-                        .status(Response.Status.NOT_FOUND)
-                        .type(MediaType.TEXT_PLAIN)
-                        .entity("User not found")
-                        .build();
-        } catch (IOException ex) {
-            return Response
-                        .status(Response.Status.INTERNAL_SERVER_ERROR)
-                        .type(MediaType.TEXT_PLAIN)
-                        .entity("An error occurred while uploading: " + ex)
-                        .build();
-        }
-        return Response
-                .ok("Successfully uploaded", MediaType.TEXT_PLAIN)
-                .build();
+//        try {
+//            User user = userRepo.getUser(libCard).get();
+//            InputStream attachment = avatar.getObject(InputStream.class);
+//            byte[] picture = new byte[attachment.available()];
+//            attachment.read(picture);
+//            UserDTO userToUpdate = new UserDTO(user);
+//            userToUpdate.setAvatar(new AvatarDTO(picture));
+//            userRepo.updateUser(libCard, userToUpdate);
+//        } catch(NoSuchElementException ex) {
+//            return Response
+//                        .status(Response.Status.NOT_FOUND)
+//                        .type(MediaType.TEXT_PLAIN)
+//                        .entity("User not found")
+//                        .build();
+//        } catch (IOException ex) {
+//            return Response
+//                        .status(Response.Status.INTERNAL_SERVER_ERROR)
+//                        .type(MediaType.TEXT_PLAIN)
+//                        .entity("An error occurred while uploading: " + ex)
+//                        .build();
+//        }
+//        return Response
+//                .ok("Successfully uploaded", MediaType.TEXT_PLAIN)
+//   
+return null;
     }
 }

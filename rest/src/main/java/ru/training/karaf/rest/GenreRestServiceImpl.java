@@ -74,19 +74,19 @@ public class GenreRestServiceImpl implements GenreRestService {
 
     @Override
     public void deleteGenre(String name) {
-        if (name.equals(Genre.DEFAULT_GENRE)) {
-            return;
-        }
-        bookRepo.getAllBooks().forEach(b -> {
-            if (b.getGenre().getName().equals(name)) {
-                bookRepo.updateBook(
-                        b.getTitle(),
-                        new BookDTO(b.getTitle(),
-                        b.getAuthor(),
-                        b.getYear(),
-                        new GenreDTO(Genre.DEFAULT_GENRE)));
-            }
-        });
-        genreRepo.deleteGenre(name);
+//        if (name.equals(Genre.DEFAULT_GENRE)) {
+//            return;
+//        }
+//        bookRepo.getAllBooks().forEach(b -> {
+//            if (b.getGenre().getName().equals(name)) {
+//                bookRepo.updateBook(
+//                        b.getTitle(),
+//                        new BookDTO(b.getTitle(),
+//                        b.getAuthor(),
+//                        b.getYear(),
+//                        new GenreDTO(Genre.DEFAULT_GENRE)));
+//            }
+//        });
+//        genreRepo.deleteGenre(name);
     }
 }

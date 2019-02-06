@@ -19,6 +19,8 @@
 		<module>rest-api</module>
 		<module>container</module>
 		<module>feature</module>
+                <module>buisness-logic-services</module>
+	 <module>buisness-logic-services-api</module>
 	</modules>
 
 	<dependencyManagement>
@@ -33,6 +35,16 @@
 				<artifactId>model-api</artifactId>
 				<version>0.0.1-SNAPSHOT</version>
 			</dependency>
+                        <dependency>
+                                <groupId>ru.training</groupId>
+                                <artifactId>buisness-logic-services</artifactId>
+                                <version>0.0.1-SNAPSHOT</version>
+                        </dependency>
+                        <dependency>
+                                <groupId>ru.training</groupId>
+                                <artifactId>buisness-logic-services-api</artifactId>
+                                <version>0.0.1-SNAPSHOT</version>
+                        </dependency>
 			<dependency>
 				<groupId>ru.training</groupId>
 				<artifactId>rest-api</artifactId>

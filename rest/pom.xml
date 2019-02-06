@@ -19,6 +19,10 @@
 			<groupId>ru.training</groupId>
 			<artifactId>rest-api</artifactId>
 		</dependency>
+                <dependency>
+                        <groupId>ru.training</groupId>
+                        <artifactId>buisness-logic-services-api</artifactId>
+                </dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-core</artifactId>

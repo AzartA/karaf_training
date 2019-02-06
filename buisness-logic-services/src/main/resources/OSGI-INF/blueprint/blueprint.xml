@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
+    
+    <reference id="userRepo" interface="ru.training.karaf.repo.UserRepo"/>
+    <reference id="bookRepo" interface="ru.training.karaf.repo.BookRepo"/>
+    <reference id="genreRepo" interface="ru.training.karaf.repo.GenreRepo"/>
+    
+    <bean id="userBuisnessLogicServiceBean"
+          class="ru.training.karaf.service.UserBuisnessLogicServiceImpl"
+          init-method="init">
+        
+        <property name="userRepo" ref="userRepo"/>
+        <property name="bookRepo" ref="bookRepo"/>              
+    </bean>
+    <service ref="userBuisnessLogicServiceBean"
+             interface="ru.training.karaf.service.UserBuisnessLogicService" />
+    
+    <bean id="bookBuisnessLogicServiceBean"
+          class="ru.training.karaf.service.BookBuisnessLogicServiceImpl"
+          init-method="init">
+        
+        <property name="bookRepo" ref="bookRepo"/>
+        <property name="genreRepo" ref="genreRepo"/>
+        <property name="userRepo" ref="userRepo"/>
+    </bean>
+    <service ref="bookBuisnessLogicServiceBean"
+             interface="ru.training.karaf.service.BookBuisnessLogicService" />
+    
+</blueprint>

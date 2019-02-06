@@ -1,8 +1,6 @@
 package ru.training.karaf.repo;
 
-import java.util.Iterator;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -11,7 +9,6 @@ import ru.training.karaf.model.Book;
 import ru.training.karaf.model.BookDO;
 import ru.training.karaf.model.FeedbackDO;
 import ru.training.karaf.model.GenreDO;
-import ru.training.karaf.model.UserDO;
 
 public class BookRepoImpl implements BookRepo {
     private JpaTemplate template;
@@ -56,33 +53,35 @@ public class BookRepoImpl implements BookRepo {
 
     @Override
     public void createBook(Book book) {
-        BookDO bookToCreate = new BookDO();
-        template.tx(em -> {
-            bookToCreate.setAuthor(book.getAuthor());
-            bookToCreate.setTitle(book.getTitle());
-            bookToCreate.setYear(book.getYear());
-            bookToCreate.setGenre(em
-                    .createNamedQuery(GenreDO.GET_GENRE_BY_NAME, GenreDO.class)
-                    .setParameter("name", book.getGenre().getName())
-                    .getSingleResult());
-            em.persist(bookToCreate);
-        });
+        template.tx(em -> em.persist(book));
+//        BookDO bookToCreate = new BookDO();
+//        template.tx(em -> {
+//            bookToCreate.setAuthor(book.getAuthor());
+//            bookToCreate.setTitle(book.getTitle());
+//            bookToCreate.setYear(book.getYear());
+//            bookToCreate.setGenre(em
+//                    .createNamedQuery(GenreDO.GET_GENRE_BY_NAME, GenreDO.class)
+//                    .setParameter("name", book.getGenre().getName())
+//                    .getSingleResult());
+//            em.persist(bookToCreate);
+//        });
     }
 
     @Override
-    public void updateBook(String title, Book book) {
-        template.tx(em -> {
-            getByTitle(title, em).ifPresent(bookToUpdate -> {
-            bookToUpdate.setAuthor(book.getAuthor());
-            bookToUpdate.setTitle(book.getTitle());
-            bookToUpdate.setYear(book.getYear());
-            bookToUpdate.setGenre(em
-                    .createNamedQuery(GenreDO.GET_GENRE_BY_NAME, GenreDO.class)
-                    .setParameter("name", book.getGenre().getName())
-                    .getSingleResult());
-            //em.merge(bookToUpdate);
-            });
-        });
+    public void updateBook(Book book) {
+        template.tx(em -> em.merge(book));
+//        template.tx(em -> {
+//            getByTitle(title, em).ifPresent(bookToUpdate -> {
+//            bookToUpdate.setAuthor(book.getAuthor());
+//            bookToUpdate.setTitle(book.getTitle());
+//            bookToUpdate.setYear(book.getYear());
+//            bookToUpdate.setGenre(em
+//                    .createNamedQuery(GenreDO.GET_GENRE_BY_NAME, GenreDO.class)
+//                    .setParameter("name", book.getGenre().getName())
+//                    .getSingleResult());
+//            //em.merge(bookToUpdate);
+//            });
+//        });
     }
 
     @Override
@@ -92,31 +91,7 @@ public class BookRepoImpl implements BookRepo {
 
     @Override
     public void deleteBook(String title) {
-        try {
-            template.tx(em -> {
-                BookDO book = getByTitle(title, em).get();
-                List<UserDO> users = em
-                        .createNamedQuery(UserDO.GET_ALL_USERS, UserDO.class)
-                        .getResultList();
-                if (users != null && !users.isEmpty()) {
-                    users.forEach(u -> {
-                        u.getBooks().remove(book);
-                        Iterator<FeedbackDO> it = u.getFeedbacks().iterator();
-                        while(it.hasNext()) {
-                            FeedbackDO fb = it.next();
-                            if (fb.getBook().equals(book)) {
-                                it.remove();
-                                break;
-                            }
-                        }
-                    });
-                }
-                em.remove(book);
-            });
-
-        } catch(NoSuchElementException ex) {
-            System.err.println("Book not found: " + ex);
-        }
+        template.tx(em -> getByTitle(title, em).ifPresent(em::remove));
     }
     
     private Optional<BookDO> getByTitle(String title, EntityManager em) {

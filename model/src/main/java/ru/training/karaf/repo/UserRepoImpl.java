@@ -87,22 +87,8 @@ public class UserRepoImpl implements UserRepo {
     }
 
     @Override
-    public void updateUser(String libCard, User user) {
-        template.tx(em -> {
-            UserDO userToUpdate = (UserDO)getUser(libCard).get();
-            userToUpdate.setAddress(user.getAddress());
-            userToUpdate.setLibCard(user.getLibCard());
-            userToUpdate.setRegDate(user.getRegDate());
-            userToUpdate.setUserName(new UserNameDO(user.getUserName()));
-            Set<BookDO> books = new HashSet<>();
-            user.getBooks().forEach(b -> {
-                books.add(em
-                        .createNamedQuery(BookDO.GET_BOOK_BY_TITLE, BookDO.class)
-                        .setParameter("title", b.getTitle())
-                        .getSingleResult());
-            });
-            userToUpdate.setBooks(books);
-        });
+    public void updateUser(User user) {
+        template.tx(em -> em.merge(user));
     }
 
     @Override

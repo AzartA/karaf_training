@@ -4,22 +4,18 @@
 >
 
     <reference id="userRepo" interface="ru.training.karaf.repo.UserRepo"/>
-    
-    <reference id="genreRepo" interface="ru.training.karaf.repo.GenreRepo"/>
-    
-    <reference id="bookRepo" interface="ru.training.karaf.repo.BookRepo"/>
-    
+    <reference id="genreRepo" interface="ru.training.karaf.repo.GenreRepo"/> 
+    <reference id="bookRepo" interface="ru.training.karaf.repo.BookRepo"/>   
     <reference id="avatarRepo" interface="ru.training.karaf.repo.AvatarRepo"/>
+    <reference id="userService" interface="ru.training.karaf.service.UserBuisnessLogicService"/>
+    <reference id="bookService" interface="ru.training.karaf.service.BookBuisnessLogicService"/>
 
     <bean id="userRestServiceBean" class="ru.training.karaf.rest.UserRestServiceImpl">
-        <property name="userRepo"  ref="userRepo"/>
-        <property name="bookRepo"  ref="bookRepo"/>
+        <property name="userService"  ref="userService"/>
     </bean>
 
-
     <bean id="bookRestServiceBean" class="ru.training.karaf.rest.BookRestServiceImpl">
-        <property name="bookRepo"  ref="bookRepo"/>
-        <property name="genreRepo"  ref="genreRepo"/>
+        <property name="bookService"  ref="bookService"/>
     </bean>
 
     <bean id="genreRestServiceBean" class="ru.training.karaf.rest.GenreRestServiceImpl">
