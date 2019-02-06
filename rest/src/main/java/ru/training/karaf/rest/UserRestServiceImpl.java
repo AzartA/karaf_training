@@ -3,6 +3,9 @@ package ru.training.karaf.rest;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import javax.ws.rs.NotFoundException;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import ru.training.karaf.rest.dto.BookDTO;
 import ru.training.karaf.rest.dto.FeedbackDTO;
 import ru.training.karaf.rest.dto.UserDTO;
@@ -38,7 +41,13 @@ public class UserRestServiceImpl implements UserRestService {
 
     @Override
     public UserDTO getUser(String libCard) {
-        return new UserDTO(userService.getUser(libCard));
+        return userService.getUser(libCard)
+                .map(u -> new UserDTO(u))
+                .orElseThrow(() -> new NotFoundException(
+                        Response.status(Response.Status.NOT_FOUND)
+                                .type(MediaType.TEXT_PLAIN)
+                                .entity("User not found")
+                                .build()));
     }
 
     @Override

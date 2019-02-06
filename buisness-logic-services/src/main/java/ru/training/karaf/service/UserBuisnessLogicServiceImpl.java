@@ -3,6 +3,7 @@ package ru.training.karaf.service;
 import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.Set;
 import ru.training.karaf.model.Book;
 import ru.training.karaf.model.BookDO;
@@ -40,6 +41,11 @@ public class UserBuisnessLogicServiceImpl implements UserBuisnessLogicService {
             System.err.println("Lib card is already taken");
             return;
         }
+        if (user.getAddress() == null || user.getLibCard() == null ||
+                user.getRegDate() == null || user.getUserName() == null) {
+            System.err.println("One or more parameters are invalid");
+            return;
+        }
         userRepo.createUser(user);
     }
 
@@ -47,7 +53,12 @@ public class UserBuisnessLogicServiceImpl implements UserBuisnessLogicService {
     public void updateUser(String libCard, User user) {
         if (userRepo.getUser(user.getLibCard()).isPresent()
                 && !libCard.equals(user.getLibCard())) {
-            System.err.println("Lib card already taken");
+            System.err.println("Lib card is already taken");
+            return;
+        }
+        if (user.getAddress() == null || user.getLibCard() == null ||
+                user.getRegDate() == null || user.getUserName() == null) {
+            System.err.println("One or more parameters are invalid");
             return;
         }
         try {
@@ -63,12 +74,12 @@ public class UserBuisnessLogicServiceImpl implements UserBuisnessLogicService {
     }
 
     @Override
-    public User getUser(String libCard) {
+    public Optional<? extends User> getUser(String libCard) {
         try {
-            return userRepo.getUser(libCard).get();
+            return Optional.of(userRepo.getUser(libCard).get());
         } catch (NoSuchElementException e) {
             System.err.println("User not found");
-            return null;
+            return Optional.empty();
         }
     }
 
@@ -133,7 +144,22 @@ public class UserBuisnessLogicServiceImpl implements UserBuisnessLogicService {
     @Override
     public void addFeedback(String libCard, Feedback feedback) {
         try {
+            if (feedback.getMessage() == null || feedback.getBook() == null) {
+                System.err.println("One or more parameters are invalid");
+                return;
+            }
             UserDO user = (UserDO)userRepo.getUser(libCard).get();
+            BookDO book = (BookDO)
+                    bookRepo.getBook(feedback.getBook().getTitle()).get();
+            if (user.getBooks()
+                    .stream()
+                    .map(b -> b.getTitle())
+                    .noneMatch(title ->
+                            title.equals(feedback.getBook().getTitle()))) {
+                
+                System.err.println("User doens't have this book");
+                return;
+            }
             
             if (user.getFeedbacks()
                     .stream()
@@ -145,25 +171,12 @@ public class UserBuisnessLogicServiceImpl implements UserBuisnessLogicService {
                 return;
             }
             
-            if (user.getBooks()
-                    .stream()
-                    .map(b -> b.getTitle())
-                    .noneMatch(title ->
-                            title.equals(feedback.getBook().getTitle()))) {
-                
-                System.err.println("User doens't have this book");
-                return;
-            }
-            
-            BookDO book = (BookDO)
-                    bookRepo.getBook(feedback.getBook().getTitle()).get();
-            
             FeedbackDO fb = new FeedbackDO();
             fb.setMessage(feedback.getMessage());
             book.addFeedback(fb);
             user.addFeedback(fb);
             userRepo.updateUser(user);
-            bookRepo.updateBook(book);
+            //bookRepo.updateBook(book);
             // TODO: update book
             
         } catch (NoSuchElementException e) {
@@ -184,7 +197,7 @@ public class UserBuisnessLogicServiceImpl implements UserBuisnessLogicService {
                 }
             }
             userRepo.updateUser(user);
-            bookRepo.updateBook(book);
+            //bookRepo.updateBook(book);
             // TODO: update book
             
         } catch (NoSuchElementException e) {

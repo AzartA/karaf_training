@@ -7,7 +7,6 @@ import javax.persistence.NoResultException;
 import org.apache.aries.jpa.template.JpaTemplate;
 import ru.training.karaf.model.Book;
 import ru.training.karaf.model.BookDO;
-import ru.training.karaf.model.FeedbackDO;
 import ru.training.karaf.model.GenreDO;
 
 public class BookRepoImpl implements BookRepo {
@@ -32,10 +31,6 @@ public class BookRepoImpl implements BookRepo {
         book1.setGenre(genre);
         book1.setTitle("t2");
         book1.setYear(1500);
-        
-        FeedbackDO f = new FeedbackDO();
-        f.setMessage("f1");
-        book1.addFeedback(f);
         
         template.tx(em -> {
             em.persist(genre);
