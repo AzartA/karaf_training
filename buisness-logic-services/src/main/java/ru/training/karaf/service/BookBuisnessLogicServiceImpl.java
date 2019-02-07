@@ -3,6 +3,7 @@ package ru.training.karaf.service;
 import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import ru.training.karaf.model.Book;
 import ru.training.karaf.model.BookDO;
 import ru.training.karaf.model.Feedback;
@@ -30,9 +31,7 @@ public class BookBuisnessLogicServiceImpl implements BookBuisnessLogicService {
         this.userRepo = userRepo;
     }    
     
-    public void init() {
-        System.err.println("Book service loaded");
-    }
+    public void init() {}
     
     @Override
     public List<? extends Book> getAllBooks() {
@@ -40,21 +39,27 @@ public class BookBuisnessLogicServiceImpl implements BookBuisnessLogicService {
     }
 
     @Override
-    public Book getBook(String title) {
+    public Optional<? extends Book> getBook(String title) {
         try {
-            return bookRepo.getBook(title).get();
+            return Optional.of(bookRepo.getBook(title).get());
         } catch (NoSuchElementException e) {
             System.err.println("Book not found");
-            return null;
+            return Optional.empty();
         }
     }
 
     @Override
     public void createBook(Book book) {
+        if (!isBookDataValid(book)) {
+            System.err.println("One or more parameters are invalid");
+            return;
+        }
+        
         if (bookRepo.getBook(book.getTitle()).isPresent()) {
             System.err.println("Book with specified title already exists");
             return;
         }
+        
         try {
             GenreDO genre = (GenreDO)
                     genreRepo.getGenre(book.getGenre().getName()).get();
@@ -72,10 +77,16 @@ public class BookBuisnessLogicServiceImpl implements BookBuisnessLogicService {
     @Override
     public void updateBook(String title, Book book) {
         try {
-            if (!title.equals(book.getTitle())) {
-                System.err.println("title can not be changed");
+            if (!isBookDataValid(book)) {
+                System.err.println("One or more parameters are invalid");
                 return;
             }
+            
+            if (!title.equals(book.getTitle())) {
+                System.err.println("Book's title can not be changed");
+                return;
+            }
+            
             GenreDO genre = (GenreDO)
                     genreRepo.getGenre(book.getGenre().getName()).get();
             
@@ -96,9 +107,9 @@ public class BookBuisnessLogicServiceImpl implements BookBuisnessLogicService {
             BookDO book = (BookDO)bookRepo.getBook(title).get();
             List<UserDO> users = (List<UserDO>)userRepo.getAllUsers();
             
-            // TODO: check if comments are removed
             users.forEach(u -> {
                 if (u.getBooks().remove(book)) {
+                    u.getFeedbacks().removeIf(f -> f.getBook().equals(book));
                     userRepo.updateUser(u);
                 }
             });
@@ -119,5 +130,9 @@ public class BookBuisnessLogicServiceImpl implements BookBuisnessLogicService {
         }
         return Collections.EMPTY_LIST;
     }
-  
+    
+    private boolean isBookDataValid(Book book) {
+        return !(book.getTitle() == null || book.getAuthor() == null
+                || book.getGenre() == null || book.getYear() == null);
+    }
 }

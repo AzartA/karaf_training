@@ -49,34 +49,11 @@ public class BookRepoImpl implements BookRepo {
     @Override
     public void createBook(Book book) {
         template.tx(em -> em.persist(book));
-//        BookDO bookToCreate = new BookDO();
-//        template.tx(em -> {
-//            bookToCreate.setAuthor(book.getAuthor());
-//            bookToCreate.setTitle(book.getTitle());
-//            bookToCreate.setYear(book.getYear());
-//            bookToCreate.setGenre(em
-//                    .createNamedQuery(GenreDO.GET_GENRE_BY_NAME, GenreDO.class)
-//                    .setParameter("name", book.getGenre().getName())
-//                    .getSingleResult());
-//            em.persist(bookToCreate);
-//        });
     }
 
     @Override
     public void updateBook(Book book) {
         template.tx(em -> em.merge(book));
-//        template.tx(em -> {
-//            getByTitle(title, em).ifPresent(bookToUpdate -> {
-//            bookToUpdate.setAuthor(book.getAuthor());
-//            bookToUpdate.setTitle(book.getTitle());
-//            bookToUpdate.setYear(book.getYear());
-//            bookToUpdate.setGenre(em
-//                    .createNamedQuery(GenreDO.GET_GENRE_BY_NAME, GenreDO.class)
-//                    .setParameter("name", book.getGenre().getName())
-//                    .getSingleResult());
-//            //em.merge(bookToUpdate);
-//            });
-//        });
     }
 
     @Override
