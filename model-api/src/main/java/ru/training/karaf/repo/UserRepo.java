@@ -10,4 +10,6 @@ public interface UserRepo {
     void updateUser(User user);
     Optional<? extends User> getUser(String libCard);
     void deleteUser(String libCard);
+    
+    void deleteUserAvatar(Long id);
 }

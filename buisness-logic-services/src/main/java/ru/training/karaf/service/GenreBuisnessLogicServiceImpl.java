@@ -22,9 +22,7 @@ public class GenreBuisnessLogicServiceImpl implements GenreBuisnessLogicService 
         this.bookRepo = bookRepo;
     }
     
-    public void init() {
-        System.err.println("Genre service loaded");
-    }
+    public void init() {}
 
     @Override
     public List<? extends Genre> getAllGenres() {

@@ -21,6 +21,12 @@
             <groupId>ru.training</groupId>
             <artifactId>buisness-logic-services-api</artifactId>
 	</dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-frontend-jaxrs</artifactId>
+            <version>3.1.9</version>
+            <scope>provided</scope>
+	</dependency>
     </dependencies>
     
     <build>

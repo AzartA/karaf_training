@@ -36,4 +36,13 @@
     <service ref="genreBuisnessLogicServiceBean"
              interface="ru.training.karaf.service.GenreBuisnessLogicService"/>
     
+    <bean id="avatarBuisnessLogicServiceBean"
+          class="ru.training.karaf.service.AvatarBuisnessLogicServiceImpl"
+          init-method="init">
+    
+        <property name="userRepo" ref="userRepo"/>
+    </bean>
+    <service ref="avatarBuisnessLogicServiceBean"
+             interface="ru.training.karaf.service.AvatarBuisnessLogicService"/>
+    
 </blueprint>

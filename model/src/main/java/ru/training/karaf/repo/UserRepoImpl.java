@@ -100,6 +100,14 @@ public class UserRepoImpl implements UserRepo {
         template.tx(em -> getUserByLibCard(libCard, em).ifPresent(em::remove));
     }
 
+    @Override
+    public void deleteUserAvatar(Long id) {
+        template.tx(em ->
+                em.createNamedQuery(UserDO.REMOVE_AVATAR)
+                        .setParameter(1, id)
+                        .executeUpdate());
+    }
+
     private Optional<UserDO> getUserByLibCard(String libCard, EntityManager em) {
         try {
             return Optional.of(em.createNamedQuery(UserDO.GET_USER_BY_LIB_CARD,
