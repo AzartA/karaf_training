@@ -9,6 +9,7 @@
     <reference id="avatarRepo" interface="ru.training.karaf.repo.AvatarRepo"/>
     <reference id="userService" interface="ru.training.karaf.service.UserBuisnessLogicService"/>
     <reference id="bookService" interface="ru.training.karaf.service.BookBuisnessLogicService"/>
+    <reference id="genreService" interface="ru.training.karaf.service.GenreBuisnessLogicService"/>
 
     <bean id="userRestServiceBean" class="ru.training.karaf.rest.UserRestServiceImpl">
         <property name="userService"  ref="userService"/>
@@ -19,8 +20,7 @@
     </bean>
 
     <bean id="genreRestServiceBean" class="ru.training.karaf.rest.GenreRestServiceImpl">
-        <property name="genreRepo"  ref="genreRepo"/>
-        <property name="bookRepo"  ref="bookRepo"/>
+        <property name="genreService"  ref="genreService"/>
     </bean>
     
     <bean id="avatarRestServiceBean" class="ru.training.karaf.rest.AvatarRestServiceImpl">

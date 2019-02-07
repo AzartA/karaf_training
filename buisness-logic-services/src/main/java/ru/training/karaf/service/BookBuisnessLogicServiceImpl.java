@@ -40,12 +40,7 @@ public class BookBuisnessLogicServiceImpl implements BookBuisnessLogicService {
 
     @Override
     public Optional<? extends Book> getBook(String title) {
-        try {
-            return Optional.of(bookRepo.getBook(title).get());
-        } catch (NoSuchElementException e) {
-            System.err.println("Book not found");
-            return Optional.empty();
-        }
+        return bookRepo.getBook(title);
     }
 
     @Override

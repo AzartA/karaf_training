@@ -34,22 +34,12 @@ public class GenreRepoImpl implements GenreRepo {
 
     @Override
     public void createGenre(Genre genre) {
-        GenreDO genreToCreate = new GenreDO(genre);
-        template.tx(em -> em.persist(genreToCreate));
+        template.tx(em -> em.persist(genre));
     }
 
     @Override
-    public void updateGenre(String name, Genre genre) {
-        template.tx(em -> {
-            getGenreByName(name, em).ifPresent(genreToUpdate -> {
-                genreToUpdate.setName(genre.getName());
-                
-                /* Entity Manager automatically detects changes
-                 * and flushes them on commit */
-                
-                //em.merge(genreToUpdate);
-            });
-        });
+    public void updateGenre(Genre genre) {
+        template.tx(em -> em.merge(genre));
     }
 
     @Override

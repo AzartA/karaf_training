@@ -1,13 +1,15 @@
-package ru.training.karaf.repo;
+package ru.training.karaf.service;
 
 import java.util.List;
 import java.util.Optional;
 import ru.training.karaf.model.Genre;
 
-public interface GenreRepo {
+public interface GenreBuisnessLogicService {
+    
     List<? extends Genre> getAllGenres();
-    void createGenre(Genre genre);
-    void updateGenre(Genre genre);
     Optional<? extends Genre> getGenre(String name);
+    void createGenre(Genre genre);
+    void updateGenre(String name, Genre genre);
     void deleteGenre(String name);
+    
 }

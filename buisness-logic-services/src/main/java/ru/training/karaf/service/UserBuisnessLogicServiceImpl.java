@@ -75,12 +75,7 @@ public class UserBuisnessLogicServiceImpl implements UserBuisnessLogicService {
 
     @Override
     public Optional<? extends User> getUser(String libCard) {
-        try {
-            return Optional.of(userRepo.getUser(libCard).get());
-        } catch (NoSuchElementException e) {
-            System.err.println("User not found");
-            return Optional.empty();
-        }
+        return userRepo.getUser(libCard);
     }
 
     @Override
