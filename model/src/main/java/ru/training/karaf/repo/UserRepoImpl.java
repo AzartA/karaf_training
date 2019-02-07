@@ -82,8 +82,7 @@ public class UserRepoImpl implements UserRepo {
     
     @Override
     public void createUser(User user) {
-        UserDO userToCreate = new UserDO(user);
-        template.tx(em -> em.persist(userToCreate));
+        template.tx(em -> em.persist(user));
     }
 
     @Override

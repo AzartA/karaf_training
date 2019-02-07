@@ -41,12 +41,18 @@ public class UserBuisnessLogicServiceImpl implements UserBuisnessLogicService {
             System.err.println("Lib card is already taken");
             return;
         }
-        if (user.getAddress() == null || user.getLibCard() == null ||
-                user.getRegDate() == null || user.getUserName() == null) {
+        
+        if (!isUserDataValid(user)) {
             System.err.println("One or more parameters are invalid");
             return;
         }
-        userRepo.createUser(user);
+        
+        UserDO userToCreate = new UserDO();
+        userToCreate.setAddress(user.getAddress());
+        userToCreate.setLibCard(user.getLibCard());
+        userToCreate.setRegDate(user.getRegDate());
+        userToCreate.setUserName(new UserNameDO(user.getUserName()));
+        userRepo.createUser(userToCreate);
     }
 
     @Override
@@ -56,8 +62,7 @@ public class UserBuisnessLogicServiceImpl implements UserBuisnessLogicService {
             System.err.println("Lib card is already taken");
             return;
         }
-        if (user.getAddress() == null || user.getLibCard() == null ||
-                user.getRegDate() == null || user.getUserName() == null) {
+        if (!isUserDataValid(user)) {
             System.err.println("One or more parameters are invalid");
             return;
         }
@@ -200,4 +205,8 @@ public class UserBuisnessLogicServiceImpl implements UserBuisnessLogicService {
         }
     }
     
+    private boolean isUserDataValid(User user) {
+        return !(user.getAddress() == null || user.getLibCard() == null ||
+                user.getRegDate() == null || user.getUserName() == null);
+    } 
 }

@@ -43,12 +43,6 @@ public class FeedbackDO implements Feedback, Serializable {
 
     public FeedbackDO() {}
     
-    public FeedbackDO(Feedback feedback) {
-        this.message = feedback.getMessage();
-        this.user = new UserDO(feedback.getUser());
-        this.book = new BookDO(feedback.getBook());
-    }
-    
     public Long getId() {
         return id;
     }

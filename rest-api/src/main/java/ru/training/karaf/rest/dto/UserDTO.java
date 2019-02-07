@@ -29,23 +29,9 @@ public class UserDTO implements User {
     
     public UserDTO(User user) {
         this.address = user.getAddress();
-        if (user.getAvatar() != null) {
-            this.avatar = new AvatarDTO(user.getAvatar());
-        }
         this.libCard = user.getLibCard();
         this.regDate = user.getRegDate();
         this.userName = new UserNameDTO(user.getUserName());
-        user.getBooks().forEach(b -> {
-            BookDTO book = new BookDTO(b);
-            books.add(book);
-        });
-        user.getFeedbacks().forEach(f -> {
-            FeedbackDTO feedback = new FeedbackDTO();
-            feedback.setBook(new BookDTO(f.getBook()));
-            feedback.setMessage(f.getMessage());
-            feedback.setUser(this);
-            feedbacks.add(feedback);
-        });
     }
 
     @Override
@@ -113,7 +99,7 @@ public class UserDTO implements User {
 
     @Override
     public int hashCode() {
-        return Objects.hash(userName, libCard, address, regDate, avatar);
+        return Objects.hash(userName, libCard, address, regDate);
     }
 
     @Override
@@ -140,16 +126,12 @@ public class UserDTO implements User {
         if (!Objects.equals(this.regDate, other.regDate)) {
             return false;
         }
-        if (!Objects.equals(this.avatar, other.avatar)) {
-            return false;
-        }
         return true;
     }
 
     @Override
     public String toString() {
         return "UserDTO{" + "userName=" + userName + ", libCard=" + libCard +
-                ", address=" + address + ", regDate=" + regDate + ", avatar="
-                + avatar + '}';
+                ", address=" + address + ", regDate=" + regDate + '}';
     }
 }

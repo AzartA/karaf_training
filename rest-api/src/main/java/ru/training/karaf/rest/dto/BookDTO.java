@@ -22,20 +22,6 @@ public class BookDTO implements Book {
         this.author = book.getAuthor();
         this.year = book.getYear();
         this.genre = new GenreDTO(book.getGenre());
-//        book.getFeedbacks().forEach(f -> {
-//            FeedbackDTO fb = new FeedbackDTO();
-//            fb.setBook(this);
-//            fb.setMessage(f.getMessage());
-//            fb.setUser(new UserDTO(f.getUser()));
-//            feedbacks.add(fb);
-//        });
-    }
-
-    public BookDTO(String title, String author, Integer year, GenreDTO genre) {
-        this.title = title;
-        this.author = author;
-        this.year = year;
-        this.genre = genre;
     }
     
     @Override
