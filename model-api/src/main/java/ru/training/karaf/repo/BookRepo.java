@@ -10,4 +10,6 @@ public interface BookRepo {
     void updateBook(Book book);
     Optional<? extends Book> getBook(String title);
     void deleteBook(String title);
+    
+    void invalidateBook(Long id);
 }

@@ -76,4 +76,9 @@ public class BookRepoImpl implements BookRepo {
             return Optional.empty();
         }
     }
+
+    @Override
+    public void invalidateBook(Long id) {
+        template.tx(em -> em.getEntityManagerFactory().getCache().evict(BookDO.class, id));
+    }
 }

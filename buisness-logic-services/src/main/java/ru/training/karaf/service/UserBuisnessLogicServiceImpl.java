@@ -174,8 +174,7 @@ public class UserBuisnessLogicServiceImpl implements UserBuisnessLogicService {
             book.addFeedback(fb);
             user.addFeedback(fb);
             userRepo.updateUser(user);
-            //bookRepo.updateBook(book);
-            // TODO: update book
+            bookRepo.invalidateBook(book.getId());
             
         } catch (NoSuchElementException e) {
             System.err.println("User/book not found");
@@ -195,8 +194,7 @@ public class UserBuisnessLogicServiceImpl implements UserBuisnessLogicService {
                 }
             }
             userRepo.updateUser(user);
-            //bookRepo.updateBook(book);
-            // TODO: update book
+            bookRepo.invalidateBook(book.getId());
             
         } catch (NoSuchElementException e) {
             System.err.println("User/book not found");
