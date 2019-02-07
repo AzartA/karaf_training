@@ -9,7 +9,7 @@ import ru.training.karaf.model.Book;
 import ru.training.karaf.model.BookDO;
 import ru.training.karaf.model.GenreDO;
 
-public class BookRepoImpl implements BookRepo {
+public class BookRepoImpl implements BookRepo, Repo {
     private JpaTemplate template;
     
     public BookRepoImpl(JpaTemplate template) {
@@ -80,5 +80,10 @@ public class BookRepoImpl implements BookRepo {
     @Override
     public void invalidateBook(Long id) {
         template.tx(em -> em.getEntityManagerFactory().getCache().evict(BookDO.class, id));
+    }
+
+    @Override
+    public BookDO getById(Long id) {
+        return template.txExpr(em -> em.find(BookDO.class, id));
     }
 }

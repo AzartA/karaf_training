@@ -8,7 +8,7 @@ import org.apache.aries.jpa.template.JpaTemplate;
 import ru.training.karaf.model.Genre;
 import ru.training.karaf.model.GenreDO;
 
-public class GenreRepoImpl implements GenreRepo {
+public class GenreRepoImpl implements GenreRepo, Repo {
     private JpaTemplate template;
 
     public GenreRepoImpl(JpaTemplate template) {
@@ -62,5 +62,10 @@ public class GenreRepoImpl implements GenreRepo {
             System.err.println("Genre not found: " + e);
             return Optional.empty();
         }
+    }
+
+    @Override
+    public GenreDO getById(Long id) {
+        return template.txExpr(em -> em.find(GenreDO.class, id));
     }
 }

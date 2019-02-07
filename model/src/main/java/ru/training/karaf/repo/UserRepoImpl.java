@@ -21,7 +21,7 @@ import ru.training.karaf.model.User;
 import ru.training.karaf.model.UserDO;
 import ru.training.karaf.model.UserNameDO;
 
-public class UserRepoImpl implements UserRepo {
+public class UserRepoImpl implements UserRepo, Repo {
     private JpaTemplate template;
 
     public UserRepoImpl(JpaTemplate template) {
@@ -117,5 +117,10 @@ public class UserRepoImpl implements UserRepo {
             System.err.println("User not found: " + e);
             return Optional.empty();
         }
+    }
+
+    @Override
+    public UserDO getById(Long id) {
+        return template.txExpr(em -> em.find(UserDO.class, id));
     }
 }

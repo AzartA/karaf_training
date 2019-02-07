@@ -18,6 +18,8 @@ public class BookBuisnessLogicServiceImpl implements BookBuisnessLogicService {
     private BookRepo bookRepo;
     private GenreRepo genreRepo;
     private UserRepo userRepo;
+    
+    private RepoFacade repoFacade;
 
     public void setBookRepo(BookRepo bookRepo) {
         this.bookRepo = bookRepo;
@@ -29,6 +31,10 @@ public class BookBuisnessLogicServiceImpl implements BookBuisnessLogicService {
 
     public void setUserRepo(UserRepo userRepo) {
         this.userRepo = userRepo;
+    }
+
+    public void setRepoFacade(RepoFacade repoFacade) {
+        this.repoFacade = repoFacade;
     }
     
     @Override

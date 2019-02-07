@@ -7,16 +7,31 @@
     <bean id="userRepo" class="ru.training.karaf.repo.UserRepoImpl" init-method="init">
         <argument ref="jpaTemplate"/>
     </bean>
-    <service ref="userRepo" interface="ru.training.karaf.repo.UserRepo"/>
+    <service ref="userRepo">
+        <interfaces>
+            <value>ru.training.karaf.repo.UserRepo</value>
+            <value>ru.training.karaf.repo.Repo</value>
+        </interfaces>
+    </service>
     
     <bean id="bookRepo" class="ru.training.karaf.repo.BookRepoImpl" init-method="init">
         <argument ref="jpaTemplate"/>
     </bean>
-    <service ref="bookRepo" interface="ru.training.karaf.repo.BookRepo"/>
+    <service ref="bookRepo">
+        <interfaces>
+            <value>ru.training.karaf.repo.BookRepo</value>
+            <value>ru.training.karaf.repo.Repo</value>
+        </interfaces>
+    </service>
     
     <bean id="genreRepo" class="ru.training.karaf.repo.GenreRepoImpl" init-method="init">
         <argument ref="jpaTemplate"/>
     </bean>
-    <service ref="genreRepo" interface="ru.training.karaf.repo.GenreRepo"/>
+    <service ref="genreRepo">
+        <interfaces>
+            <value>ru.training.karaf.repo.GenreRepo</value>
+            <value>ru.training.karaf.repo.Repo</value>
+        </interfaces>
+    </service>
 
 </blueprint>
