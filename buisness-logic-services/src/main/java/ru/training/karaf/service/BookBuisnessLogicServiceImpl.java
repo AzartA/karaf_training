@@ -29,9 +29,7 @@ public class BookBuisnessLogicServiceImpl implements BookBuisnessLogicService {
 
     public void setUserRepo(UserRepo userRepo) {
         this.userRepo = userRepo;
-    }    
-    
-    public void init() {}
+    }
     
     @Override
     public List<? extends Book> getAllBooks() {

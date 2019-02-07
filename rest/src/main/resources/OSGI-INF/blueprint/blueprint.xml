@@ -3,10 +3,6 @@
            xmlns:jaxrs="http://cxf.apache.org/blueprint/jaxrs"
 >
 
-    <reference id="userRepo" interface="ru.training.karaf.repo.UserRepo"/>
-    <reference id="genreRepo" interface="ru.training.karaf.repo.GenreRepo"/> 
-    <reference id="bookRepo" interface="ru.training.karaf.repo.BookRepo"/>   
-    <reference id="avatarRepo" interface="ru.training.karaf.repo.AvatarRepo"/>
     <reference id="userService" interface="ru.training.karaf.service.UserBuisnessLogicService"/>
     <reference id="bookService" interface="ru.training.karaf.service.BookBuisnessLogicService"/>
     <reference id="genreService" interface="ru.training.karaf.service.GenreBuisnessLogicService"/>

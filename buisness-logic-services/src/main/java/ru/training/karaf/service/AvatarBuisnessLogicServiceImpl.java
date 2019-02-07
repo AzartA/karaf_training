@@ -17,8 +17,6 @@ public class AvatarBuisnessLogicServiceImpl implements AvatarBuisnessLogicServic
         this.userRepo = userRepo;
     }
     
-    public void init() {}
-    
     @Override
     public Optional<byte[]> getAvatar(String libCard) {
         try {

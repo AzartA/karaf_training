@@ -28,8 +28,6 @@ public class UserBuisnessLogicServiceImpl implements UserBuisnessLogicService {
         this.bookRepo = bookRepo;
     }
     
-    public void init() {}
-    
     @Override
     public List<? extends User> getAllUsers() {
         return userRepo.getAllUsers();

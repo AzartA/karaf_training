@@ -6,8 +6,7 @@
     <reference id="genreRepo" interface="ru.training.karaf.repo.GenreRepo"/>
     
     <bean id="userBuisnessLogicServiceBean"
-          class="ru.training.karaf.service.UserBuisnessLogicServiceImpl"
-          init-method="init">
+          class="ru.training.karaf.service.UserBuisnessLogicServiceImpl">
         
         <property name="userRepo" ref="userRepo"/>
         <property name="bookRepo" ref="bookRepo"/>              
@@ -16,8 +15,7 @@
              interface="ru.training.karaf.service.UserBuisnessLogicService" />
     
     <bean id="bookBuisnessLogicServiceBean"
-          class="ru.training.karaf.service.BookBuisnessLogicServiceImpl"
-          init-method="init">
+          class="ru.training.karaf.service.BookBuisnessLogicServiceImpl">
         
         <property name="bookRepo" ref="bookRepo"/>
         <property name="genreRepo" ref="genreRepo"/>
@@ -27,8 +25,7 @@
              interface="ru.training.karaf.service.BookBuisnessLogicService" />
     
     <bean id="genreBuisnessLogicServiceBean"
-          class="ru.training.karaf.service.GenreBuisnessLogicServiceImpl"
-          init-method="init">
+          class="ru.training.karaf.service.GenreBuisnessLogicServiceImpl">
     
         <property name="genreRepo" ref="genreRepo"/>
         <property name="bookRepo" ref="bookRepo"/>
@@ -37,8 +34,7 @@
              interface="ru.training.karaf.service.GenreBuisnessLogicService"/>
     
     <bean id="avatarBuisnessLogicServiceBean"
-          class="ru.training.karaf.service.AvatarBuisnessLogicServiceImpl"
-          init-method="init">
+          class="ru.training.karaf.service.AvatarBuisnessLogicServiceImpl">
     
         <property name="userRepo" ref="userRepo"/>
     </bean>

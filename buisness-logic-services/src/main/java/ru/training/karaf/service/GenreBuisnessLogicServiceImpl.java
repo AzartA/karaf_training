@@ -22,8 +22,6 @@ public class GenreBuisnessLogicServiceImpl implements GenreBuisnessLogicService 
         this.bookRepo = bookRepo;
     }
     
-    public void init() {}
-
     @Override
     public List<? extends Genre> getAllGenres() {
         return genreRepo.getAllGenres();
