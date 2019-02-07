@@ -44,7 +44,8 @@ public class BookBuisnessLogicServiceImpl implements BookBuisnessLogicService {
 
     @Override
     public Optional<? extends Book> getBook(String title) {
-        return bookRepo.getBook(title);
+        return repoFacade.retrieveEntity(BookDO.class, title);
+        //return bookRepo.getBook(title);
     }
 
     @Override
@@ -60,8 +61,10 @@ public class BookBuisnessLogicServiceImpl implements BookBuisnessLogicService {
         }
         
         try {
+//            GenreDO genre = (GenreDO)
+//                    genreRepo.getGenre(book.getGenre().getName()).get();
             GenreDO genre = (GenreDO)
-                    genreRepo.getGenre(book.getGenre().getName()).get();
+                    repoFacade.retrieveEntity(GenreDO.class, book.getGenre().getName()).get();
             BookDO bookToCreate = new BookDO();
             bookToCreate.setAuthor(book.getAuthor());
             bookToCreate.setGenre(genre);
@@ -86,10 +89,16 @@ public class BookBuisnessLogicServiceImpl implements BookBuisnessLogicService {
                 return;
             }
             
-            GenreDO genre = (GenreDO)
-                    genreRepo.getGenre(book.getGenre().getName()).get();
+//            GenreDO genre = (GenreDO)
+//                    genreRepo.getGenre(book.getGenre().getName()).get();
             
-            BookDO bookToUpdate = (BookDO)bookRepo.getBook(title).get();
+            GenreDO genre = (GenreDO)
+                    repoFacade.retrieveEntity(GenreDO.class, book.getGenre().getName()).get();
+
+//            BookDO bookToUpdate = (BookDO)bookRepo.getBook(title).get();
+
+            BookDO bookToUpdate = (BookDO)repoFacade.retrieveEntity(BookDO.class, title).get();
+
             bookToUpdate.setAuthor(book.getAuthor());
             bookToUpdate.setGenre(genre);
             bookToUpdate.setTitle(book.getTitle());
@@ -103,7 +112,10 @@ public class BookBuisnessLogicServiceImpl implements BookBuisnessLogicService {
     @Override
     public void deleteBook(String title) {
         try {
-            BookDO book = (BookDO)bookRepo.getBook(title).get();
+            //BookDO book = (BookDO)bookRepo.getBook(title).get();
+            
+            BookDO book = (BookDO)repoFacade.retrieveEntity(BookDO.class, title).get();
+            
             List<UserDO> users = (List<UserDO>)userRepo.getAllUsers();
             
             users.forEach(u -> {
@@ -122,7 +134,10 @@ public class BookBuisnessLogicServiceImpl implements BookBuisnessLogicService {
     @Override
     public List<? extends Feedback> getBookFeedbacks(String title) {
         try {
-            BookDO book = (BookDO)bookRepo.getBook(title).get();
+            //BookDO book = (BookDO)bookRepo.getBook(title).get();
+            
+            BookDO book = (BookDO)repoFacade.retrieveEntity(BookDO.class, title).get();
+            
             return book.getFeedbacks();
         } catch (NoSuchElementException e) {
             System.err.println("Book not found");

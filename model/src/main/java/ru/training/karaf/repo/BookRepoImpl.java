@@ -83,7 +83,11 @@ public class BookRepoImpl implements BookRepo, Repo {
     }
 
     @Override
-    public BookDO getById(Long id) {
-        return template.txExpr(em -> em.find(BookDO.class, id));
+    public Object getByCriteria(String criteria) {
+        Optional<? extends Book> book = getBook(criteria);
+        if (book.isPresent()) {
+            return book.get();
+        }
+        return null;
     }
 }

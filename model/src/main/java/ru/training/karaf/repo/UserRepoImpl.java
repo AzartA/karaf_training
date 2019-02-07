@@ -120,7 +120,11 @@ public class UserRepoImpl implements UserRepo, Repo {
     }
 
     @Override
-    public UserDO getById(Long id) {
-        return template.txExpr(em -> em.find(UserDO.class, id));
+    public Object getByCriteria(String criteria) {
+        Optional<? extends User> user = getUser(criteria);
+        if (user.isPresent()) {
+            return user.get();
+        }
+        return null;
     }
 }

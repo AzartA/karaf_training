@@ -65,7 +65,11 @@ public class GenreRepoImpl implements GenreRepo, Repo {
     }
 
     @Override
-    public GenreDO getById(Long id) {
-        return template.txExpr(em -> em.find(GenreDO.class, id));
+    public Object getByCriteria(String criteria) {
+        Optional<? extends Genre> genre = getGenre(criteria);
+        if (genre.isPresent()) {
+            return genre.get();
+        }
+        return null;
     }
 }

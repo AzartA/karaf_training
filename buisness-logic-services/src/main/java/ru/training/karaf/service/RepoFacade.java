@@ -1,6 +1,7 @@
 package ru.training.karaf.service;
 
 import java.util.List;
+import java.util.Optional;
 import ru.training.karaf.repo.Repo;
 
 public class RepoFacade {
@@ -11,17 +12,17 @@ public class RepoFacade {
         this.repos = repos;
     }
 
-    public void init() {
-        repos.forEach(r -> {
-            System.err.println(r.getClass().getCanonicalName());
-        });
-    }
+    public void init() {}
     
-    public Object retrieveEntity(Class type, Long id) {
-        System.err.println(repos.get(0).getById(id));
-        System.err.println(repos.get(1).getById(id));
-        System.err.println(repos.get(2).getById(id));
-        return null;
+    public Optional retrieveEntity(Class type, String criteria) {
+        System.err.println("Inside facade");
+        for (Repo r: repos) {
+            Object entity = r.getByCriteria(criteria);
+            System.err.println(entity);
+            if (entity != null && entity.getClass().equals(type)) {
+                return Optional.of(entity);
+            }
+        }
+        return Optional.empty();
     }
-    
 }
