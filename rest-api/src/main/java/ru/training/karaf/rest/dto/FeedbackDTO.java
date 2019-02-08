@@ -4,6 +4,7 @@ import java.util.Objects;
 import ru.training.karaf.model.Feedback;
 
 public class FeedbackDTO implements Feedback {
+    
     private String message;
     private UserDTO user;
     private BookDTO book;

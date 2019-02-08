@@ -20,7 +20,7 @@
 		<module>container</module>
 		<module>feature</module>
                 <module>buisness-logic-services</module>
-	 <module>buisness-logic-services-api</module>
+                <module>buisness-logic-services-api</module>
 	</modules>
 
 	<dependencyManagement>

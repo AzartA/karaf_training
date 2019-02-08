@@ -11,6 +11,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import ru.training.karaf.model.User;
 
 public class UserDTO implements User {
+    
     private UserNameDTO userName;
     private String libCard;
     private JsonNode address;

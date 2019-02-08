@@ -2,7 +2,6 @@ package ru.training.karaf.repo;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
@@ -29,11 +28,13 @@ public class UserRepoImpl implements UserRepo, Repo {
     }
 
     public void init() throws IOException {
-        InputStream in = new FileInputStream("C:\\Projects\\karaf_training\\a.png");
-        byte[] picture = new byte[in.available()];
-        in.read(picture);
+
+        /* Create admin stub */
         
+        InputStream in = getClass().getResourceAsStream("/img/admin.png");
         AvatarDO avatar = new AvatarDO();
+        byte[] picture = new byte[in.available()];
+        in.read(picture, 0, picture.length);
         avatar.setPicture(picture);
         
         UserNameDO name = new UserNameDO();
@@ -72,6 +73,7 @@ public class UserRepoImpl implements UserRepo, Repo {
             em.persist(genre);
             em.persist(admin);
         });
+        
     }
     
     @Override

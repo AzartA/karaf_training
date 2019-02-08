@@ -4,6 +4,7 @@ import java.util.Objects;
 import ru.training.karaf.model.Genre;
 
 public class GenreDTO implements Genre {
+    
     private String name;
     
     public GenreDTO() {}

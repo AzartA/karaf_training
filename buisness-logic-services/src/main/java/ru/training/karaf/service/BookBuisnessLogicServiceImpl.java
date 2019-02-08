@@ -45,7 +45,7 @@ public class BookBuisnessLogicServiceImpl implements BookBuisnessLogicService {
     @Override
     public Optional<? extends Book> getBook(String title) {
         return repoFacade.retrieveEntity(BookDO.class, title);
-        //return bookRepo.getBook(title);
+        /* return bookRepo.getBook(title); */
     }
 
     @Override
@@ -61,8 +61,8 @@ public class BookBuisnessLogicServiceImpl implements BookBuisnessLogicService {
         }
         
         try {
-//            GenreDO genre = (GenreDO)
-//                    genreRepo.getGenre(book.getGenre().getName()).get();
+            /* GenreDO genre = (GenreDO)
+                    genreRepo.getGenre(book.getGenre().getName()).get(); */
             GenreDO genre = (GenreDO)
                     repoFacade.retrieveEntity(GenreDO.class, book.getGenre().getName()).get();
             BookDO bookToCreate = new BookDO();
@@ -89,13 +89,13 @@ public class BookBuisnessLogicServiceImpl implements BookBuisnessLogicService {
                 return;
             }
             
-//            GenreDO genre = (GenreDO)
-//                    genreRepo.getGenre(book.getGenre().getName()).get();
+            /* GenreDO genre = (GenreDO)
+                    genreRepo.getGenre(book.getGenre().getName()).get(); */
             
             GenreDO genre = (GenreDO)
                     repoFacade.retrieveEntity(GenreDO.class, book.getGenre().getName()).get();
 
-//            BookDO bookToUpdate = (BookDO)bookRepo.getBook(title).get();
+            /* BookDO bookToUpdate = (BookDO)bookRepo.getBook(title).get(); */
 
             BookDO bookToUpdate = (BookDO)repoFacade.retrieveEntity(BookDO.class, title).get();
 
@@ -112,7 +112,7 @@ public class BookBuisnessLogicServiceImpl implements BookBuisnessLogicService {
     @Override
     public void deleteBook(String title) {
         try {
-            //BookDO book = (BookDO)bookRepo.getBook(title).get();
+            /* BookDO book = (BookDO)bookRepo.getBook(title).get(); */
             
             BookDO book = (BookDO)repoFacade.retrieveEntity(BookDO.class, title).get();
             
@@ -134,7 +134,7 @@ public class BookBuisnessLogicServiceImpl implements BookBuisnessLogicService {
     @Override
     public List<? extends Feedback> getBookFeedbacks(String title) {
         try {
-            //BookDO book = (BookDO)bookRepo.getBook(title).get();
+            /* BookDO book = (BookDO)bookRepo.getBook(title).get(); */
             
             BookDO book = (BookDO)repoFacade.retrieveEntity(BookDO.class, title).get();
             

@@ -15,6 +15,7 @@ import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 
 @Path("/avatars")
 public interface AvatarRestService {
+    
     @GET
     @Produces("image/png")
     Response getAvatar(@QueryParam("libCard") String libCard);
@@ -27,4 +28,5 @@ public interface AvatarRestService {
     
     @DELETE
     Response deleteAvatar(@QueryParam("libCard") String libCard);
+    
 }

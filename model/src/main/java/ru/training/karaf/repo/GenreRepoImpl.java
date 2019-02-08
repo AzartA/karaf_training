@@ -9,6 +9,7 @@ import ru.training.karaf.model.Genre;
 import ru.training.karaf.model.GenreDO;
 
 public class GenreRepoImpl implements GenreRepo, Repo {
+    
     private JpaTemplate template;
 
     public GenreRepoImpl(JpaTemplate template) {
@@ -59,7 +60,6 @@ public class GenreRepoImpl implements GenreRepo, Repo {
                     .setParameter("name", name)
                     .getSingleResult());
         } catch (NoResultException e) {
-            System.err.println("Genre not found: " + e);
             return Optional.empty();
         }
     }

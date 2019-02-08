@@ -66,4 +66,5 @@ public interface UserRestService {
     @Path("{libCard}/feedbacks")
     void removeFeedback(@PathParam("libCard") String libCard,
             @QueryParam("title") String title);
+    
 }

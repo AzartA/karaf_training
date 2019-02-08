@@ -40,6 +40,7 @@ import javax.persistence.TemporalType;
         query = "DELETE FROM AVATARDO WHERE id = ?")
 
 public class UserDO implements User, Serializable {
+    
     public static final String GET_ALL_USERS = "Users.getAllUsers";
     public static final String GET_USER_BY_LIB_CARD = "Users.getUserByLibCard";
     public static final String REMOVE_AVATAR = "Users.removeAvatar";

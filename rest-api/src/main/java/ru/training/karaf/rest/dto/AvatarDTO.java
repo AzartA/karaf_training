@@ -4,6 +4,7 @@ import java.util.Arrays;
 import ru.training.karaf.model.Avatar;
 
 public class AvatarDTO implements Avatar {
+    
     private byte[] picture;
     
     public AvatarDTO() {}

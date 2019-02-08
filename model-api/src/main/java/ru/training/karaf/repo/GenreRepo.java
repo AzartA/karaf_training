@@ -5,9 +5,15 @@ import java.util.Optional;
 import ru.training.karaf.model.Genre;
 
 public interface GenreRepo {
+    
     List<? extends Genre> getAllGenres();
+    
     void createGenre(Genre genre);
+    
     void updateGenre(Genre genre);
+    
     Optional<? extends Genre> getGenre(String name);
+    
     void deleteGenre(String name);
+
 }

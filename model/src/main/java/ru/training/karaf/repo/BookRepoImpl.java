@@ -10,6 +10,7 @@ import ru.training.karaf.model.BookDO;
 import ru.training.karaf.model.GenreDO;
 
 public class BookRepoImpl implements BookRepo, Repo {
+    
     private JpaTemplate template;
     
     public BookRepoImpl(JpaTemplate template) {
@@ -17,6 +18,9 @@ public class BookRepoImpl implements BookRepo, Repo {
     }
     
     public void init() {
+        
+        /* Create two book stubs */
+        
         GenreDO genre = new GenreDO();
         genre.setName("g1");
         
@@ -72,14 +76,14 @@ public class BookRepoImpl implements BookRepo, Repo {
                     BookDO.class).setParameter("title", title)
                     .getSingleResult());
         } catch (NoResultException ex) {
-            System.err.println("Book not found: " + ex);
             return Optional.empty();
         }
     }
 
     @Override
     public void invalidateBook(Long id) {
-        template.tx(em -> em.getEntityManagerFactory().getCache().evict(BookDO.class, id));
+        template.tx(em ->
+                em.getEntityManagerFactory().getCache().evict(BookDO.class, id));
     }
 
     @Override

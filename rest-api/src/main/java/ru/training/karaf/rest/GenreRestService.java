@@ -34,4 +34,5 @@ public interface GenreRestService {
     @DELETE
     @Path("{name}")
     void deleteGenre(@PathParam("name") String name);
+    
 }

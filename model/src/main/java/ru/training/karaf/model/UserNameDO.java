@@ -7,6 +7,7 @@ import javax.persistence.Embeddable;
 
 @Embeddable
 public class UserNameDO implements UserName, Serializable {
+    
     @Column(name = "FIRST_NAME")
     private String firstName;
     

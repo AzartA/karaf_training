@@ -7,6 +7,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import ru.training.karaf.model.Book;
 
 public class BookDTO implements Book {
+    
     private String title;
     private String author;
     private Integer year;

@@ -27,6 +27,7 @@ import javax.persistence.Table;
 })
 
 public class BookDO implements Book, Serializable {
+    
     public static final String GET_ALL_BOOKS = "Books.getAll";
     public static final String GET_BOOK_BY_TITLE = "Books.getByTitle";
     

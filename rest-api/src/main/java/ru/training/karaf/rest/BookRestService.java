@@ -39,4 +39,5 @@ public interface BookRestService {
     @GET
     @Path("{title}/feedbacks")
     List<FeedbackDTO> getBookFeedbacks(@PathParam("title") String title);
+    
 }

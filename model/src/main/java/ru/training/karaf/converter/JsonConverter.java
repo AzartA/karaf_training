@@ -10,6 +10,7 @@ import org.postgresql.util.PGobject;
 
 @Converter
 public class JsonConverter implements AttributeConverter<JsonNode, Object> {
+    
     private static ObjectMapper mapper = new ObjectMapper();
     
     @Override

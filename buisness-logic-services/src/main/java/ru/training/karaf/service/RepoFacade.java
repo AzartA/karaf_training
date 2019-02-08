@@ -15,10 +15,8 @@ public class RepoFacade {
     public void init() {}
     
     public Optional retrieveEntity(Class type, String criteria) {
-        System.err.println("Inside facade");
         for (Repo r: repos) {
             Object entity = r.getByCriteria(criteria);
-            System.err.println(entity);
             if (entity != null && entity.getClass().equals(type)) {
                 return Optional.of(entity);
             }

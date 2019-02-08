@@ -4,6 +4,7 @@ import java.util.Objects;
 import ru.training.karaf.model.UserName;
 
 public class UserNameDTO implements UserName {
+    
     private String firstName;
     private String lastName;
 

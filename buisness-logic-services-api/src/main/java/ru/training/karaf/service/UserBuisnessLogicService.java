@@ -10,15 +10,25 @@ import ru.training.karaf.model.User;
 public interface UserBuisnessLogicService {
     
     List<? extends User> getAllUsers();
-    void createUser(User user);
-    void updateUser(String libCard, User user);
-    Optional<? extends User> getUser(String libCard);
-    void deleteUser(String libCard);
-    Set<? extends Book> getUserBooks(String libCard);
-    List<? extends Feedback> getUserFeedbacks(String libCard);
-    public void addBook(String libCard, String title);
-    public void removeBook(String libCard, String title);
-    public void addFeedback(String libCard, Feedback feedback);
-    public void removeFeedback(String libCard, String title);
     
+    void createUser(User user);
+    
+    void updateUser(String libCard, User user);
+    
+    Optional<? extends User> getUser(String libCard);
+    
+    void deleteUser(String libCard);
+    
+    Set<? extends Book> getUserBooks(String libCard);
+    
+    List<? extends Feedback> getUserFeedbacks(String libCard);
+    
+    void addBook(String libCard, String title);
+    
+    void removeBook(String libCard, String title);
+    
+    void addFeedback(String libCard, Feedback feedback);
+    
+    void removeFeedback(String libCard, String title);
+        
 }
