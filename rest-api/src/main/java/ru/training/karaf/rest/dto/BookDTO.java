@@ -1,17 +1,28 @@
 package ru.training.karaf.rest.dto;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import javax.xml.bind.annotation.XmlTransient;
+import ru.training.karaf.custom.BookDTOSerializer;
 import ru.training.karaf.model.Book;
 
+@JsonSerialize(using = BookDTOSerializer.class)
 public class BookDTO implements Book {
     
     private String title;
     private String author;
     private Integer year;
     private GenreDTO genre;
+    
+    private List<Pair> properties = new ArrayList<>();
+    
+    {
+        properties.add(new Pair("1", "2"));
+        properties.add(new Pair("3", "4"));
+        properties.add(new Pair("5", "6"));
+    }
     
     @XmlTransient
     private List<FeedbackDTO> feedbacks = new ArrayList<>();
@@ -68,6 +79,14 @@ public class BookDTO implements Book {
 
     public void setFeedbacks(List<FeedbackDTO> feedbacks) {
         this.feedbacks = feedbacks;
+    }
+
+    public List<Pair> getProperties() {
+        return properties;
+    }
+
+    public void setProperties(List<Pair> properties) {
+        this.properties = properties;
     }
 
     @Override
