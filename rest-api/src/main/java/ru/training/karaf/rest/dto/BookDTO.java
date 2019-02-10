@@ -1,14 +1,17 @@
 package ru.training.karaf.rest.dto;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import javax.xml.bind.annotation.XmlTransient;
-import ru.training.karaf.custom.BookDTOSerializer;
+import ru.training.karaf.json.BookDTODeserializer;
+import ru.training.karaf.json.BookDTOSerializer;
 import ru.training.karaf.model.Book;
 
 @JsonSerialize(using = BookDTOSerializer.class)
+@JsonDeserialize(using = BookDTODeserializer.class)
 public class BookDTO implements Book {
     
     private String title;
@@ -19,9 +22,9 @@ public class BookDTO implements Book {
     private List<Pair> properties = new ArrayList<>();
     
     {
-        properties.add(new Pair("1", "2"));
-        properties.add(new Pair("3", "4"));
-        properties.add(new Pair("5", "6"));
+        properties.add(new Pair("k1", "v1"));
+        properties.add(new Pair("k2", "v2"));
+        properties.add(new Pair("k3", "v3"));
     }
     
     @XmlTransient
@@ -91,7 +94,7 @@ public class BookDTO implements Book {
 
     @Override
     public int hashCode() {
-        return Objects.hash(title, author, year, genre);
+        return Objects.hash(title, author, year, genre, properties);
     }
 
     @Override
@@ -118,12 +121,16 @@ public class BookDTO implements Book {
         if (!Objects.equals(this.genre, other.genre)) {
             return false;
         }
+        if (!Objects.equals(this.properties, other.properties)) {
+            return false;
+        }
         return true;
     }
 
     @Override
     public String toString() {
-        return "BookDTO{" + "title=" + title + ", author=" + author + ", year="
-                + year + ", genre=" + genre + '}';
+        return "BookDTO{" + "title=" + title + ", author=" + author +
+                ", year=" + year + ", genre=" + genre +
+                ", properties=" + properties + '}';
     }
 }

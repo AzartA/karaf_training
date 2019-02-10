@@ -1,4 +1,4 @@
-package ru.training.karaf.custom;
+package ru.training.karaf.json;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
@@ -23,8 +23,8 @@ public class BookDTOSerializer extends StdSerializer<BookDTO> {
             throws IOException {
         
         jg.writeStartObject();
-        jg.writeStringField("author", book.getAuthor());
         jg.writeStringField("title", book.getTitle());
+        jg.writeStringField("author", book.getAuthor());
         jg.writeNumberField("year", book.getYear());
         jg.writeObjectField("genre", book.getGenre());
         jg.writeFieldName("properties");

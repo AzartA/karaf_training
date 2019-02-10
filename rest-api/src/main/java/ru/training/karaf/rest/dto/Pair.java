@@ -58,4 +58,9 @@ public class Pair {
         }
         return true;
     }
+
+    @Override
+    public String toString() {
+        return "Pair{" + "first=" + first + ", second=" + second + '}';
+    }
 }
