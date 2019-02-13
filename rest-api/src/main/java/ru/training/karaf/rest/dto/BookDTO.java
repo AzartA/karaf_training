@@ -1,5 +1,6 @@
 package ru.training.karaf.rest.dto;
 
+import ru.training.karaf.json.Pair;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.util.ArrayList;

@@ -11,7 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.training.karaf.rest.dto.BookDTO;
 import ru.training.karaf.rest.dto.GenreDTO;
-import ru.training.karaf.rest.dto.Pair;
+import ru.training.karaf.json.Pair;
 
 
 public class JsonRepresentationTest {

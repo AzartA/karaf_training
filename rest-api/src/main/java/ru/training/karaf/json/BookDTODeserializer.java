@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Map.Entry;
 import ru.training.karaf.rest.dto.BookDTO;
 import ru.training.karaf.rest.dto.GenreDTO;
-import ru.training.karaf.rest.dto.Pair;
 
 public class BookDTODeserializer extends StdDeserializer<BookDTO> {
 

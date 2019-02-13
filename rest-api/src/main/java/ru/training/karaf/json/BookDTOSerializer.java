@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import java.io.IOException;
 import ru.training.karaf.rest.dto.BookDTO;
-import ru.training.karaf.rest.dto.Pair;
 
 
 public class BookDTOSerializer extends StdSerializer<BookDTO> {

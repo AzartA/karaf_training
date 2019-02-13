@@ -1,4 +1,4 @@
-package ru.training.karaf.rest.dto;
+package ru.training.karaf.json;
 
 import java.util.Objects;
 
