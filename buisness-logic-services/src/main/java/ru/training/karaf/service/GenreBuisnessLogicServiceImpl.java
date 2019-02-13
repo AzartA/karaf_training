@@ -33,48 +33,51 @@ public class GenreBuisnessLogicServiceImpl implements GenreBuisnessLogicService 
     }
 
     @Override
-    public void createGenre(Genre genre) {
+    public boolean createGenre(Genre genre) {
         if (!isGenreDataValid(genre)) {
-            System.err.println("One or more parameters are invalid");
-            return;
+            System.err.println("Genre's name is not specified");
+            return false;
         }
         
         if (genreRepo.getGenre(genre.getName()).isPresent()) {
             System.err.println("Genre already exists");
-            return;
+            return false;
         }
         
         GenreDO genreToCreate = new GenreDO();
         genreToCreate.setName(genre.getName());
         genreRepo.createGenre(genreToCreate);
+        return true;
     }
 
     @Override
-    public void updateGenre(String name, Genre genre) {
+    public boolean updateGenre(String name, Genre genre) {
         if (!isGenreDataValid(genre) || genre.getName().equals(Genre.DEFAULT_GENRE)) {
             System.err.println("One or more parameters are invalid");
-            return;
+            return false;
         }
         
         if (genreRepo.getGenre(genre.getName()).isPresent()) {
             System.err.println("Genre already exists");
-            return;
+            return false;
         }
         
         try {
             GenreDO genreToUpdate = (GenreDO)genreRepo.getGenre(name).get();
             genreToUpdate.setName(genre.getName());
             genreRepo.updateGenre(genreToUpdate);
+            return true;
         } catch (NoSuchElementException e) {
             System.err.println("Genre not found");
+            return false;
         }
     }
 
     @Override
-    public void deleteGenre(String name) {
+    public boolean deleteGenre(String name) {
         if (name.equals(GenreDO.DEFAULT_GENRE)) {
             System.err.println("Access denied");
-            return;
+            return false;
         }
         
         try {
@@ -88,8 +91,10 @@ public class GenreBuisnessLogicServiceImpl implements GenreBuisnessLogicService 
                 }
             });
             genreRepo.deleteGenre(name);
+            return true;
         } catch (NoSuchElementException e) {
             System.err.println("Genre not found");
+            return false;
         }
     }
     

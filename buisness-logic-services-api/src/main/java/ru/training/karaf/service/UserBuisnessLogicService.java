@@ -11,24 +11,24 @@ public interface UserBuisnessLogicService {
     
     List<? extends User> getAllUsers();
     
-    void createUser(User user);
+    boolean createUser(User user);
     
-    void updateUser(String libCard, User user);
+    boolean updateUser(String libCard, User user);
     
     Optional<? extends User> getUser(String libCard);
     
-    void deleteUser(String libCard);
+    boolean deleteUser(String libCard);
     
     Set<? extends Book> getUserBooks(String libCard);
     
     List<? extends Feedback> getUserFeedbacks(String libCard);
     
-    void addBook(String libCard, String title);
+    boolean addBook(String libCard, String title);
     
-    void removeBook(String libCard, String title);
+    boolean removeBook(String libCard, String title);
     
-    void addFeedback(String libCard, Feedback feedback);
+    boolean addFeedback(String libCard, Feedback feedback);
     
-    void removeFeedback(String libCard, String title);
+    boolean removeFeedback(String libCard, String title);
         
 }

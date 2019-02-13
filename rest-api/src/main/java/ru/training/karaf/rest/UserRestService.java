@@ -12,6 +12,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import ru.training.karaf.rest.dto.BookDTO;
 import ru.training.karaf.rest.dto.FeedbackDTO;
 import ru.training.karaf.rest.dto.UserDTO;
@@ -25,11 +26,11 @@ public interface UserRestService {
     List<UserDTO> getAllUsers();
     
     @POST
-    void createUser(UserDTO user);
+    Response createUser(UserDTO user);
     
     @PUT
     @Path("{libCard}")
-    void updateUser(@PathParam("libCard") String libCard, UserDTO user);
+    Response updateUser(@PathParam("libCard") String libCard, UserDTO user);
     
     @GET
     @Path("{libCard}")
@@ -37,7 +38,7 @@ public interface UserRestService {
     
     @DELETE
     @Path("{libCard}")
-    void deleteUser(@PathParam("libCard") String libCard);
+    Response deleteUser(@PathParam("libCard") String libCard);
     
     @GET
     @Path("{libCard}/books")
@@ -45,12 +46,12 @@ public interface UserRestService {
     
     @POST
     @Path("{libCard}/books")
-    void addBook(@PathParam("libCard") String libCard,
+    Response addBook(@PathParam("libCard") String libCard,
             @QueryParam("title") String title);
     
     @DELETE
     @Path("{libCard}/books")
-    void removeBook(@PathParam("libCard") String libCard,
+    Response removeBook(@PathParam("libCard") String libCard,
             @QueryParam("title") String title);   
     
     @GET
@@ -59,12 +60,12 @@ public interface UserRestService {
     
     @POST
     @Path("{libCard}/feedbacks")
-    void addFeedback(@PathParam("libCard") String libCard,
+    Response addFeedback(@PathParam("libCard") String libCard,
             FeedbackDTO feedback);
     
     @DELETE
     @Path("{libCard}/feedbacks")
-    void removeFeedback(@PathParam("libCard") String libCard,
+    Response removeFeedback(@PathParam("libCard") String libCard,
             @QueryParam("title") String title);
     
 }

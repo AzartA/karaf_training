@@ -34,15 +34,15 @@ public class UserBuisnessLogicServiceImpl implements UserBuisnessLogicService {
     }
 
     @Override
-    public void createUser(User user) {
+    public boolean createUser(User user) {
         if (userRepo.getUser(user.getLibCard()).isPresent()) {
             System.err.println("Lib card is already taken");
-            return;
+            return false;
         }
         
         if (!isUserDataValid(user)) {
             System.err.println("One or more parameters are invalid");
-            return;
+            return false;
         }
         
         UserDO userToCreate = new UserDO();
@@ -51,18 +51,19 @@ public class UserBuisnessLogicServiceImpl implements UserBuisnessLogicService {
         userToCreate.setRegDate(user.getRegDate());
         userToCreate.setUserName(new UserNameDO(user.getUserName()));
         userRepo.createUser(userToCreate);
+        return true;
     }
 
     @Override
-    public void updateUser(String libCard, User user) {
+    public boolean updateUser(String libCard, User user) {
         if (userRepo.getUser(user.getLibCard()).isPresent()
                 && !libCard.equals(user.getLibCard())) {
             System.err.println("Lib card is already taken");
-            return;
+            return false;
         }
         if (!isUserDataValid(user)) {
             System.err.println("One or more parameters are invalid");
-            return;
+            return false;
         }
         try {
             UserDO userToUpdate = (UserDO)userRepo.getUser(libCard).get();
@@ -71,8 +72,10 @@ public class UserBuisnessLogicServiceImpl implements UserBuisnessLogicService {
             userToUpdate.setRegDate(user.getRegDate());
             userToUpdate.setUserName(new UserNameDO(user.getUserName()));
             userRepo.updateUser(userToUpdate);
+            return true;
         } catch (NoSuchElementException e) {
             System.err.println("User not found");
+            return false;
         }
     }
 
@@ -82,8 +85,9 @@ public class UserBuisnessLogicServiceImpl implements UserBuisnessLogicService {
     }
 
     @Override
-    public void deleteUser(String libCard) {
+    public boolean deleteUser(String libCard) {
         userRepo.deleteUser(libCard);
+        return true;
     }
 
     @Override
@@ -109,42 +113,46 @@ public class UserBuisnessLogicServiceImpl implements UserBuisnessLogicService {
     }
 
     @Override
-    public void addBook(String libCard, String title) {
+    public boolean addBook(String libCard, String title) {
         try {
             UserDO user = (UserDO)userRepo.getUser(libCard).get();
             BookDO book = (BookDO)bookRepo.getBook(title).get();
             if (user.getBooks().contains(book)) {
                 System.err.println("User already has this book");
-                return;
+                return false;
             }
             user.getBooks().add(book);
             userRepo.updateUser(user);
+            return true;
         } catch (NoSuchElementException e) {
             System.err.println("User/book not found");
+            return false;
         }
     }
 
     @Override
-    public void removeBook(String libCard, String title) {
+    public boolean removeBook(String libCard, String title) {
         try {
             UserDO user = (UserDO)userRepo.getUser(libCard).get();
             BookDO book = (BookDO)bookRepo.getBook(title).get();
             if (!user.getBooks().remove(book)) {
                 System.err.println("User doesn't have this book");
-                return;
+                return false;
             }
             userRepo.updateUser(user);
+            return true;
         } catch (NoSuchElementException e) {
             System.err.println("User/book not found");
+            return false;
         }
     }
 
     @Override
-    public void addFeedback(String libCard, Feedback feedback) {
+    public boolean addFeedback(String libCard, Feedback feedback) {
         try {
             if (feedback.getMessage() == null || feedback.getBook() == null) {
                 System.err.println("One or more parameters are invalid");
-                return;
+                return false;
             }
             UserDO user = (UserDO)userRepo.getUser(libCard).get();
             BookDO book = (BookDO)
@@ -156,7 +164,7 @@ public class UserBuisnessLogicServiceImpl implements UserBuisnessLogicService {
                             title.equals(feedback.getBook().getTitle()))) {
                 
                 System.err.println("User doens't have this book");
-                return;
+                return false;
             }
             
             if (user.getFeedbacks()
@@ -166,7 +174,7 @@ public class UserBuisnessLogicServiceImpl implements UserBuisnessLogicService {
                             title.equals(feedback.getBook().getTitle()))) {
                 
                 System.err.println("User's feedback already exists");
-                return;
+                return false;
             }
             
             FeedbackDO fb = new FeedbackDO();
@@ -175,14 +183,16 @@ public class UserBuisnessLogicServiceImpl implements UserBuisnessLogicService {
             user.addFeedback(fb);
             userRepo.updateUser(user);
             bookRepo.invalidateBook(book.getId());
+            return true;
             
         } catch (NoSuchElementException e) {
             System.err.println("User/book not found");
+            return false;
         }
     }
 
     @Override
-    public void removeFeedback(String libCard, String title) {
+    public boolean removeFeedback(String libCard, String title) {
         try {
             UserDO user = (UserDO)userRepo.getUser(libCard).get();
             BookDO book = (BookDO)bookRepo.getBook(title).get();
@@ -195,9 +205,10 @@ public class UserBuisnessLogicServiceImpl implements UserBuisnessLogicService {
             }
             userRepo.updateUser(user);
             bookRepo.invalidateBook(book.getId());
-            
+            return true;
         } catch (NoSuchElementException e) {
             System.err.println("User/book not found");
+            return false;
         }
     }
     

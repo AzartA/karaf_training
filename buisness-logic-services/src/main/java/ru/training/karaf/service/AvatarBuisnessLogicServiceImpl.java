@@ -49,7 +49,7 @@ public class AvatarBuisnessLogicServiceImpl implements AvatarBuisnessLogicServic
             System.err.println("User not found");
             return false;
         } catch (IOException ex) {
-            System.err.println("Cannot upload an avatar");
+            System.err.println("Cannot upload an avatar: " + ex);
             return false;
         }
     }

@@ -29,30 +29,52 @@ public class UserRestServiceImpl implements UserRestService {
     }
 
     @Override
-    public void createUser(UserDTO user) {
-        userService.createUser(user);
+    public Response createUser(UserDTO user) {
+        if (userService.createUser(user)) {
+            return buildResponse(
+                    Response.Status.CREATED,
+                    "New user successfully created");
+        } else {
+            return buildResponse(
+                    Response.Status.INTERNAL_SERVER_ERROR,
+                    "Cannot create user");
+        }
     }
 
     
     @Override
-    public void updateUser(String libCard, UserDTO updatedUser) {
-        userService.updateUser(libCard, updatedUser);
+    public Response updateUser(String libCard, UserDTO updatedUser) {
+        if (userService.updateUser(libCard, updatedUser)) {
+            return buildResponse(
+                    Response.Status.OK,
+                    "User successfully updated");
+        } else {
+            return buildResponse(
+                    Response.Status.INTERNAL_SERVER_ERROR,
+                    "Cannot update user");
+        }
     }
 
     @Override
     public UserDTO getUser(String libCard) {
         return userService.getUser(libCard)
                 .map(u -> new UserDTO(u))
-                .orElseThrow(() -> new NotFoundException(
-                        Response.status(Response.Status.NOT_FOUND)
-                                .type(MediaType.TEXT_PLAIN)
-                                .entity("User not found")
-                                .build()));
+                .orElseThrow(() -> new NotFoundException(buildResponse(
+                        Response.Status.NOT_FOUND,
+                        "User not found")));
     }
 
     @Override
-    public void deleteUser(String libCard) {
-        userService.deleteUser(libCard);
+    public Response deleteUser(String libCard) {
+        if (userService.deleteUser(libCard)) {
+            return buildResponse(
+                    Response.Status.INTERNAL_SERVER_ERROR,
+                    "User successfully deleted");
+        } else {
+            return buildResponse(
+                    Response.Status.INTERNAL_SERVER_ERROR,
+                    "Cannot delete user");
+        }
     }
 
     @Override
@@ -64,13 +86,28 @@ public class UserRestServiceImpl implements UserRestService {
     }
 
     @Override
-    public void addBook(String libCard, String title) {
-        userService.addBook(libCard, title);
+    public Response addBook(String libCard, String title) {
+        if (userService.addBook(libCard, title)) {
+            return buildResponse(
+                    Response.Status.OK,
+                    "Book added to the user list");
+        } else {
+            return buildResponse(
+                    Response.Status.INTERNAL_SERVER_ERROR,
+                    "Cannot add a book to the list");
+        }
     }
 
     @Override
-    public void removeBook(String libCard, String title) {
-        userService.removeBook(libCard, title);
+    public Response removeBook(String libCard, String title) {
+        if (userService.removeBook(libCard, title)) {
+            return buildResponse(Response.Status.OK,
+                    "Book deleted from the list");
+        } else {
+            return buildResponse(
+                    Response.Status.INTERNAL_SERVER_ERROR,
+                    "Cannot delete a book from the list");
+        }
     }
     
     @Override
@@ -82,12 +119,36 @@ public class UserRestServiceImpl implements UserRestService {
     }
     
     @Override
-    public void addFeedback(String libCard, FeedbackDTO feedback) {
-        userService.addFeedback(libCard, feedback);
+    public Response addFeedback(String libCard, FeedbackDTO feedback) {
+        if (userService.addFeedback(libCard, feedback)) {
+            return buildResponse(
+                    Response.Status.OK,
+                    "Feedback added");
+        } else {
+            return buildResponse(
+                    Response.Status.INTERNAL_SERVER_ERROR,
+                    "Cannot add new feedback");
+        }
     }
 
     @Override
-    public void removeFeedback(String libCard, String title) {
-        userService.removeFeedback(libCard, title);
+    public Response removeFeedback(String libCard, String title) {
+        if (userService.removeFeedback(libCard, title)) {
+            return buildResponse(
+                    Response.Status.OK,
+                    "Feedback deleted");
+        } else {
+            return buildResponse(
+                    Response.Status.INTERNAL_SERVER_ERROR,
+                    "Cannot delete feedback");
+        }
+    }
+    
+    private Response buildResponse(Response.Status status, String desc) {
+        return Response
+                .status(status)
+                .type(MediaType.TEXT_PLAIN)
+                .entity(desc)
+                .build();
     }
 }

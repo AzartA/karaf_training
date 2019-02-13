@@ -11,11 +11,11 @@ public interface BookBuisnessLogicService {
     
     Optional<? extends Book> getBook(String title);
     
-    void createBook(Book book);
+    boolean createBook(Book book);
     
-    void updateBook(String title, Book book);
+    boolean updateBook(String title, Book book);
     
-    void deleteBook(String title);
+    boolean deleteBook(String title);
     
     List<? extends Feedback> getBookFeedbacks(String title);
         

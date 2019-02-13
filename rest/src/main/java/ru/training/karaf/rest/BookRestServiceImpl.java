@@ -30,26 +30,41 @@ public class BookRestServiceImpl implements BookRestService {
         return bookService.getBook(title)
                 .map(b -> new BookDTO(b))
                 .orElseThrow(() ->
-                        new NotFoundException(
-                                Response.status(Response.Status.NOT_FOUND)
-                                        .type(MediaType.TEXT_PLAIN)
-                                        .entity("Book not found")
-                                        .build()));
+                        new NotFoundException(buildResponse(
+                                Response.Status.NOT_FOUND, "Book not found")));
     }
 
     @Override
-    public void createBook(BookDTO book) {
-        bookService.createBook(book);
+    public Response createBook(BookDTO book) {
+        if (bookService.createBook(book)) {
+            return buildResponse(Response.Status.CREATED,
+                    "New book successfully created");
+        } else {
+            return buildResponse(Response.Status.INTERNAL_SERVER_ERROR,
+                    "Cannot create new book");
+        }
     }
 
     @Override
-    public void updateBook(String title, BookDTO book) {
-        bookService.updateBook(title, book);
+    public Response updateBook(String title, BookDTO book) {
+        if (bookService.updateBook(title, book)) {
+            return buildResponse(Response.Status.OK,
+                    "Book successfully updated");
+        } else {
+            return buildResponse(Response.Status.INTERNAL_SERVER_ERROR,
+                    "Cannot update book");
+        }
     }
 
     @Override
-    public void deleteBook(String title) {
-        bookService.deleteBook(title);
+    public Response deleteBook(String title) {
+        if (bookService.deleteBook(title)) {
+            return buildResponse(Response.Status.OK,
+                    "Book successfully deleted");
+        } else {
+            return buildResponse(Response.Status.INTERNAL_SERVER_ERROR,
+                    "Cannot delete book");
+        }
     }
 
     @Override
@@ -58,5 +73,13 @@ public class BookRestServiceImpl implements BookRestService {
                 .stream()
                 .map(f -> new FeedbackDTO(f))
                 .collect(Collectors.toList());
+    }
+    
+    private Response buildResponse(Response.Status status, String desc) {
+        return Response
+                .status(status)
+                .type(MediaType.TEXT_PLAIN)
+                .entity(desc)
+                .build();
     }
 }

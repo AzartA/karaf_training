@@ -29,25 +29,48 @@ public class GenreRestServiceImpl implements GenreRestService {
         return genreService.getGenre(name)
                 .map(g -> new GenreDTO(g))
                 .orElseThrow(() ->
-                        new NotFoundException(
-                                Response.status(Response.Status.NOT_FOUND)
-                                        .type(MediaType.TEXT_PLAIN)
-                                        .entity("Genre not found")
-                                        .build()));
+                        new NotFoundException(buildResponse(
+                                Response.Status.NOT_FOUND, "Genre not found")));
     }
 
     @Override
-    public void createGenre(GenreDTO genre) {
-        genreService.createGenre(genre);
+    public Response createGenre(GenreDTO genre) {
+        if (genreService.createGenre(genre)) {
+            return buildResponse(Response.Status.CREATED,
+                    "New genre successfully created");
+        } else {
+            return buildResponse(Response.Status.INTERNAL_SERVER_ERROR,
+                    "Cannot create new gerne");
+        }
     }
 
     @Override
-    public void updateGenre(String name, GenreDTO genre) {
-        genreService.updateGenre(name, genre);
+    public Response updateGenre(String name, GenreDTO genre) {
+        if (genreService.updateGenre(name, genre)) {
+            return buildResponse(Response.Status.OK,
+                    "Genre successfully updated");
+        } else {
+            return buildResponse(Response.Status.INTERNAL_SERVER_ERROR,
+                    "Cannot update gerne");
+        }
     }
 
     @Override
-    public void deleteGenre(String name) {
-        genreService.deleteGenre(name);
+    public Response deleteGenre(String name) {
+        if (genreService.deleteGenre(name)) {
+            return buildResponse(Response.Status.OK,
+                    "Gerne successfully deleted");
+        } else {
+            return buildResponse(Response.Status.INTERNAL_SERVER_ERROR,
+                    "Cannot delete genre");
+        }
+    }
+    
+    private Response buildResponse(Response.Status status, String desc) {
+        return Response
+                .status(status)
+                .type(MediaType.TEXT_PLAIN)
+                .entity(desc)
+                .build();
     }
 }

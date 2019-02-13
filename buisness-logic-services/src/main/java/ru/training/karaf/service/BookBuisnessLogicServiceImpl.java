@@ -49,15 +49,15 @@ public class BookBuisnessLogicServiceImpl implements BookBuisnessLogicService {
     }
 
     @Override
-    public void createBook(Book book) {
+    public boolean createBook(Book book) {
         if (!isBookDataValid(book)) {
             System.err.println("One or more parameters are invalid");
-            return;
+            return false;
         }
         
         if (bookRepo.getBook(book.getTitle()).isPresent()) {
             System.err.println("Book with specified title already exists");
-            return;
+            return false;
         }
         
         try {
@@ -71,22 +71,24 @@ public class BookBuisnessLogicServiceImpl implements BookBuisnessLogicService {
             bookToCreate.setTitle(book.getTitle());
             bookToCreate.setYear(book.getYear());
             bookRepo.createBook(bookToCreate);
+            return true;
         } catch (NoSuchElementException e) {
             System.err.println("Genre not found");
+            return false;
         }
     }
 
     @Override
-    public void updateBook(String title, Book book) {
+    public boolean updateBook(String title, Book book) {
         try {
             if (!isBookDataValid(book)) {
                 System.err.println("One or more parameters are invalid");
-                return;
+                return false;
             }
             
             if (!title.equals(book.getTitle())) {
                 System.err.println("Book's title can not be changed");
-                return;
+                return false;
             }
             
             /* GenreDO genre = (GenreDO)
@@ -104,13 +106,15 @@ public class BookBuisnessLogicServiceImpl implements BookBuisnessLogicService {
             bookToUpdate.setTitle(book.getTitle());
             bookToUpdate.setYear(book.getYear());
             bookRepo.updateBook(bookToUpdate);
+            return true;
         } catch (NoSuchElementException e) {
             System.err.println("Genre/book not found");
+            return false;
         }
     }
 
     @Override
-    public void deleteBook(String title) {
+    public boolean deleteBook(String title) {
         try {
             /* BookDO book = (BookDO)bookRepo.getBook(title).get(); */
             
@@ -126,8 +130,10 @@ public class BookBuisnessLogicServiceImpl implements BookBuisnessLogicService {
             });
             
             bookRepo.deleteBook(title);
+            return true;
         } catch (NoSuchElementException e) {
             System.err.println("Book not found");
+            return false;
         }
     }
 

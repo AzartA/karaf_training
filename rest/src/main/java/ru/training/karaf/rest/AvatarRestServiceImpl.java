@@ -25,45 +25,38 @@ public class AvatarRestServiceImpl implements AvatarRestService {
                             "attachment; filename=\"" + libCard + "-avatar.png\"")
                         .build();
         } catch (NoSuchElementException e) {
-            throw new NotFoundException(
-                    Response.status(Response.Status.NOT_FOUND)
-                            .type(MediaType.TEXT_PLAIN)
-                            .entity("Avatar not found")
-                            .build());
+            throw new NotFoundException(buildResponse(
+                    Response.Status.NOT_FOUND, "Avatar not found"));
         }
     }
 
     @Override
     public Response deleteAvatar(String libCard) {
         if (avatarService.deleteAvatar(libCard)) {
-            return Response
-                    .status(Response.Status.OK)
-                    .type(MediaType.TEXT_PLAIN)
-                    .entity("Avatar successfully deleted")
-                    .build();
+            return buildResponse(
+                    Response.Status.OK, "Avatar successfully deleted");
         } else {
-            return Response
-                    .status(Response.Status.NO_CONTENT)
-                    .type(MediaType.TEXT_PLAIN)
-                    .entity("Cannot delete avatar")
-                    .build();
+            return buildResponse(
+                    Response.Status.NO_CONTENT, "Cannot delete avatar");
         }
     }
      
     @Override
     public Response uploadAvatar(String libCard, Attachment avatar) {
         if (avatarService.uploadAvatar(libCard, avatar)) {
-            return Response
-                    .status(Response.Status.CREATED)
-                    .type(MediaType.TEXT_PLAIN)
-                    .entity("Avatar successfully uploaded")
-                    .build();
+            return buildResponse(
+                    Response.Status.CREATED, "Avatar successfully uploaded");
         } else {
-            return Response
-                    .status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .type(MediaType.TEXT_PLAIN)
-                    .entity("Cannot upload an avatar")
-                    .build();
+            return buildResponse(
+                    Response.Status.INTERNAL_SERVER_ERROR, "Cannot upload an avatar");
         }
+    }
+    
+    private Response buildResponse(Response.Status status, String desc) {
+        return Response
+                .status(status)
+                .type(MediaType.TEXT_PLAIN)
+                .entity(desc)
+                .build();
     }
 }

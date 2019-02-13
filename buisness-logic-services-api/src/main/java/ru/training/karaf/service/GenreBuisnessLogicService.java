@@ -10,10 +10,10 @@ public interface GenreBuisnessLogicService {
     
     Optional<? extends Genre> getGenre(String name);
     
-    void createGenre(Genre genre);
+    boolean createGenre(Genre genre);
     
-    void updateGenre(String name, Genre genre);
+    boolean updateGenre(String name, Genre genre);
     
-    void deleteGenre(String name);
+    boolean deleteGenre(String name);
     
 }

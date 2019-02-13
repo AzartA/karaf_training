@@ -10,6 +10,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import ru.training.karaf.rest.dto.GenreDTO;
 
 @Path("genres")
@@ -25,14 +26,14 @@ public interface GenreRestService {
     GenreDTO getGenre(@PathParam("name") String name);
     
     @POST
-    void createGenre(GenreDTO genre);
+    Response createGenre(GenreDTO genre);
     
     @PUT
     @Path("{name}")
-    void updateGenre(@PathParam("name") String name, GenreDTO genre);
+    Response updateGenre(@PathParam("name") String name, GenreDTO genre);
     
     @DELETE
     @Path("{name}")
-    void deleteGenre(@PathParam("name") String name);
+    Response deleteGenre(@PathParam("name") String name);
     
 }

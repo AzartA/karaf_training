@@ -10,6 +10,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import ru.training.karaf.rest.dto.BookDTO;
 import ru.training.karaf.rest.dto.FeedbackDTO;
 
@@ -26,15 +27,15 @@ public interface BookRestService {
     BookDTO getBook(@PathParam("title") String title);
     
     @POST
-    void createBook(BookDTO book);
+    Response createBook(BookDTO book);
     
     @PUT
     @Path("{title}")
-    void updateBook(@PathParam("title") String title, BookDTO book);
+    Response updateBook(@PathParam("title") String title, BookDTO book);
     
     @DELETE
     @Path("{title}")
-    void deleteBook(@PathParam("title") String title);
+    Response deleteBook(@PathParam("title") String title);
     
     @GET
     @Path("{title}/feedbacks")
