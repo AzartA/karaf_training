@@ -11,17 +11,13 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 @Table(name = "FEEDBACKDO", uniqueConstraints =
         {@UniqueConstraint(columnNames = {"USER_ID", "BOOK_ID"})})
 @Entity
-@NamedQuery(name = FeedbackDO.GET_ALL_FEEDBACKS,
-        query = "SELECT f FROM FeedbackDO f")
 public class FeedbackDO implements Feedback, Serializable {
-    public static final String GET_ALL_FEEDBACKS = "FeedbackDO.getAllFeedbacks";    
     
     @Id
     @GeneratedValue
@@ -42,12 +38,6 @@ public class FeedbackDO implements Feedback, Serializable {
     private BookDO book;
 
     public FeedbackDO() {}
-    
-    public FeedbackDO(Feedback feedback) {
-        this.message = feedback.getMessage();
-        this.user = new UserDO(feedback.getUser());
-        this.book = new BookDO(feedback.getBook());
-    }
     
     public Long getId() {
         return id;

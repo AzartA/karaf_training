@@ -18,7 +18,7 @@
 		<db.port>5432</db.port>
 		<db.user>postgres</db.user>
 		<db.password>admin</db.password>
-		<db.name>postgres</db.name>
+		<db.name>test</db.name>
 	</properties>
 	
 	<dependencies>

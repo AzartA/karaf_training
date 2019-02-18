@@ -19,6 +19,7 @@ import javax.persistence.Table;
             query = "SELECT g FROM GenreDO g WHERE g.name = :name")
 })
 public class GenreDO implements Genre, Serializable {
+    
     public static final String GET_ALL_GENRES = "GenreDO.getAll";
     public static final String GET_GENRE_BY_NAME = "GenreDO.getByName";
     

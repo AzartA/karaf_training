@@ -1,35 +1,36 @@
 package ru.training.karaf.rest.dto;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import javax.xml.bind.annotation.XmlTransient;
-import ru.training.karaf.model.Avatar;
-import ru.training.karaf.model.Book;
-import ru.training.karaf.model.Feedback;
 import ru.training.karaf.model.User;
 import ru.training.karaf.model.UserName;
 
 public class UserDTO implements User {
+    
     private UserNameDTO userName;
     private String libCard;
     private JsonNode address;
     private Date regDate;
+    
+    @XmlTransient
     private AvatarDTO avatar;
     
     @XmlTransient
-    private Set<BookDTO> books;
+    private Set<BookDTO> books = new HashSet<>();
     
     @XmlTransient
-    private List<FeedbackDTO> feedbacks;
+    private List<FeedbackDTO> feedbacks = new ArrayList<>();
 
     public UserDTO() {}
     
     public UserDTO(User user) {
         this.address = user.getAddress();
-        this.avatar = new AvatarDTO(user.getAvatar());
         this.libCard = user.getLibCard();
         this.regDate = user.getRegDate();
         this.userName = new UserNameDTO(user.getUserName());
@@ -100,7 +101,7 @@ public class UserDTO implements User {
 
     @Override
     public int hashCode() {
-        return Objects.hash(userName, libCard, address, regDate, avatar);
+        return Objects.hash(userName, libCard, address, regDate);
     }
 
     @Override
@@ -127,16 +128,12 @@ public class UserDTO implements User {
         if (!Objects.equals(this.regDate, other.regDate)) {
             return false;
         }
-        if (!Objects.equals(this.avatar, other.avatar)) {
-            return false;
-        }
         return true;
     }
 
     @Override
     public String toString() {
         return "UserDTO{" + "userName=" + userName + ", libCard=" + libCard +
-                ", address=" + address + ", regDate=" + regDate + ", avatar="
-                + avatar + '}';
+                ", address=" + address + ", regDate=" + regDate + '}';
     }
 }

@@ -1,71 +1,132 @@
 package ru.training.karaf.repo;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-
+import java.util.Set;
+import java.util.HashSet;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
-
 import org.apache.aries.jpa.template.JpaTemplate;
-
+import ru.training.karaf.model.AvatarDO;
+import ru.training.karaf.model.BookDO;
+import ru.training.karaf.model.FeedbackDO;
+import ru.training.karaf.model.GenreDO;
 import ru.training.karaf.model.User;
 import ru.training.karaf.model.UserDO;
+import ru.training.karaf.model.UserNameDO;
 
-public class UserRepoImpl implements UserRepo {
+public class UserRepoImpl implements UserRepo, Repo {
     private JpaTemplate template;
 
     public UserRepoImpl(JpaTemplate template) {
         this.template = template;
     }
 
-    @Override
-    public List<? extends User> getAll() {
-        return template.txExpr(em -> em.createNamedQuery(UserDO.GET_ALL, UserDO.class).getResultList());
-    }
+    public void init() throws IOException {
 
-    @Override
-    public void create(User user) {
-        UserDO userToCreate = new UserDO();
-        userToCreate.setLogin(user.getLogin());
-        userToCreate.setFirstName(user.getFirstName());
-        userToCreate.setLastName(user.getLastName());
-        userToCreate.setAddress(user.getAddress());
-        userToCreate.setAge(user.getAge());
-        userToCreate.setProperties(user.getProperties());
-        template.tx(em -> em.persist(userToCreate));
-    }
+        /* Create admin stub */
+        
+        InputStream in = getClass().getResourceAsStream("/img/admin.png");
+        AvatarDO avatar = new AvatarDO();
+        byte[] picture = new byte[in.available()];
+        in.read(picture, 0, picture.length);
+        avatar.setPicture(picture);
+        
+        UserNameDO name = new UserNameDO();
+        name.setFirstName("afn");
+        name.setLastName("aln");
+        
+        String stringAddress = "{\"country\":\"russia\",\"city\":\"moscow\"}";
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode address = mapper.readTree(stringAddress);
+               
+        FeedbackDO feedback = new FeedbackDO();
+        feedback.setMessage("af");
+        
+        GenreDO genre = new GenreDO();
+        genre.setName("ag");
 
-    @Override
-    public void update(String login, User user) {
+        BookDO book = new BookDO();
+        book.setAuthor("aba");
+        book.setGenre(genre);
+        book.setTitle("abt");
+        book.setYear(2000);
+        book.addFeedback(feedback);
+        Set<BookDO> books = new HashSet<>();
+        books.add(book);
+        
+        UserDO admin = new UserDO();
+        admin.setAddress(address);
+        admin.setLibCard("alc");
+        admin.setRegDate(new Date());
+        admin.setAvatar(avatar);
+        admin.setUserName(name);
+        admin.addFeedback(feedback);
+        admin.setBooks(books);
+
         template.tx(em -> {
-            getByLogin(login, em).ifPresent(userToUpdate -> {
-                userToUpdate.setLogin(user.getLogin());
-                userToUpdate.setFirstName(user.getFirstName());
-                userToUpdate.setLastName(user.getLastName());
-                userToUpdate.setAddress(user.getAddress());
-                userToUpdate.setAge(user.getAge());
-                userToUpdate.setProperties(user.getProperties());
-                em.merge(userToUpdate);
-            });
+            em.persist(genre);
+            em.persist(admin);
         });
+        
+    }
+    
+    @Override
+    public List<? extends User> getAllUsers() {
+        return template.txExpr(em -> em.createNamedQuery
+            (UserDO.GET_ALL_USERS, UserDO.class).getResultList());
+    }
+    
+    @Override
+    public void createUser(User user) {
+        template.tx(em -> em.persist(user));
     }
 
     @Override
-    public Optional<? extends User> get(String login) {
-        return template.txExpr(em -> getByLogin(login, em));
+    public void updateUser(User user) {
+        template.tx(em -> em.merge(user));
     }
 
     @Override
-    public void delete(String login) {
-        template.tx(em -> getByLogin(login, em).ifPresent(em::remove));
+    public Optional<? extends User> getUser(String libCard) {
+        return template.txExpr(em -> getUserByLibCard(libCard, em));
     }
 
-    private Optional<UserDO> getByLogin(String login, EntityManager em) {
+    @Override
+    public void deleteUser(String libCard) {
+        template.tx(em -> getUserByLibCard(libCard, em).ifPresent(em::remove));
+    }
+
+    @Override
+    public void deleteUserAvatar(Long id) {
+        template.tx(em ->
+                em.createNamedQuery(UserDO.REMOVE_AVATAR)
+                        .setParameter(1, id)
+                        .executeUpdate());
+    }
+
+    private Optional<UserDO> getUserByLibCard(String libCard, EntityManager em) {
         try {
-            return Optional.of(em.createNamedQuery(UserDO.GET_BY_LOGIN, UserDO.class).setParameter("login", login)
+            return Optional.of(em.createNamedQuery(UserDO.GET_USER_BY_LIB_CARD,
+                    UserDO.class).setParameter("libCard", libCard)
                     .getSingleResult());
         } catch (NoResultException e) {
+            System.err.println("User not found: " + e);
             return Optional.empty();
         }
+    }
+
+    @Override
+    public Object getByCriteria(String criteria) {
+        Optional<? extends User> user = getUser(criteria);
+        if (user.isPresent()) {
+            return user.get();
+        }
+        return null;
     }
 }

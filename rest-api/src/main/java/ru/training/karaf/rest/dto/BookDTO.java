@@ -1,20 +1,35 @@
 package ru.training.karaf.rest.dto;
 
+import ru.training.karaf.json.Pair;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import javax.xml.bind.annotation.XmlTransient;
+import ru.training.karaf.json.BookDTODeserializer;
+import ru.training.karaf.json.BookDTOSerializer;
 import ru.training.karaf.model.Book;
-import ru.training.karaf.model.Feedback;
-import ru.training.karaf.model.Genre;
 
+@JsonSerialize(using = BookDTOSerializer.class)
+@JsonDeserialize(using = BookDTODeserializer.class)
 public class BookDTO implements Book {
+    
     private String title;
     private String author;
     private Integer year;
     private GenreDTO genre;
     
+    private List<Pair> properties = new ArrayList<>();
+    
+    {
+        properties.add(new Pair("k1", "v1"));
+        properties.add(new Pair("k2", "v2"));
+        properties.add(new Pair("k3", "v3"));
+    }
+    
     @XmlTransient
-    private List<FeedbackDTO> feedbacks;
+    private List<FeedbackDTO> feedbacks = new ArrayList<>();
 
     public BookDTO() {}
     
@@ -70,9 +85,17 @@ public class BookDTO implements Book {
         this.feedbacks = feedbacks;
     }
 
+    public List<Pair> getProperties() {
+        return properties;
+    }
+
+    public void setProperties(List<Pair> properties) {
+        this.properties = properties;
+    }
+
     @Override
     public int hashCode() {
-        return Objects.hash(title, author, year, genre);
+        return Objects.hash(title, author, year, genre, properties);
     }
 
     @Override
@@ -99,12 +122,17 @@ public class BookDTO implements Book {
         if (!Objects.equals(this.genre, other.genre)) {
             return false;
         }
+
+        if (!Objects.equals(this.properties, other.properties)) {
+            return false;
+        }
         return true;
     }
 
     @Override
     public String toString() {
-        return "BookDTO{" + "title=" + title + ", author=" + author + ", year="
-                + year + ", genre=" + genre + '}';
+        return "BookDTO{" + "title=" + title + ", author=" + author +
+                ", year=" + year + ", genre=" + genre +
+                ", properties=" + properties + '}';
     }
 }

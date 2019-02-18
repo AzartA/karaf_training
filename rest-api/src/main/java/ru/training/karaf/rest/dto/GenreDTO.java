@@ -4,12 +4,17 @@ import java.util.Objects;
 import ru.training.karaf.model.Genre;
 
 public class GenreDTO implements Genre {
+    
     private String name;
     
     public GenreDTO() {}
     
     public GenreDTO(Genre genre) {
         this.name = genre.getName();
+    }
+
+    public GenreDTO(String name) {
+        this.name = name;
     }
     
     @Override

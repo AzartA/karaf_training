@@ -25,7 +25,9 @@ import javax.persistence.Table;
     @NamedQuery(name = BookDO.GET_BOOK_BY_TITLE,
             query = "SELECT b FROM BookDO b WHERE b.title = :title")
 })
+
 public class BookDO implements Book, Serializable {
+    
     public static final String GET_ALL_BOOKS = "Books.getAll";
     public static final String GET_BOOK_BY_TITLE = "Books.getByTitle";
     
@@ -43,7 +45,7 @@ public class BookDO implements Book, Serializable {
     @Column(name = "RELEASE_YEAR")
     private Integer year;
     
-    @ManyToOne(fetch = FetchType.LAZY/*, cascade = CascadeType.ALL*/)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "GENRE_ID", nullable = false)
     private GenreDO genre;
     
@@ -53,27 +55,6 @@ public class BookDO implements Book, Serializable {
     private List<FeedbackDO> feedbacks = new ArrayList<>();
 
     public BookDO() {}
-    
-    public BookDO(Book book){
-        this.title = book.getTitle();
-        this.author = book.getAuthor();
-        this.year = book.getYear();
-        this.genre = new GenreDO(book.getGenre());
-//        book.getFeedbacks().forEach(f -> {
-//            FeedbackDO fb = new FeedbackDO();
-//            fb.setBook(this);
-//            fb.setMessage(f.getMessage());
-//            fb.setUser(new UserDO(f.getUser()));
-//            feedbacks.add(fb);
-//        });
-    }
-    
-    public BookDO(String title, String author, Integer year, GenreDO genre) {
-        this.title = title;
-        this.author = author;
-        this.year = year;
-        this.genre = genre;
-    }
     
     public void addFeedback(FeedbackDO feedback) {
         feedbacks.add(feedback);

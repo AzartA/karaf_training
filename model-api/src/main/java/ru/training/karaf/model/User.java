@@ -6,11 +6,19 @@ import java.util.List;
 import java.util.Set;
 
 public interface User {
-    public UserName getUserName();
-    public String getLibCard();
-    public JsonNode getAddress();
-    public Date getRegDate();
-    public Avatar getAvatar();
-    public Set<? extends Book> getBooks();
-    public List<? extends Feedback> getFeedbacks();
+    
+    UserName getUserName();
+    
+    String getLibCard();
+    
+    JsonNode getAddress();
+    
+    Date getRegDate();
+    
+    Avatar getAvatar();
+    
+    Set<? extends Book> getBooks();
+    
+    List<? extends Feedback> getFeedbacks();
+  
 }

@@ -4,12 +4,17 @@ import java.util.Arrays;
 import ru.training.karaf.model.Avatar;
 
 public class AvatarDTO implements Avatar {
+
     private byte[] picture;
     
     public AvatarDTO() {}
     
     public AvatarDTO(Avatar avatar) {
         this.picture = avatar.getPicture();
+    }
+
+    public AvatarDTO(byte[] picture) {
+        this.picture = picture;
     }
     
     @Override

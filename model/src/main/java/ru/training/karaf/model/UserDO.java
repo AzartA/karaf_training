@@ -18,6 +18,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.NamedNativeQuery;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -30,14 +31,19 @@ import javax.persistence.TemporalType;
 @Table(name = "USERDO")
 @Entity
 @NamedQueries({
-    @NamedQuery(name = UserDO.GET_ALL_USERS, query = "SELECT u FROM UserDO AS u"),
+    @NamedQuery(name = UserDO.GET_ALL_USERS,
+            query = "SELECT u FROM UserDO AS u"),
     @NamedQuery(name = UserDO.GET_USER_BY_LIB_CARD,
             query = "SELECT u FROM UserDO AS u WHERE u.libCard = :libCard")
 })
+@NamedNativeQuery(name = UserDO.REMOVE_AVATAR,
+        query = "DELETE FROM AVATARDO WHERE id = ?")
 
 public class UserDO implements User, Serializable {
+    
     public static final String GET_ALL_USERS = "Users.getAllUsers";
     public static final String GET_USER_BY_LIB_CARD = "Users.getUserByLibCard";
+    public static final String REMOVE_AVATAR = "Users.removeAvatar";
     
     @Id
     @GeneratedValue

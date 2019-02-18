@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
+    
+    <reference id="userRepo" interface="ru.training.karaf.repo.UserRepo"/>
+    <reference id="bookRepo" interface="ru.training.karaf.repo.BookRepo"/>
+    <reference id="genreRepo" interface="ru.training.karaf.repo.GenreRepo"/>
+    <reference-list id="repoList" interface="ru.training.karaf.repo.Repo"/>
+    
+    <bean id="repoFacade"
+          class="ru.training.karaf.service.RepoFacade"
+          init-method="init">
+        <property name="repos" ref="repoList"/>
+    </bean>
+    
+    <bean id="userBuisnessLogicServiceBean"
+          class="ru.training.karaf.service.UserBuisnessLogicServiceImpl">
+        
+        <property name="userRepo" ref="userRepo"/>
+        <property name="bookRepo" ref="bookRepo"/>              
+    </bean>
+    <service ref="userBuisnessLogicServiceBean"
+             interface="ru.training.karaf.service.UserBuisnessLogicService" />
+    
+    <bean id="bookBuisnessLogicServiceBean"
+          class="ru.training.karaf.service.BookBuisnessLogicServiceImpl">
+        
+        <property name="bookRepo" ref="bookRepo"/>
+        <property name="genreRepo" ref="genreRepo"/>
+        <property name="userRepo" ref="userRepo"/>
+        <property name="repoFacade" ref="repoFacade"/>
+    </bean>
+    <service ref="bookBuisnessLogicServiceBean"
+             interface="ru.training.karaf.service.BookBuisnessLogicService" />
+    
+    <bean id="genreBuisnessLogicServiceBean"
+          class="ru.training.karaf.service.GenreBuisnessLogicServiceImpl">
+    
+        <property name="genreRepo" ref="genreRepo"/>
+        <property name="bookRepo" ref="bookRepo"/>
+    </bean>
+    <service ref="genreBuisnessLogicServiceBean"
+             interface="ru.training.karaf.service.GenreBuisnessLogicService"/>
+    
+    <bean id="avatarBuisnessLogicServiceBean"
+          class="ru.training.karaf.service.AvatarBuisnessLogicServiceImpl">
+    
+        <property name="userRepo" ref="userRepo"/>
+    </bean>
+    <service ref="avatarBuisnessLogicServiceBean"
+             interface="ru.training.karaf.service.AvatarBuisnessLogicService"/>
+    
+</blueprint>
