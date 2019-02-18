@@ -9,6 +9,7 @@ import java.util.Objects;
 import java.util.Set;
 import javax.xml.bind.annotation.XmlTransient;
 import ru.training.karaf.model.User;
+import ru.training.karaf.model.UserName;
 
 public class UserDTO implements User {
     

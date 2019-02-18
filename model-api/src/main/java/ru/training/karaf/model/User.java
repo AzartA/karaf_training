@@ -20,5 +20,5 @@ public interface User {
     Set<? extends Book> getBooks();
     
     List<? extends Feedback> getFeedbacks();
-
+  
 }

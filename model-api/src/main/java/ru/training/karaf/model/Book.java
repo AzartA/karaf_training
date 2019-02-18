@@ -13,5 +13,5 @@ public interface Book {
     Genre getGenre();
     
     List<? extends Feedback> getFeedbacks();
-
+  
 }

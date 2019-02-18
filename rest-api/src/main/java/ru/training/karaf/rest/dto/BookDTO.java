@@ -122,6 +122,7 @@ public class BookDTO implements Book {
         if (!Objects.equals(this.genre, other.genre)) {
             return false;
         }
+
         if (!Objects.equals(this.properties, other.properties)) {
             return false;
         }
