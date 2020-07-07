@@ -17,7 +17,7 @@
 		<db.host>localhost</db.host>
 		<db.port>5432</db.port>
 		<db.user>postgres</db.user>
-		<db.password>admin</db.password>
+		<db.password>156bnT60</db.password>
 		<db.name>postgres</db.name>
 	</properties>
 	
