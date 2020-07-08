@@ -27,10 +27,7 @@ public class UserRepoImpl implements UserRepo {
     public void create(User user) {
         UserDO userToCreate = new UserDO();
         userToCreate.setLogin(user.getLogin());
-        userToCreate.setFirstName(user.getFirstName());
-        userToCreate.setLastName(user.getLastName());
-        userToCreate.setAddress(user.getAddress());
-        userToCreate.setAge(user.getAge());
+        userToCreate.setName(user.getName());
         userToCreate.setProperties(user.getProperties());
         template.tx(em -> em.persist(userToCreate));
     }
@@ -40,10 +37,7 @@ public class UserRepoImpl implements UserRepo {
         template.tx(em -> {
             getByLogin(login, em).ifPresent(userToUpdate -> {
                 userToUpdate.setLogin(user.getLogin());
-                userToUpdate.setFirstName(user.getFirstName());
-                userToUpdate.setLastName(user.getLastName());
-                userToUpdate.setAddress(user.getAddress());
-                userToUpdate.setAge(user.getAge());
+                userToUpdate.setName(user.getName());
                 userToUpdate.setProperties(user.getProperties());
                 em.merge(userToUpdate);
             });
