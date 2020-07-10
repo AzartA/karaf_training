@@ -7,20 +7,14 @@ import ru.training.karaf.model.User;
 public class UserDTO implements User {
 
     private String login;
-    private String firstName;
-    private String lastName;
-    private Integer age;
-    private String address;
+    private String name;
     private Set<String> properties;
 
     public UserDTO() {}
     
     public UserDTO(User user) {
         login = user.getLogin();
-        firstName = user.getFirstName();
-        lastName = user.getLastName();
-        age = user.getAge();
-        address = user.getAddress();
+        name = user.getName();
         properties = user.getProperties();
     }
 
@@ -32,36 +26,12 @@ public class UserDTO implements User {
         this.login = login;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public String getName() {
+        return name;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public Integer getAge() {
-        return age;
-    }
-
-    public void setAge(Integer age) {
-        this.age = age;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Set<String> getProperties() {
@@ -76,10 +46,7 @@ public class UserDTO implements User {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((address == null) ? 0 : address.hashCode());
-        result = prime * result + ((age == null) ? 0 : age.hashCode());
-        result = prime * result + ((firstName == null) ? 0 : firstName.hashCode());
-        result = prime * result + ((lastName == null) ? 0 : lastName.hashCode());
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
         result = prime * result + ((login == null) ? 0 : login.hashCode());
         result = prime * result + ((properties == null) ? 0 : properties.hashCode());
         return result;
@@ -94,25 +61,10 @@ public class UserDTO implements User {
         if (getClass() != obj.getClass())
             return false;
         UserDTO other = (UserDTO) obj;
-        if (address == null) {
-            if (other.address != null)
+        if (name == null) {
+            if (other.name != null)
                 return false;
-        } else if (!address.equals(other.address))
-            return false;
-        if (age == null) {
-            if (other.age != null)
-                return false;
-        } else if (!age.equals(other.age))
-            return false;
-        if (firstName == null) {
-            if (other.firstName != null)
-                return false;
-        } else if (!firstName.equals(other.firstName))
-            return false;
-        if (lastName == null) {
-            if (other.lastName != null)
-                return false;
-        } else if (!lastName.equals(other.lastName))
+        } else if (!name.equals(other.name))
             return false;
         if (login == null) {
             if (other.login != null)
@@ -129,7 +81,6 @@ public class UserDTO implements User {
 
     @Override
     public String toString() {
-        return "UserDTO [login=" + login + ", firstName=" + firstName + ", lastName=" + lastName + ", age=" + age
-                + ", address=" + address + ", properties=" + properties + "]";
+        return "UserDTO [login=" + login + ", name=" + name + ", properties=" + properties + "]";
     }
 }
