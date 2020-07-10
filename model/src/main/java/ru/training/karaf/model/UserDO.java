@@ -1,16 +1,9 @@
 package ru.training.karaf.model;
 
 import java.util.Set;
+import java.util.stream.Collectors;
 
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
+import javax.persistence.*;
 
 @Entity
 @NamedQueries({
@@ -33,6 +26,9 @@ public class UserDO implements User {
     @CollectionTable(name = "user_properties",
             joinColumns = @JoinColumn(name = "user_id"))
     private Set<String> properties;
+    @ManyToMany
+    @JoinTable(name="USER_SENSOR_SET")
+    Set<SensorDO> sensors;
 
     public UserDO() {}
 
@@ -42,26 +38,32 @@ public class UserDO implements User {
     public void setId(Long id) {
         this.id = id;
     }
+    @Override
     public String getName() {
         return name;
     }
     public void setName(String name) {
         this.name = name;
     }
-
     public String getLogin() {
         return login;
     }
     public void setLogin(String login) {
         this.login = login;
     }
-
     public Set<String> getProperties() {
         return properties;
     }
     public void setProperties(Set<String> properties) {
         this.properties = properties;
     }
+    public Set<SensorDO> getSensors() {
+        return sensors;
+    }
+    public void setSensors(Set<SensorDO> sensors) {
+        this.sensors = sensors;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -70,6 +72,7 @@ public class UserDO implements User {
         result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + ((login == null) ? 0 : login.hashCode());
         result = prime * result + ((properties == null) ? 0 : properties.hashCode());
+        result = prime * result + ((sensors == null) ? 0 : sensors.hashCode());
         return result;
     }
     @Override
@@ -101,11 +104,17 @@ public class UserDO implements User {
                 return false;
         } else if (!properties.equals(other.properties))
             return false;
+        if (sensors == null) {
+            if (other.sensors != null)
+                return false;
+        } else if (!sensors.equals(other.sensors))
+            return false;
         return true;
     }
     @Override
     public String toString() {
+        String SensorNames = "[" + sensors.stream().map(Sensor::getName).collect(Collectors.joining(",")) + "]";
         return "UserDO [id=" + id + ", firstName=" + name + ", login=" + login
-                + ", properties=" + properties + "]";
+                + ", properties=" + properties + ", sensors=" + SensorNames + "]";
     }
 }

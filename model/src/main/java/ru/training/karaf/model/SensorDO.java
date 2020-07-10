@@ -1,7 +1,10 @@
 package ru.training.karaf.model;
 
 import javax.persistence.*;
+import java.util.Arrays;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 public class SensorDO implements Sensor {
@@ -10,10 +13,14 @@ public class SensorDO implements Sensor {
     private Long id;
     @Column(name = "name")
     private String name;
-    //@ManyToOne (optional = false, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
-   // @JoinColumn(name = "location")
-    @Column(name = "location")
-    private Location location;
+    @ManyToOne (optional = false, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @JoinColumn(name = "location")
+    private LocationDO location;
+    @ManyToOne (optional = false, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @JoinColumn(name = "type")
+    private SensorTypeDO type;
+    @ManyToMany(mappedBy="sensors")
+    private Set<UserDO> users;
 
     public SensorDO() {
     }
@@ -30,16 +37,22 @@ public class SensorDO implements Sensor {
     public void setName(String name) {
         this.name = name;
     }
-    public Location getLocation() {
+    public LocationDO getLocation() {
         return location;
     }
-    public void setLocation(Location location) {
+    public void setLocation(LocationDO location) {
         this.location = location;
+    }
+    public Set<UserDO> getUsers() {
+        return users;
+    }
+    public void setUsers(Set<UserDO> users) {
+        this.users = users;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id,name,location);
+        return Objects.hash(id, name, location, users);
     }
 
     public boolean equals(Object obj) {
@@ -65,10 +78,17 @@ public class SensorDO implements Sensor {
                 return false;
         } else if (!location.equals(other.location))
             return false;
+        if (users == null) {
+            if (other.users != null)
+                return false;
+        } else if (!users.equals(other.users))
+            return false;
         return true;
     }
     @Override
     public String toString() {
-        return "SensorDO [id=" + id + ", name=" + name + ", location =" + location.getName() + "]";
+        String userNames = "[" + users.stream().map(User::getName).collect(Collectors.joining(",")) + "]";
+        return "SensorDO [id=" + id + ", name=" + name + ", location =" + location.getName() +
+                ", users ="  + userNames + "]";
     }
 }

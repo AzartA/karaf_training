@@ -1,22 +1,22 @@
 package ru.training.karaf.model;
 
 import javax.persistence.*;
-import java.util.Arrays;
 import java.util.Objects;
 import java.util.Set;
 
 @Entity
-public class LocationDO implements Location  {
+public class SensorTypeDO implements SensorType {
     @Id
     @GeneratedValue
     private Long id;
-    @Column(name = "name")
+    @Column(length = 48)
     private String name;
-    @OneToMany(mappedBy = "location", fetch = FetchType.EAGER)
+    @Column (length = 48)
+    private String range;
+    @Column(name = "min_time")
+    private int minTime;
+    @OneToMany(mappedBy = "type", fetch = FetchType.EAGER)
     private Set<SensorDO> sensorSet;
-
-    public LocationDO() {
-    }
 
     public Long getId() {
         return id;
@@ -24,11 +24,17 @@ public class LocationDO implements Location  {
     public void setId(Long id) {
         this.id = id;
     }
-    public String getName() {
-        return name;
+    public String getRange() {
+        return range;
     }
-    public void setName(String name) {
-        this.name = name;
+    public void setRange(String range) {
+        this.range = range;
+    }
+    public int getMinTime() {
+        return minTime;
+    }
+    public void setMinTime(int minTime) {
+        this.minTime = minTime;
     }
     public Set<SensorDO> getSensorSet() {
         return sensorSet;
@@ -36,11 +42,17 @@ public class LocationDO implements Location  {
     public void setSensorSet(Set<SensorDO> sensorSet) {
         this.sensorSet = sensorSet;
     }
-
+    public void setName(String name) {
+        this.name = name;
+    }
+    @Override
+    public String getName() {
+        return null;
+    }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id,name); //,sensorSet);
+        return Objects.hash(id,name,range, minTime);
     }
 
     public boolean equals(Object obj) {
@@ -50,7 +62,7 @@ public class LocationDO implements Location  {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        LocationDO other = (LocationDO) obj;
+        SensorTypeDO other = (SensorTypeDO) obj;
         if (name == null) {
             if (other.name != null)
                 return false;
@@ -61,19 +73,17 @@ public class LocationDO implements Location  {
                 return false;
         } else if (!id.equals(other.id))
             return false;
-        if (sensorSet == null) {
-            if (other.sensorSet != null)
+        if (range == null) {
+            if (other.range != null)
                 return false;
-        } else if(!sensorSet.equals(other.sensorSet))
+        } else if (!range.equals(other.range))
             return false;
+        if (minTime != other.minTime)
+                return false;
         return true;
     }
     @Override
-
-
-//ToDo упростить вывод stream to String
     public String toString() {
-        String sensorsNames = Arrays.toString(sensorSet.stream().map(Sensor::getName).toArray());
-        return "UserDO [id=" + id + ", name=" + name + ", sensorSet=" + sensorsNames + "]";
+        return "SensorDO [id=" + id + ", name=" + name + ", range =" + range + ", minInterval =" + minTime + "]";
     }
 }
