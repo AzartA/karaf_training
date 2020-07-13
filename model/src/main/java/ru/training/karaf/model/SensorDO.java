@@ -1,7 +1,6 @@
 package ru.training.karaf.model;
 
 import javax.persistence.*;
-import java.util.Arrays;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -11,9 +10,9 @@ public class SensorDO implements Sensor {
     @Id
     @GeneratedValue
     private Long id;
-    @Column(name = "name")
+    @Column(name = "name", length = 48)
     private String name;
-    @ManyToOne (optional = false, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @ManyToOne (optional = false, cascade = {CascadeType.ALL})
     @JoinColumn(name = "location")
     private LocationDO location;
     @ManyToOne (optional = false, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
@@ -21,6 +20,9 @@ public class SensorDO implements Sensor {
     private SensorTypeDO type;
     @ManyToMany(mappedBy="sensors")
     private Set<UserDO> users;
+//ToDo Type? Maybe List? What about sorting?
+    @OneToMany(mappedBy = "sensor")
+    private Set<MeasuringDO> meashurings;
 
     public SensorDO() {
     }
@@ -49,46 +51,45 @@ public class SensorDO implements Sensor {
     public void setUsers(Set<UserDO> users) {
         this.users = users;
     }
+    public SensorTypeDO getType() {
+        return type;
+    }
+    public void setType(SensorTypeDO type) {
+        this.type = type;
+    }
+    public Set<MeasuringDO> getMeashurings() {
+        return meashurings;
+    }
+
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, location, users);
+        return Objects.hash(id, name, location, type);
     }
 
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        SensorDO other = (SensorDO) obj;
-        if (name == null) {
-            if (other.name != null)
-                return false;
-        } else if (!name.equals(other.name))
-            return false;
-        if (id == null) {
-            if (other.id != null)
-                return false;
-        } else if (!id.equals(other.id))
-            return false;
-        if (location == null) {
-            if (other.location != null)
-                return false;
-        } else if (!location.equals(other.location))
-            return false;
-        if (users == null) {
-            if (other.users != null)
-                return false;
-        } else if (!users.equals(other.users))
-            return false;
-        return true;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof SensorDO)) return false;
+
+        SensorDO sensorDO = (SensorDO) o;
+
+        if (!id.equals(sensorDO.id)) return false;
+        if (name != null ? !name.equals(sensorDO.name) : sensorDO.name != null) return false;
+        if (location != null ? !location.equals(sensorDO.location) : sensorDO.location != null) return false;
+        return type != null ? type.equals(sensorDO.type) : sensorDO.type == null;
     }
+
     @Override
     public String toString() {
         String userNames = "[" + users.stream().map(User::getName).collect(Collectors.joining(",")) + "]";
-        return "SensorDO [id=" + id + ", name=" + name + ", location =" + location.getName() +
-                ", users ="  + userNames + "]";
+
+        return "SensorDO{" +
+                "id=" + id +
+                ", name=" + name +
+                ", location=" + location.getName() +
+                ", type=" + type.getName() +
+                ", users=" + userNames +
+                '}';
     }
 }

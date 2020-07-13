@@ -4,13 +4,14 @@ import javax.persistence.*;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 public class LocationDO implements Location  {
     @Id
     @GeneratedValue
     private Long id;
-    @Column(name = "name")
+    @Column(name = "name", length = 48)
     private String name;
     @OneToMany(mappedBy = "location", fetch = FetchType.EAGER)
     private Set<SensorDO> sensorSet;
@@ -57,23 +58,13 @@ public class LocationDO implements Location  {
         } else if (!name.equals(other.name))
             return false;
         if (id == null) {
-            if (other.id != null)
-                return false;
-        } else if (!id.equals(other.id))
-            return false;
-        if (sensorSet == null) {
-            if (other.sensorSet != null)
-                return false;
-        } else if(!sensorSet.equals(other.sensorSet))
-            return false;
-        return true;
+            return other.id == null;
+        } else return id.equals(other.id);
     }
+
     @Override
-
-
-//ToDo упростить вывод stream to String
     public String toString() {
-        String sensorsNames = Arrays.toString(sensorSet.stream().map(Sensor::getName).toArray());
+        String sensorsNames = sensorSet.stream().map(Sensor::getName).collect(Collectors.joining(","));
         return "UserDO [id=" + id + ", name=" + name + ", sensorSet=" + sensorsNames + "]";
     }
 }

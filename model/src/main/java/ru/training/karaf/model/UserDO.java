@@ -21,7 +21,6 @@ public class UserDO implements User {
     private String name;
     @Column(name = "login", nullable = false, unique=true)
     private String login;
-
     @ElementCollection
     @CollectionTable(name = "user_properties",
             joinColumns = @JoinColumn(name = "user_id"))
@@ -72,7 +71,6 @@ public class UserDO implements User {
         result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + ((login == null) ? 0 : login.hashCode());
         result = prime * result + ((properties == null) ? 0 : properties.hashCode());
-        result = prime * result + ((sensors == null) ? 0 : sensors.hashCode());
         return result;
     }
     @Override
@@ -100,21 +98,13 @@ public class UserDO implements User {
         } else if (!login.equals(other.login))
             return false;
         if (properties == null) {
-            if (other.properties != null)
-                return false;
-        } else if (!properties.equals(other.properties))
-            return false;
-        if (sensors == null) {
-            if (other.sensors != null)
-                return false;
-        } else if (!sensors.equals(other.sensors))
-            return false;
-        return true;
+            return other.properties == null;
+        } else return properties.equals(other.properties);
     }
     @Override
     public String toString() {
-        String SensorNames = "[" + sensors.stream().map(Sensor::getName).collect(Collectors.joining(",")) + "]";
+        String sensorNames = "[" + sensors.stream().map(Sensor::getName).collect(Collectors.joining(",")) + "]";
         return "UserDO [id=" + id + ", firstName=" + name + ", login=" + login
-                + ", properties=" + properties + ", sensors=" + SensorNames + "]";
+                + ", properties=" + properties + ", sensors=" + sensorNames + "]";
     }
 }
