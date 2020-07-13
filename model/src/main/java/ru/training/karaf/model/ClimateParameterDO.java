@@ -1,6 +1,7 @@
 package ru.training.karaf.model;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -9,7 +10,7 @@ public class ClimateParameterDO implements ClimateParameter{
 
     @Id
     @GeneratedValue
-    private Long id;
+    private long id;
     @Column(name = "name", length = 48)
     private String name;
     @ManyToMany(mappedBy="parameters")
@@ -18,12 +19,12 @@ public class ClimateParameterDO implements ClimateParameter{
     @JoinTable(name="PARAMETER_UNIT_SET")
     Set<UnitDO> units;
     @OneToMany(mappedBy = "parameter")
-    private Set<MeasuringDO> meashurings;
+    private List<MeasuringDO> meashurings;
 
-    public Long getId() {
+    public long getId() {
         return id;
     }
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
     public void setName(String name) {
@@ -45,7 +46,7 @@ public class ClimateParameterDO implements ClimateParameter{
     public void setUnits(Set<UnitDO> units) {
         this.units = units;
     }
-    public Set<MeasuringDO> getMeashurings() {
+    public List<MeasuringDO> getMeashurings() {
         return meashurings;
     }
 
@@ -53,23 +54,13 @@ public class ClimateParameterDO implements ClimateParameter{
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof ClimateParameterDO)) return false;
-
         ClimateParameterDO that = (ClimateParameterDO) o;
-
-        if (!id.equals(that.id)) return false;
-        if (name != null ? !name.equals(that.name) : that.name != null) return false;
-        if (sensorTypes != null ? !sensorTypes.equals(that.sensorTypes) : that.sensorTypes != null)
-            return false;
-        return units != null ? units.equals(that.units) : that.units == null;
+        return id == that.id;
     }
 
     @Override
     public int hashCode() {
-        int result = id.hashCode();
-        result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + (sensorTypes != null ? sensorTypes.hashCode() : 0);
-        result = 31 * result + (units != null ? units.hashCode() : 0);
-        return result;
+        return Long.hashCode(id);
     }
 
     @Override

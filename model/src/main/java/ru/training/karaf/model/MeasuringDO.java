@@ -13,7 +13,7 @@ public class MeasuringDO implements  Measuring{
 
     @Id
     @GeneratedValue
-    private Long id;
+    private long id;
     @Column(name = "measured_on", columnDefinition = "TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP")
     private java.sql.Timestamp timestamp;
     @ManyToOne (optional = false)
@@ -25,10 +25,10 @@ public class MeasuringDO implements  Measuring{
     @Column(columnDefinition = "real")
     float value;
 
-    public Long getId() {
+    public long getId() {
         return id;
     }
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
     @Override
@@ -59,24 +59,13 @@ public class MeasuringDO implements  Measuring{
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof MeasuringDO)) return false;
-
         MeasuringDO that = (MeasuringDO) o;
-
-        if (Float.compare(that.value, value) != 0) return false;
-        if (!id.equals(that.id)) return false;
-        if (!timestamp.equals(that.timestamp)) return false;
-        if (sensor != null ? !sensor.equals(that.sensor) : that.sensor != null) return false;
-        return parameter != null ? parameter.equals(that.parameter) : that.parameter == null;
+        return id == that.id;
     }
 
     @Override
     public int hashCode() {
-        int result = id.hashCode();
-        result = 31 * result + timestamp.hashCode();
-        result = 31 * result + (sensor != null ? sensor.hashCode() : 0);
-        result = 31 * result + (parameter != null ? parameter.hashCode() : 0);
-        result = 31 * result + (value != +0.0f ? Float.floatToIntBits(value) : 0);
-        return result;
+        return Long.hashCode(id);
     }
 
     @Override

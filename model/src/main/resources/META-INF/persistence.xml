@@ -5,12 +5,13 @@
     <persistence-unit name="PU" transaction-type="JTA">
     	<provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
         <jta-data-source>osgi:service/javax.sql.DataSource/(osgi.jndi.service.name=jdbc/ru.training.model.model-datasource)</jta-data-source>
+        <class>ru.training.karaf.converter.CapabilityConverter</class>
         <properties>
             <property name="eclipselink.query-results-cache" value="true"/>
             <property name="eclipselink.cache.shared.default" value="true"/>
             <property name="eclipselink.target-database" value="PostgreSQL"/>
 
-            <property name="javax.persistence.schema-generation.database.action" value="drop-and-create"/>
+            <property name="javax.persistence.schema-generation.database.action" value="create"/>
             <property name="javax.persistence.schema-generation.create-source" value="script-then-metadata"/>
             <property name="javax.persistence.schema-generation.drop-source" value="metadata-then-script"/>
 

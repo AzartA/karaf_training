@@ -1,6 +1,7 @@
 package ru.training.karaf.model;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -9,10 +10,10 @@ import java.util.stream.Collectors;
 public class SensorDO implements Sensor {
     @Id
     @GeneratedValue
-    private Long id;
+    private long id;
     @Column(name = "name", length = 48)
     private String name;
-    @ManyToOne (optional = false, cascade = {CascadeType.ALL})
+    @ManyToOne (optional = false, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinColumn(name = "location")
     private LocationDO location;
     @ManyToOne (optional = false, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
@@ -20,17 +21,13 @@ public class SensorDO implements Sensor {
     private SensorTypeDO type;
     @ManyToMany(mappedBy="sensors")
     private Set<UserDO> users;
-//ToDo Type? Maybe List? What about sorting?
     @OneToMany(mappedBy = "sensor")
-    private Set<MeasuringDO> meashurings;
+    private List<MeasuringDO> meashurings;
 
-    public SensorDO() {
-    }
-
-    public Long getId() {
+    public long getId() {
         return id;
     }
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
     public String getName() {
@@ -57,27 +54,21 @@ public class SensorDO implements Sensor {
     public void setType(SensorTypeDO type) {
         this.type = type;
     }
-    public Set<MeasuringDO> getMeashurings() {
+    public List<MeasuringDO> getMeasurings() {
         return meashurings;
     }
 
-
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, location, type);
+        return Long.hashCode(id);
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof SensorDO)) return false;
-
-        SensorDO sensorDO = (SensorDO) o;
-
-        if (!id.equals(sensorDO.id)) return false;
-        if (name != null ? !name.equals(sensorDO.name) : sensorDO.name != null) return false;
-        if (location != null ? !location.equals(sensorDO.location) : sensorDO.location != null) return false;
-        return type != null ? type.equals(sensorDO.type) : sensorDO.type == null;
+        SensorDO that = (SensorDO) o;
+        return id == that.id;
     }
 
     @Override

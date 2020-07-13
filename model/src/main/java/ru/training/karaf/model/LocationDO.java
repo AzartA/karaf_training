@@ -1,7 +1,6 @@
 package ru.training.karaf.model;
 
 import javax.persistence.*;
-import java.util.Arrays;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -10,19 +9,16 @@ import java.util.stream.Collectors;
 public class LocationDO implements Location  {
     @Id
     @GeneratedValue
-    private Long id;
+    private long id;
     @Column(name = "name", length = 48)
     private String name;
     @OneToMany(mappedBy = "location", fetch = FetchType.EAGER)
     private Set<SensorDO> sensorSet;
 
-    public LocationDO() {
-    }
-
-    public Long getId() {
+    public long getId() {
         return id;
     }
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
     public String getName() {
@@ -41,25 +37,14 @@ public class LocationDO implements Location  {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id,name); //,sensorSet);
+        return Long.hashCode(id);
     }
 
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        LocationDO other = (LocationDO) obj;
-        if (name == null) {
-            if (other.name != null)
-                return false;
-        } else if (!name.equals(other.name))
-            return false;
-        if (id == null) {
-            return other.id == null;
-        } else return id.equals(other.id);
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof LocationDO)) return false;
+        LocationDO that = (LocationDO) o;
+        return id == that.id;
     }
 
     @Override

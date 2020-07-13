@@ -16,7 +16,7 @@ public class UserDO implements User {
     
     @Id
     @GeneratedValue
-    private Long id;
+    private long id;
     @Column(name = "name")
     private String name;
     @Column(name = "login", nullable = false, unique=true)
@@ -31,10 +31,10 @@ public class UserDO implements User {
 
     public UserDO() {}
 
-    public Long getId() {
+    public long getId() {
         return id;
     }
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
     @Override
@@ -65,41 +65,14 @@ public class UserDO implements User {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + ((login == null) ? 0 : login.hashCode());
-        result = prime * result + ((properties == null) ? 0 : properties.hashCode());
-        return result;
+        return Long.hashCode(id);
     }
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        UserDO other = (UserDO) obj;
-        if (name == null) {
-            if (other.name != null)
-                return false;
-        } else if (!name.equals(other.name))
-            return false;
-        if (id == null) {
-            if (other.id != null)
-                return false;
-        } else if (!id.equals(other.id))
-            return false;
-        if (login == null) {
-            if (other.login != null)
-                return false;
-        } else if (!login.equals(other.login))
-            return false;
-        if (properties == null) {
-            return other.properties == null;
-        } else return properties.equals(other.properties);
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof UserDO)) return false;
+        UserDO that = (UserDO) o;
+        return id == that.id;
     }
     @Override
     public String toString() {
