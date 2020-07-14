@@ -1,6 +1,7 @@
 package ru.training.karaf.model;
 
 import ru.training.karaf.converter.CapabilityConverter;
+import ru.training.karaf.converter.JsonbCapabilityConverter;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -14,8 +15,8 @@ public class SensorTypeDO implements SensorType {
     private long id;
     @Column(length = 48)
     private String name;
-    @Convert (converter = CapabilityConverter.class)
-    @Column (columnDefinition = "character varying(255)")
+    @Convert (converter = JsonbCapabilityConverter.class)
+    @Column (columnDefinition = "jsonb")
     private Capability capability;
     @Column(name = "min_time")
     private int minTime;
