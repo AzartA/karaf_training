@@ -7,6 +7,10 @@
     <bean id="userRepo" class="ru.training.karaf.repo.UserRepoImpl">
         <argument ref="jpaTemplate"/>
     </bean>
+    <bean id="locationRepo" class="ru.training.karaf.repo.LocationRepoImpl">
+        <argument ref="jpaTemplate"/>
+    </bean>
     <service ref="userRepo" interface="ru.training.karaf.repo.UserRepo"/>
+    <service ref="locationRepo" interface="ru.training.karaf.repo.LocationRepo"/>
 
 </blueprint>

@@ -11,9 +11,9 @@ public class SensorDO implements Sensor {
     @Id
     @GeneratedValue
     private long id;
-    @Column(name = "name", length = 48)
+    @Column(name = "name", nullable = false, length = 48, unique = true)
     private String name;
-    @ManyToOne (optional = false, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @ManyToOne (optional = false, cascade = {CascadeType.ALL})
     @JoinColumn(name = "location")
     private LocationDO location;
     @ManyToOne (optional = false, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
@@ -22,7 +22,7 @@ public class SensorDO implements Sensor {
     @ManyToMany(mappedBy="sensors")
     private Set<UserDO> users;
     @OneToMany(mappedBy = "sensor")
-    private List<MeasuringDO> meashurings;
+    private List<MeasuringDO> measurings;
 
     public long getId() {
         return id;
@@ -40,6 +40,7 @@ public class SensorDO implements Sensor {
         return location;
     }
     public void setLocation(LocationDO location) {
+        location.getSensorSet().add(this);
         this.location = location;
     }
     public Set<UserDO> getUsers() {
@@ -52,10 +53,11 @@ public class SensorDO implements Sensor {
         return type;
     }
     public void setType(SensorTypeDO type) {
+        type.getSensors().add(this);
         this.type = type;
     }
     public List<MeasuringDO> getMeasurings() {
-        return meashurings;
+        return measurings;
     }
 
     @Override

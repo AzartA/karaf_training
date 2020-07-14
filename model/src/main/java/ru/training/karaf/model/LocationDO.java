@@ -1,19 +1,35 @@
 package ru.training.karaf.model;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Entity
+@NamedQueries({
+        @NamedQuery(name = LocationDO.GET_ALL, query = "SELECT l FROM LocationDO AS l"),
+        @NamedQuery(name = LocationDO.GET_BY_NAME, query = "SELECT l FROM LocationDO AS l WHERE l.name = :name")
+})
 public class LocationDO implements Location  {
+    public static final String GET_ALL = "Locations.getAll";
+    public static final String GET_BY_NAME = "Locations.getByName";
     @Id
     @GeneratedValue
     private long id;
-    @Column(name = "name", length = 48)
+    @Column(name = "name", length = 48, nullable = false, unique = true)
     private String name;
     @OneToMany(mappedBy = "location", fetch = FetchType.EAGER)
+    //ToDo initialization here?
     private Set<SensorDO> sensorSet;
+
+    public LocationDO() {
+    }
+
+    public LocationDO(String name) {
+        this.name = name;
+        sensorSet = new HashSet<>();
+    }
 
     public long getId() {
         return id;

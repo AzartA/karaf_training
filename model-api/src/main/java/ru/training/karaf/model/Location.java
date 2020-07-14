@@ -4,5 +4,5 @@ import java.util.Set;
 
 public interface Location {
     String getName();
-    //Set<Sensor> getSensorSet();
+    Set<? extends Sensor> getSensorSet();
 }

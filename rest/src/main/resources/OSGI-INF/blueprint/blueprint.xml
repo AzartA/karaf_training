@@ -2,17 +2,22 @@
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
            xmlns:jaxrs="http://cxf.apache.org/blueprint/jaxrs"
 >
-
     <reference id="userRepo" interface="ru.training.karaf.repo.UserRepo"/>
-
+    <reference id="locationRepo" interface="ru.training.karaf.repo.LocationRepo"/>
     <bean id="userRestServiceBean" class="ru.training.karaf.rest.UserRestServiceImpl">
         <property name="repo"  ref="userRepo"/>
     </bean>
+
+    <bean id="locationRestServiceBean" class="ru.training.karaf.rest.LocationRestServiceImpl">
+        <property name="repo"  ref="locationRepo"/>
+    </bean>
+
 
     <!-- CXF -->
     <jaxrs:server id="restServer" address="/rest">
         <jaxrs:serviceBeans>
             <ref component-id="userRestServiceBean"/>
+            <ref component-id="locationRestServiceBean"/>
         </jaxrs:serviceBeans>
                 <jaxrs:providers>
             <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider"/>
