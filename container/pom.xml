@@ -70,6 +70,12 @@
             <type>xml</type>
             <scope>runtime</scope>
         </dependency>
+		<dependency>
+			<groupId>org.hibernate.validator</groupId>
+			<artifactId>hibernate-validator-osgi-karaf-features</artifactId>
+			<version>6.1.5.Final</version>
+			<type>pom</type>
+		</dependency>
     </dependencies>
 	
 	<build>
@@ -149,6 +155,7 @@
 						<feature>cxf</feature>
 						<feature>wrap</feature>
 						<feature>blueprint-web</feature>
+						<!--<feature>hibernate-validator-osgi-karaf-features</feature>-->
 					</bootFeatures>
 				</configuration>
 				<executions>

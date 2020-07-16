@@ -4,8 +4,11 @@ import java.util.Set;
 
 import ru.training.karaf.model.User;
 
+import javax.validation.constraints.Size;
+
 public class UserDTO implements User {
 
+    @Size(min = 3, max = 48,message = "Login must contain from 3 to 48 symbols!")
     private String login;
     private String name;
     private Set<String> properties;
