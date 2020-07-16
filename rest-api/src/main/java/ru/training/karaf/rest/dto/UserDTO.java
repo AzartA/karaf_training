@@ -2,9 +2,11 @@ package ru.training.karaf.rest.dto;
 
 import java.util.Set;
 
+
 import ru.training.karaf.model.User;
 
 import javax.validation.constraints.Size;
+
 
 public class UserDTO implements User {
 

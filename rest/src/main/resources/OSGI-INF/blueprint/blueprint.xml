@@ -7,9 +7,18 @@
     <bean id="userRestServiceBean" class="ru.training.karaf.rest.UserRestServiceImpl">
         <property name="repo"  ref="userRepo"/>
     </bean>
-
     <bean id="locationRestServiceBean" class="ru.training.karaf.rest.LocationRestServiceImpl">
         <property name="repo"  ref="locationRepo"/>
+    </bean>
+
+    <bean id="validationProviderResolver" class="ru.training.karaf.rest.HibernateValidationProviderResolver"/>
+
+    <bean id="beanValidationProvider" class="org.apache.cxf.validation.BeanValidationProvider">
+        <argument ref="validationProviderResolver"/>
+    </bean>
+
+    <bean id="jaxrsValidationFeature" class="org.apache.cxf.validation.BeanValidationFeature">
+        <property name="provider" ref="beanValidationProvider"/>
     </bean>
 
 
@@ -24,6 +33,9 @@
             <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider"/>
             <bean class="org.apache.cxf.jaxrs.impl.WebApplicationExceptionMapper"/>
         </jaxrs:providers>
+        <jaxrs:features>
+            <ref component-id="jaxrsValidationFeature" />
+        </jaxrs:features>
 
     </jaxrs:server>
 </blueprint>
