@@ -13,15 +13,17 @@
     </bean>
 
 
+
     <!-- CXF -->
     <jaxrs:server id="restServer" address="/rest">
         <jaxrs:serviceBeans>
             <ref component-id="userRestServiceBean"/>
             <ref component-id="locationRestServiceBean"/>
         </jaxrs:serviceBeans>
-                <jaxrs:providers>
+        <jaxrs:providers>
             <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider"/>
             <bean class="org.apache.cxf.jaxrs.impl.WebApplicationExceptionMapper"/>
         </jaxrs:providers>
+
     </jaxrs:server>
 </blueprint>
