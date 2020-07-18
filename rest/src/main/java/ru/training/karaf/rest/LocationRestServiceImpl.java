@@ -2,7 +2,6 @@ package ru.training.karaf.rest;
 
 import ru.training.karaf.repo.LocationRepo;
 import ru.training.karaf.rest.dto.LocationDTO;
-import ru.training.karaf.rest.dto.UserDTO;
 
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.MediaType;
@@ -10,7 +9,7 @@ import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class LocationRestServiceImpl implements  LocationRestService{
+public class LocationRestServiceImpl implements LocationRestService {
 
     private LocationRepo repo;
 
@@ -30,7 +29,7 @@ public class LocationRestServiceImpl implements  LocationRestService{
 
     @Override
     public void update(String name, LocationDTO location) {
-        repo.update(name,location);
+        repo.update(name, location);
     }
 
     @Override
@@ -39,6 +38,7 @@ public class LocationRestServiceImpl implements  LocationRestService{
                 .orElseThrow(() -> new NotFoundException(Response.status(Response.Status.NOT_FOUND)
                         .type(MediaType.TEXT_HTML).entity("Location not found").build()));
     }
+
     @Override
     public void delete(String name) {
         repo.delete(name);

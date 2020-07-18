@@ -1,35 +1,44 @@
 package ru.training.karaf.model;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Entity
-public class UnitDO implements  Unit{
+public class UnitDO implements Unit {
     @Id
     @GeneratedValue
     private long id;
     @Column(name = "name", length = 48)
     private String name;
-    @ManyToMany(mappedBy="units")
+    @ManyToMany(mappedBy = "units")
     private Set<ClimateParameterDO> climateParameters;
 
     public long getId() {
         return id;
     }
+
     public void setId(long id) {
         this.id = id;
     }
+
     @Override
     public String getName() {
         return name;
     }
+
     public void setName(String name) {
         this.name = name;
     }
+
     public Set<ClimateParameterDO> getClimateParameters() {
         return climateParameters;
     }
+
     public void setClimateParameters(Set<ClimateParameterDO> climateParameters) {
         this.climateParameters = climateParameters;
     }

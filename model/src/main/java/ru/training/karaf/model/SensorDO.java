@@ -1,8 +1,15 @@
 package ru.training.karaf.model;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -13,13 +20,13 @@ public class SensorDO implements Sensor {
     private long id;
     @Column(name = "name", nullable = false, length = 48, unique = true)
     private String name;
-    @ManyToOne (optional = false, cascade = {CascadeType.ALL})
+    @ManyToOne(optional = false, cascade = {CascadeType.ALL})
     @JoinColumn(name = "location")
     private LocationDO location;
-    @ManyToOne (optional = false, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @ManyToOne(optional = false, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinColumn(name = "type")
     private SensorTypeDO type;
-    @ManyToMany(mappedBy="sensors")
+    @ManyToMany(mappedBy = "sensors")
     private Set<UserDO> users;
     @OneToMany(mappedBy = "sensor")
     private List<MeasuringDO> measurings;
@@ -27,35 +34,45 @@ public class SensorDO implements Sensor {
     public long getId() {
         return id;
     }
+
     public void setId(long id) {
         this.id = id;
     }
+
     public String getName() {
         return name;
     }
+
     public void setName(String name) {
         this.name = name;
     }
+
     public LocationDO getLocation() {
         return location;
     }
+
     public void setLocation(LocationDO location) {
         location.getSensorSet().add(this);
         this.location = location;
     }
+
     public Set<UserDO> getUsers() {
         return users;
     }
+
     public void setUsers(Set<UserDO> users) {
         this.users = users;
     }
+
     public SensorTypeDO getType() {
         return type;
     }
+
     public void setType(SensorTypeDO type) {
         type.getSensors().add(this);
         this.type = type;
     }
+
     public List<MeasuringDO> getMeasurings() {
         return measurings;
     }

@@ -7,6 +7,7 @@ import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import ru.training.karaf.model.User;
 import ru.training.karaf.repo.UserRepo;
 import ru.training.karaf.rest.dto.UserDTO;
 
@@ -20,13 +21,18 @@ public class UserRestServiceImpl implements UserRestService {
 
     @Override
     public List<UserDTO> getAll() {
-        List<UserDTO> result = repo.getAll().stream().map(u -> new UserDTO(u)).collect(Collectors.toList());
-        return result;
+        return repo.getAll().stream().map(UserDTO::new).collect(Collectors.toList());
     }
 
     @Override
-    public void create(UserDTO user) {
-        repo.create(user); 
+    public User create(UserDTO user) {
+
+        return repo.create(user);
+      /*  } else {
+            throw new BadRequestException(Response.status(Response.Status.BAD_REQUEST)
+                    .type(MediaType.APPLICATION_JSON_TYPE).entity("{errors:" + msg + "}").build());
+        }*/
+
     }
 
     @Override
@@ -36,7 +42,7 @@ public class UserRestServiceImpl implements UserRestService {
 
     @Override
     public UserDTO get(String login) {
-        return repo.get(login).map(u -> new UserDTO(u))
+        return repo.get(login).map(UserDTO::new)
                 .orElseThrow(() -> new NotFoundException(Response.status(Response.Status.NOT_FOUND)
                         .type(MediaType.TEXT_HTML).entity("User not found").build()));
     }

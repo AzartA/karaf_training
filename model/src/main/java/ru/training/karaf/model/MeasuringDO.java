@@ -1,25 +1,29 @@
 package ru.training.karaf.model;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Transient;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.stream.Collectors;
 
 @Entity
-public class MeasuringDO implements  Measuring{
+public class MeasuringDO implements Measuring {
     @Transient
     private final SimpleDateFormat DATE_TIME_FORMAT = new SimpleDateFormat("dd.MM.yyyy hh:mm:ss");
-
     @Id
     @GeneratedValue
     private long id;
     @Column(name = "measured_on", columnDefinition = "TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP")
     private java.sql.Timestamp timestamp;
-    @ManyToOne (optional = false)
+    @ManyToOne(optional = false)
     @JoinColumn(name = "sensor")
     private SensorDO sensor;
-    @ManyToOne (optional = false)
+    @ManyToOne(optional = false)
     @JoinColumn(name = "parameter")
     private ClimateParameterDO parameter;
     @Column(columnDefinition = "real")
@@ -28,31 +32,39 @@ public class MeasuringDO implements  Measuring{
     public long getId() {
         return id;
     }
+
     public void setId(long id) {
         this.id = id;
     }
+
     @Override
     public Timestamp getTimestamp() {
         return timestamp;
     }
+
     public SensorDO getSensor() {
         return sensor;
     }
+
     public void setSensor(SensorDO sensor) {
         this.sensor = sensor;
     }
+
     public ClimateParameterDO getParameter() {
         return parameter;
     }
+
     public void setParameter(ClimateParameterDO parameter) {
         this.parameter = parameter;
     }
-    public void setValue(float value) {
-        this.value = value;
-    }
+
     @Override
     public float getValue() {
         return value;
+    }
+
+    public void setValue(float value) {
+        this.value = value;
     }
 
     @Override

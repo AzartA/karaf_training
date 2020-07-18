@@ -1,18 +1,16 @@
 package ru.training.karaf.repo;
 
-import java.util.List;
-import java.util.Optional;
-
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-
 import org.apache.aries.jpa.template.JpaTemplate;
-
 import ru.training.karaf.model.User;
 import ru.training.karaf.model.UserDO;
 
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import java.util.List;
+import java.util.Optional;
+
 public class UserRepoImpl implements UserRepo {
-    private JpaTemplate template;
+    private final JpaTemplate template;
 
     public UserRepoImpl(JpaTemplate template) {
         this.template = template;
@@ -24,24 +22,23 @@ public class UserRepoImpl implements UserRepo {
     }
 
     @Override
-    public void create(User user) {
+    public User create(User user) {
         UserDO userToCreate = new UserDO();
         userToCreate.setLogin(user.getLogin());
         userToCreate.setName(user.getName());
         userToCreate.setProperties(user.getProperties());
         template.tx(em -> em.persist(userToCreate));
+        return userToCreate;
     }
 
     @Override
     public void update(String login, User user) {
-        template.tx(em -> {
-                getByLogin(login, em).ifPresent(userToUpdate -> {
-                userToUpdate.setLogin(user.getLogin());
-                userToUpdate.setName(user.getName());
-                userToUpdate.setProperties(user.getProperties());
-                em.merge(userToUpdate);
-            });
-        });
+        template.tx(em -> getByLogin(login, em).ifPresent(userToUpdate -> {
+            userToUpdate.setLogin(user.getLogin());
+            userToUpdate.setName(user.getName());
+            userToUpdate.setProperties(user.getProperties());
+            em.merge(userToUpdate);
+        }));
     }
 
     @Override

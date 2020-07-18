@@ -1,8 +1,14 @@
 package ru.training.karaf.model;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -11,7 +17,7 @@ import java.util.stream.Collectors;
         @NamedQuery(name = LocationDO.GET_ALL, query = "SELECT l FROM LocationDO AS l"),
         @NamedQuery(name = LocationDO.GET_BY_NAME, query = "SELECT l FROM LocationDO AS l WHERE l.name = :name")
 })
-public class LocationDO implements Location  {
+public class LocationDO implements Location {
     public static final String GET_ALL = "Locations.getAll";
     public static final String GET_BY_NAME = "Locations.getByName";
     @Id
@@ -34,18 +40,23 @@ public class LocationDO implements Location  {
     public long getId() {
         return id;
     }
+
     public void setId(long id) {
         this.id = id;
     }
+
     public String getName() {
         return name;
     }
+
     public void setName(String name) {
         this.name = name;
     }
+
     public Set<SensorDO> getSensorSet() {
         return sensorSet;
     }
+
     public void setSensorSet(Set<SensorDO> sensorSet) {
         this.sensorSet = sensorSet;
     }

@@ -1,51 +1,67 @@
 package ru.training.karaf.model;
 
-import javax.persistence.*;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Entity
-public class ClimateParameterDO implements ClimateParameter{
+public class ClimateParameterDO implements ClimateParameter {
 
     @Id
     @GeneratedValue
     private long id;
     @Column(name = "name", length = 48)
     private String name;
-    @ManyToMany(mappedBy="parameters")
+    @ManyToMany(mappedBy = "parameters")
     private Set<SensorTypeDO> sensorTypes;
     @ManyToMany
-    @JoinTable(name="PARAMETER_UNIT_SET")
+    @JoinTable(name = "PARAMETER_UNIT_SET")
     Set<UnitDO> units;
     @OneToMany(mappedBy = "parameter")
     private List<MeasuringDO> meashurings;
 
+
     public long getId() {
         return id;
     }
+
     public void setId(long id) {
         this.id = id;
     }
-    public void setName(String name) {
-        this.name = name;
-    }
+
     @Override
     public String getName() {
         return name;
     }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public Set<SensorTypeDO> getSensorTypes() {
         return sensorTypes;
     }
+
     public void setSensorTypes(Set<SensorTypeDO> sensorTypes) {
         this.sensorTypes = sensorTypes;
     }
+
     public Set<UnitDO> getUnits() {
         return units;
     }
+
     public void setUnits(Set<UnitDO> units) {
         this.units = units;
     }
+
     public List<MeasuringDO> getMeashurings() {
         return meashurings;
     }

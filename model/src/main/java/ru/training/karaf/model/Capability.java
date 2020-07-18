@@ -3,7 +3,6 @@ package ru.training.karaf.model;
 import java.io.Serializable;
 
 
-
 public class Capability implements Serializable {
     private static final long serialVersionUID = 9874563217891L;
     private String range;
@@ -13,18 +12,23 @@ public class Capability implements Serializable {
     public String getRange() {
         return range;
     }
+
     public void setRange(String range) {
         this.range = range;
     }
+
     public String getAccuracy() {
         return accuracy;
     }
+
     public void setAccuracy(String accuracy) {
         this.accuracy = accuracy;
     }
+
     public String getResolution() {
         return resolution;
     }
+
     public void setResolution(String resolution) {
         this.resolution = resolution;
     }

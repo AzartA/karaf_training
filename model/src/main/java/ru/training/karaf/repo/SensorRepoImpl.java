@@ -1,13 +1,12 @@
 package ru.training.karaf.repo;
 
-import ru.training.karaf.model.LocationDO;
 import ru.training.karaf.model.Sensor;
 import ru.training.karaf.model.SensorDO;
 
 import java.util.List;
 import java.util.Optional;
 
-public class SensorRepoImpl implements SensorRepo{
+public class SensorRepoImpl implements SensorRepo {
     @Override
     public void create(Sensor sensor) {
         SensorDO sensorForSave = new SensorDO();

@@ -3,15 +3,13 @@ package ru.training.karaf.repo;
 import org.apache.aries.jpa.template.JpaTemplate;
 import ru.training.karaf.model.Location;
 import ru.training.karaf.model.LocationDO;
-import ru.training.karaf.model.UserDO;
-
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import java.util.List;
 import java.util.Optional;
 
-public class LocationRepoImpl implements LocationRepo{
+public class LocationRepoImpl implements LocationRepo {
     private JpaTemplate template;
 
     public LocationRepoImpl(JpaTemplate template) {
@@ -31,13 +29,11 @@ public class LocationRepoImpl implements LocationRepo{
 
     @Override
     public void update(String name, Location location) {
-        template.tx(em -> {
-            getByName(name, em).ifPresent(locationToUpdate -> {
-                locationToUpdate.setName(location.getName());
-                //locationToUpdate.getSensorSet(location.getSensorSet());
-                em.merge(locationToUpdate);
-            });
-        });
+        template.tx(em -> getByName(name, em).ifPresent(locationToUpdate -> {
+            locationToUpdate.setName(location.getName());
+            //locationToUpdate.getSensorSet(location.getSensorSet());
+            em.merge(locationToUpdate);
+        }));
     }
 
     @Override
