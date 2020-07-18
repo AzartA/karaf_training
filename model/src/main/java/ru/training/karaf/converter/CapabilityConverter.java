@@ -8,6 +8,7 @@ import javax.persistence.Converter;
 @Converter
 public class CapabilityConverter implements AttributeConverter<Capability, String> {
     private final static String DELIMITER = " | ";
+
     @Override
     public String convertToDatabaseColumn(Capability capability) {
         return capability.getRange() +

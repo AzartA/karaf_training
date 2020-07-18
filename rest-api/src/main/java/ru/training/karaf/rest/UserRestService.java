@@ -2,6 +2,7 @@ package ru.training.karaf.rest;
 
 import java.util.List;
 
+import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -23,7 +24,7 @@ public interface UserRestService {
     List<UserDTO> getAll();
     
     @POST
-    void create(UserDTO user);
+    void create(@Valid UserDTO user);
     
     @PUT
     @Path("{login}")
