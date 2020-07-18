@@ -2,14 +2,18 @@ package ru.training.karaf.rest.dto;
 
 import ru.training.karaf.model.User;
 
+
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.Set;
 
 
 public class UserDTO implements User {
     private long id;
-    @Size(min = 3, max = 48, message = "Login must contain from 3 to 48 symbols!")
+
+    @Pattern(regexp = "^[0-9a-zA-Z-_]{2,48}$", message = "Login must contain from 3 to 48 letters or digits only")
     private String login;
+    @Size(min = 5, max = 48, message = "Name must contain from 5 to 48 symbols")
     private String name;
     private Set<String> properties;
 

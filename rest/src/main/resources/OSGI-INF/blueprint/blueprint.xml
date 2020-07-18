@@ -11,7 +11,7 @@
         <property name="repo"  ref="locationRepo"/>
     </bean>
 
-    <bean id="validationProviderResolver" class="ru.training.karaf.rest.HibernateValidationProviderResolver"/>
+    <bean id="validationProviderResolver" class="ru.training.karaf.rest.validation.HibernateValidationProviderResolver"/>
 
     <bean id="beanValidationProvider" class="org.apache.cxf.validation.BeanValidationProvider">
         <argument ref="validationProviderResolver"/>
@@ -21,7 +21,8 @@
         <property name="provider" ref="beanValidationProvider"/>
     </bean>
 
-
+    <!--<bean id="exceptionMapper" class="org.apache.cxf.jaxrs.validation.ValidationExceptionMapper"/>-->
+    <bean id="exceptionMapper" class="ru.training.karaf.rest.validation.ValidationExceptionMapperWithMassages"/>
 
     <!-- CXF -->
     <jaxrs:server id="restServer" address="/rest">
@@ -32,6 +33,7 @@
         <jaxrs:providers>
             <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider"/>
             <bean class="org.apache.cxf.jaxrs.impl.WebApplicationExceptionMapper"/>
+            <ref component-id="exceptionMapper"/>
         </jaxrs:providers>
         <jaxrs:features>
             <ref component-id="jaxrsValidationFeature" />

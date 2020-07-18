@@ -51,6 +51,11 @@ public class UserRepoImpl implements UserRepo {
         template.tx(em -> getByLogin(login, em).ifPresent(em::remove));
     }
 
+    @Override
+    public boolean loginIsUnique(String login) {
+       return !template.txExpr(em -> getByLogin(login, em).isPresent());
+    }
+
     private Optional<UserDO> getByLogin(String login, EntityManager em) {
         try {
             return Optional.of(em.createNamedQuery(UserDO.GET_BY_LOGIN, UserDO.class).setParameter("login", login)

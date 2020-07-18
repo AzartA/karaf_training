@@ -15,4 +15,6 @@ public interface UserRepo {
     Optional<? extends User> get(String login);
 
     void delete(String login);
+
+    boolean loginIsUnique(String login);
 }

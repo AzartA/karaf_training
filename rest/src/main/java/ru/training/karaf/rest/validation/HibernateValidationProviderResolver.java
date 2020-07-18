@@ -1,4 +1,4 @@
-package ru.training.karaf.rest;
+package ru.training.karaf.rest.validation;
 
 import org.hibernate.validator.HibernateValidator;
 

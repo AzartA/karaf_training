@@ -3,6 +3,8 @@ package ru.training.karaf.rest;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.validation.ConstraintViolationException;
+import javax.validation.ValidationException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -26,13 +28,10 @@ public class UserRestServiceImpl implements UserRestService {
 
     @Override
     public User create(UserDTO user) {
-
+        if(!repo.loginIsUnique(user.getLogin())){
+            throw new ValidationException("login must be unique");
+        }
         return repo.create(user);
-      /*  } else {
-            throw new BadRequestException(Response.status(Response.Status.BAD_REQUEST)
-                    .type(MediaType.APPLICATION_JSON_TYPE).entity("{errors:" + msg + "}").build());
-        }*/
-
     }
 
     @Override
