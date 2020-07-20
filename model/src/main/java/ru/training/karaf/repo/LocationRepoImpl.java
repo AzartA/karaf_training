@@ -25,7 +25,7 @@ public class LocationRepoImpl implements LocationRepo {
     public Location create(Location location) {
         LocationDO locationToCreate = new LocationDO(location.getName());
         template.tx(em -> em.persist(locationToCreate));
-
+        return null;
     }
 
     @Override

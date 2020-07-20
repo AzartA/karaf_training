@@ -5,13 +5,14 @@
     <reference id="userRepo" interface="ru.training.karaf.repo.UserRepo"/>
     <reference id="locationRepo" interface="ru.training.karaf.repo.LocationRepo"/>
     <bean id="userRestServiceBean" class="ru.training.karaf.rest.UserRestServiceImpl">
-        <property name="repo"  ref="userRepo"/>
+        <property name="repo" ref="userRepo"/>
     </bean>
     <bean id="locationRestServiceBean" class="ru.training.karaf.rest.LocationRestServiceImpl">
-        <property name="repo"  ref="locationRepo"/>
+        <property name="repo" ref="locationRepo"/>
     </bean>
 
-    <bean id="validationProviderResolver" class="ru.training.karaf.rest.validation.HibernateValidationProviderResolver"/>
+    <bean id="validationProviderResolver"
+          class="ru.training.karaf.rest.validation.HibernateValidationProviderResolver"/>
 
     <bean id="beanValidationProvider" class="org.apache.cxf.validation.BeanValidationProvider">
         <argument ref="validationProviderResolver"/>
@@ -36,7 +37,7 @@
             <ref component-id="exceptionMapper"/>
         </jaxrs:providers>
         <jaxrs:features>
-            <ref component-id="jaxrsValidationFeature" />
+            <ref component-id="jaxrsValidationFeature"/>
         </jaxrs:features>
 
     </jaxrs:server>

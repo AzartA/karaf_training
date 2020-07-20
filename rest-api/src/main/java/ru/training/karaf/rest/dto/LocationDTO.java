@@ -3,7 +3,6 @@ package ru.training.karaf.rest.dto;
 import ru.training.karaf.model.Location;
 import ru.training.karaf.model.Sensor;
 
-
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -23,13 +22,16 @@ public class LocationDTO implements Location {
     public String getName() {
         return name;
     }
+
     public void setName(String name) {
         this.name = name;
     }
+
     @Override
     public Set<? extends Sensor> getSensorSet() {
         return sensorSet;
     }
+
     public void setSensorSet(Set<? extends Sensor> sensorSet) {
         this.sensorSet = sensorSet;
     }

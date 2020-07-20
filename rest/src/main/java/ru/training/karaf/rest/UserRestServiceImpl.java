@@ -7,7 +7,6 @@ import ru.training.karaf.rest.dto.UserDTO;
 
 import javax.validation.ValidationException;
 import javax.ws.rs.NotFoundException;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,11 +26,11 @@ public class UserRestServiceImpl implements UserRestService {
     }
 
     @Override
-    public User create(UserDTO user) {
+    public UserDTO create(UserDTO user) {
         if (!repo.loginIsPresent(user.getLogin())) {
             throw new ValidationException("login must be unique");
         }
-        return repo.create(user);
+        return new UserDTO(repo.create(user));
     }
 
     @Override
@@ -53,10 +52,8 @@ public class UserRestServiceImpl implements UserRestService {
 
     @Override
     public void delete(String login) {
-        //ToDo repo??
-        if(!repo.delete(login).isPresent()){
-            new NotFoundException(Response.status(Response.Status.NOT_FOUND).build());
-        }
+        repo.delete(login)
+                .orElseThrow(() -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
 
     }
 }

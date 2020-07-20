@@ -23,6 +23,7 @@ public class UserRepoImpl implements UserRepo {
 
     @Override
     public User create(User user) {
+
         UserDO userToCreate = new UserDO();
         userToCreate.setLogin(user.getLogin());
         userToCreate.setName(user.getName());
@@ -50,12 +51,15 @@ public class UserRepoImpl implements UserRepo {
 
     @Override
     public Optional<UserDO> delete(String login) {
-        return template.txExpr(em -> getByLogin(login, em).map(user -> {em.remove(user); return user;}));
+        return template.txExpr(em -> getByLogin(login, em).map(user -> {
+            em.remove(user);
+            return user;
+        }));
     }
 
     @Override
     public boolean loginIsPresent(String login) {
-       return !template.txExpr(em -> getByLogin(login, em).isPresent());
+        return !template.txExpr(em -> getByLogin(login, em).isPresent());
     }
 
     private Optional<UserDO> getByLogin(String login, EntityManager em) {

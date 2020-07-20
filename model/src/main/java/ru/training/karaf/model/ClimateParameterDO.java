@@ -26,7 +26,7 @@ public class ClimateParameterDO implements ClimateParameter {
     @JoinTable(name = "PARAMETER_UNIT_SET")
     Set<UnitDO> units;
     @OneToMany(mappedBy = "parameter")
-    private List<MeasuringDO> meashurings;
+    private List<MeasuringDO> measurings;
 
 
     public long getId() {
@@ -62,8 +62,8 @@ public class ClimateParameterDO implements ClimateParameter {
         this.units = units;
     }
 
-    public List<MeasuringDO> getMeashurings() {
-        return meashurings;
+    public List<MeasuringDO> getMeasurings() {
+        return measurings;
     }
 
     @Override
