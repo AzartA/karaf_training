@@ -11,7 +11,7 @@ import java.util.Set;
 public class UserDTO implements User {
     private long id;
 
-    @Pattern(regexp = "^[0-9a-zA-Z-_]{2,48}$", message = "Login must contain from 3 to 48 letters or digits only")
+    @Pattern(regexp = "^[0-9a-zA-Z-_]{3,48}$", message = "Login must contain from 3 to 48 letters or digits only")
     private String login;
     @Size(min = 5, max = 48, message = "Name must contain from 5 to 48 symbols")
     private String name;
@@ -21,6 +21,7 @@ public class UserDTO implements User {
     }
 
     public UserDTO(User user) {
+        id = user.getId();
         login = user.getLogin();
         name = user.getName();
         properties = user.getProperties();

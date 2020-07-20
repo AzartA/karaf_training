@@ -22,18 +22,20 @@ public class LocationRepoImpl implements LocationRepo {
     }
 
     @Override
-    public void create(Location location) {
+    public Location create(Location location) {
         LocationDO locationToCreate = new LocationDO(location.getName());
         template.tx(em -> em.persist(locationToCreate));
+
     }
 
     @Override
-    public void update(String name, Location location) {
+    public Optional<? extends Location> update(String name, Location location) {
         template.tx(em -> getByName(name, em).ifPresent(locationToUpdate -> {
             locationToUpdate.setName(location.getName());
             //locationToUpdate.getSensorSet(location.getSensorSet());
             em.merge(locationToUpdate);
         }));
+        return Optional.empty();
     }
 
     @Override
@@ -42,8 +44,9 @@ public class LocationRepoImpl implements LocationRepo {
     }
 
     @Override
-    public void delete(String name) {
+    public String delete(String name) {
         template.tx(em -> getByName(name, em).ifPresent(em::remove));
+        return "";
     }
 
     private Optional<LocationDO> getByName(String name, EntityManager em) {

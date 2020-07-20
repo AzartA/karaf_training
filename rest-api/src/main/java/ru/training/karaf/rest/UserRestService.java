@@ -28,7 +28,7 @@ public interface UserRestService {
 
     @PUT
     @Path("{login}")
-    void update(@PathParam("login") String login, UserDTO user);
+    UserDTO update(@PathParam("login") String login, @Valid UserDTO user);
 
     @GET
     @Path("{login}")

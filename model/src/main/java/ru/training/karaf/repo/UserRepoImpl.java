@@ -32,13 +32,15 @@ public class UserRepoImpl implements UserRepo {
     }
 
     @Override
-    public void update(String login, User user) {
-        template.tx(em -> getByLogin(login, em).ifPresent(userToUpdate -> {
+    public Optional<? extends User> update(String login, User user) {
+        return template.txExpr(em -> getByLogin(login, em).map(userToUpdate -> {
             userToUpdate.setLogin(user.getLogin());
             userToUpdate.setName(user.getName());
             userToUpdate.setProperties(user.getProperties());
             em.merge(userToUpdate);
+            return userToUpdate;
         }));
+
     }
 
     @Override
@@ -47,12 +49,12 @@ public class UserRepoImpl implements UserRepo {
     }
 
     @Override
-    public void delete(String login) {
-        template.tx(em -> getByLogin(login, em).ifPresent(em::remove));
+    public Optional<UserDO> delete(String login) {
+        return template.txExpr(em -> getByLogin(login, em).map(user -> {em.remove(user); return user;}));
     }
 
     @Override
-    public boolean loginIsUnique(String login) {
+    public boolean loginIsPresent(String login) {
        return !template.txExpr(em -> getByLogin(login, em).isPresent());
     }
 

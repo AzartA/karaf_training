@@ -37,6 +37,7 @@ public class LocationDO implements Location {
         sensorSet = new HashSet<>();
     }
 
+
     public long getId() {
         return id;
     }

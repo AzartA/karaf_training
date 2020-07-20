@@ -10,11 +10,11 @@ public interface UserRepo {
 
     User create(User user);
 
-    void update(String login, User user);
+    Optional<? extends User> update(String login, User user);
 
     Optional<? extends User> get(String login);
 
-    void delete(String login);
+    Optional<? extends User> delete(String login);
 
-    boolean loginIsUnique(String login);
+    boolean loginIsPresent(String login);
 }

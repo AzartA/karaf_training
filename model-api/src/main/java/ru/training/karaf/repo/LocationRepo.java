@@ -8,11 +8,11 @@ import java.util.Optional;
 public interface LocationRepo {
     List<? extends Location> getAll();
 
-    void create(Location location);
+    Location create(Location location);
 
-    void update(String name, Location location);
+    Optional<? extends Location> update(String name, Location location);
 
     Optional<? extends Location> get(String name);
 
-    void delete(String name);
+    String delete(String name);
 }
