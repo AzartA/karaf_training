@@ -1,9 +1,9 @@
 package ru.training.karaf.rest;
 
-import ru.training.karaf.model.User;
 import ru.training.karaf.rest.dto.UserDTO;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -24,17 +24,23 @@ public interface UserRestService {
     List<UserDTO> getAll();
 
     @POST
-    User create(@Valid UserDTO user);
+    UserDTO create(@Valid UserDTO user);
 
     @PUT
-    @Path("{login}")
-    UserDTO update(@PathParam("login") String login, @Valid UserDTO user);
+    @Path("{id}")
+    //@NotNull(message = "This login is already exist")
+    UserDTO update(@PathParam("id") long id, @Valid  UserDTO user);
+
 
     @GET
     @Path("{login}")
-    UserDTO get(@PathParam("login") String login);
+    UserDTO getByLogin(@PathParam("login") String login);
+
+    @GET
+    @Path("{id}")
+    UserDTO get(@PathParam("id") long id);
 
     @DELETE
-    @Path("{login}")
-    void delete(@PathParam("login") String login);
+    @Path("{id}")
+    void delete(@PathParam("id") long id);
 }

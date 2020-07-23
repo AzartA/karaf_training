@@ -10,11 +10,17 @@ public interface UserRepo {
 
     User create(User user);
 
-    Optional<? extends User> update(String login, User user);
+    Optional< ? extends  User> update(long id, User user);
 
-    Optional<? extends User> get(String login);
+    Optional<? extends User> updateById(long id, User user);
 
-    Optional<? extends User> delete(String login);
+    Optional<? extends User> updateByLogin(String login, User user);
+
+    Optional<? extends User> get(long id);
+
+    Optional<? extends User> getByLogin(String login);
+
+    Optional<? extends User> delete(long id);
 
     boolean loginIsPresent(String login);
 }

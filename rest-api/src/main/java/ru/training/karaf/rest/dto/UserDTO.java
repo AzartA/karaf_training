@@ -1,15 +1,16 @@
 package ru.training.karaf.rest.dto;
 
-import ru.training.karaf.model.User;
-
+import java.util.Set;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-import java.util.Set;
 
+import ru.training.karaf.model.UniqueFieldEntity;
+import ru.training.karaf.model.User;
+import ru.training.karaf.rest.validation.UniqueKey;
 
-public class UserDTO implements User {
+@UniqueKey(field = "login", message = "Login is already exist")
+public class UserDTO implements User, UniqueFieldEntity {
     private long id;
-
     @Pattern(regexp = "^[0-9a-zA-Z-_]{3,48}$", message = "Login must contain from 3 to 48 letters or digits only")
     private String login;
     @Size(min = 5, max = 48, message = "Name must contain from 5 to 48 symbols")
@@ -69,9 +70,13 @@ public class UserDTO implements User {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
+        if (this == obj) {
+            return true;
+        }
 
-        if (!(obj instanceof UserDTO)) return false;
+        if (!(obj instanceof UserDTO)) {
+            return false;
+        }
         UserDTO other = (UserDTO) obj;
         return login.equals(other.getLogin());
     }

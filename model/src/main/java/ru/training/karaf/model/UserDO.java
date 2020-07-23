@@ -17,11 +17,16 @@ import java.util.stream.Collectors;
 @Entity
 @NamedQueries({
         @NamedQuery(name = UserDO.GET_ALL, query = "SELECT u FROM UserDO AS u"),
-        @NamedQuery(name = UserDO.GET_BY_LOGIN, query = "SELECT u FROM UserDO AS u WHERE u.login = :login")
+        @NamedQuery(name = UserDO.GET_BY_LOGIN, query = "SELECT u FROM UserDO AS u WHERE u.login = :login"),
+        @NamedQuery(name = UserDO.GET_BY_ID, query = "SELECT u FROM UserDO AS u WHERE u.id = :id"),
+        @NamedQuery(name = UserDO.GET_BY_ID_OR_LOGIN, query = "SELECT u FROM UserDO AS u WHERE u.id = :id OR u.login = :login")
+
 })
-public class UserDO implements User {
+public class UserDO implements User, UniqueFieldEntity {
     public static final String GET_ALL = "Users.getAll";
     public static final String GET_BY_LOGIN = "Users.getByLogin";
+    public static final String GET_BY_ID = "Users.getById";
+    public static final String GET_BY_ID_OR_LOGIN = "Users.getByIdOrLogin";
     @Id
     @GeneratedValue
     private long id;

@@ -4,6 +4,8 @@
 >
     <reference id="userRepo" interface="ru.training.karaf.repo.UserRepo"/>
     <reference id="locationRepo" interface="ru.training.karaf.repo.LocationRepo"/>
+    <reference id="uniqueValidationRepo" interface="ru.training.karaf.repo.UniqueValidationRepo"/>
+
     <bean id="userRestServiceBean" class="ru.training.karaf.rest.UserRestServiceImpl">
         <property name="repo" ref="userRepo"/>
     </bean>
@@ -24,12 +26,16 @@
 
     <!--<bean id="exceptionMapper" class="org.apache.cxf.jaxrs.validation.ValidationExceptionMapper"/>-->
     <bean id="exceptionMapper" class="ru.training.karaf.rest.validation.ValidationExceptionMapperWithMassages"/>
+    <bean id="uniqueKeyValidator" class="ru.training.karaf.rest.validation.UniqueKeyValidator">
+        <property name="repo" ref="uniqueValidationRepo"/>
+    </bean>
 
     <!-- CXF -->
     <jaxrs:server id="restServer" address="/rest">
         <jaxrs:serviceBeans>
             <ref component-id="userRestServiceBean"/>
             <ref component-id="locationRestServiceBean"/>
+            <ref component-id="uniqueKeyValidator"/>
         </jaxrs:serviceBeans>
         <jaxrs:providers>
             <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider"/>
