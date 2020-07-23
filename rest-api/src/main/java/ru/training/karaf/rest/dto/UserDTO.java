@@ -8,7 +8,7 @@ import ru.training.karaf.model.UniqueFieldEntity;
 import ru.training.karaf.model.User;
 import ru.training.karaf.rest.validation.UniqueKey;
 
-@UniqueKey(field = "login", message = "Login is already exist")
+//@UniqueKey(field = "login", message = "Login is already exist")
 public class UserDTO implements User, UniqueFieldEntity {
     private long id;
     @Pattern(regexp = "^[0-9a-zA-Z-_]{3,48}$", message = "Login must contain from 3 to 48 letters or digits only")

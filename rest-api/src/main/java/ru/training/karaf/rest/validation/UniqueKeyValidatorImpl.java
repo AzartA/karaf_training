@@ -9,7 +9,7 @@ import javax.validation.ConstraintValidatorContext;
 import java.lang.reflect.Field;
 import java.util.Optional;
 
-public class UniqueKeyValidator implements ConstraintValidator<UniqueKey, UniqueFieldEntity> {
+public class UniqueKeyValidatorImpl implements ConstraintValidator<UniqueKey, UniqueFieldEntity> {
     private UniqueKey uniqueKey;
     private UniqueValidationRepo repo;
 

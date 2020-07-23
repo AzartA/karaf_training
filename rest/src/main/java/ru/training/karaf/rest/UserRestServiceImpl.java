@@ -29,9 +29,9 @@ public class UserRestServiceImpl implements UserRestService {
 
     @Override
     public UserDTO create(UserDTO user) {
-       /* if (repo.loginIsPresent(user.getLogin())) {
+        if (repo.loginIsPresent(user.getLogin())) {
             throw new ValidationException("login must be unique");
-        }*/
+        }
         return new UserDTO(repo.create(user));
     }
 

@@ -10,11 +10,11 @@
     <bean id="locationRepo" class="ru.training.karaf.repo.LocationRepoImpl">
         <argument ref="jpaTemplate"/>
     </bean>
-    <bean id="uniqueValidationRepo" class="ru.training.karaf.repo.UniqueValidationRepoImpl">
+    <!--<bean id="uniqueValidationRepo" class="ru.training.karaf.repo.UniqueValidationRepoImpl">
         <argument ref="jpaTemplate"/>
-    </bean>
+    </bean>-->
     <service ref="userRepo" interface="ru.training.karaf.repo.UserRepo"/>
     <service ref="locationRepo" interface="ru.training.karaf.repo.LocationRepo"/>
-    <service ref="uniqueValidationRepo" interface="ru.training.karaf.repo.UniqueValidationRepo"/>
+    <!--<service ref="uniqueValidationRepo" interface="ru.training.karaf.repo.UniqueValidationRepo"/>-->
 
 </blueprint>

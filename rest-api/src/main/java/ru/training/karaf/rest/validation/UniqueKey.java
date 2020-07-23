@@ -10,7 +10,7 @@ import javax.validation.Payload;
 
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = {UniqueKeyValidator.class})
+@Constraint(validatedBy = {UniqueKeyValidatorImpl.class})
 @Repeatable(UniqueKey.List.class)
 public @interface UniqueKey {
     String field();
