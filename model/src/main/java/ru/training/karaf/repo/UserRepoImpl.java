@@ -35,18 +35,19 @@ public class UserRepoImpl implements UserRepo {
     @Override
     public Optional<? extends User> update(long id, User user) {
         return template.txExpr(em -> {
-            Optional<UserDO> u = getByIdOrLogin(id, user.getLogin(), em);
-            if (u == null) {
+            List<UserDO> u = getByIdOrLogin(id, user.getLogin(), em);
+            if (u.size() > 1) {
                 return null;
             }
-            u = u.map(userToUpdate -> {
+            if (u.size() == 1) {
+                UserDO userToUpdate = u.get(0);
                 userToUpdate.setLogin(user.getLogin());
                 userToUpdate.setName(user.getName());
                 userToUpdate.setProperties(user.getProperties());
                 em.merge(userToUpdate);
-                return userToUpdate;
-            });
-            return u;
+                return Optional.of(userToUpdate);
+            }
+            return Optional.empty();
         });
     }
 
@@ -61,26 +62,18 @@ public class UserRepoImpl implements UserRepo {
         }));
     }
 
-    @Override
-    public Optional<? extends User> updateByLogin(String login, User user) {
-        return template.txExpr(em -> getByLogin(login, em).map(userToUpdate -> {
-            userToUpdate.setLogin(user.getLogin());
-            userToUpdate.setName(user.getName());
-            userToUpdate.setProperties(user.getProperties());
-            em.merge(userToUpdate);
-            return userToUpdate;
-        }));
-    }
 
     @Override
     public Optional<? extends User> get(long id) {
-        return template.txExpr(em -> getById(id, em));
+       // return template.txExpr(em -> getById(id, em));
+        return Optional.ofNullable(template.txExpr(em -> em.find(UserDO.class, id)));
+
     }
 
-    @Override
+   /* @Override
     public Optional<? extends User> getByLogin(String login) {
         return template.txExpr(em -> getByLogin(login, em));
-    }
+    }*/
 
     @Override
     public Optional<UserDO> delete(long id) {
@@ -113,18 +106,12 @@ public class UserRepoImpl implements UserRepo {
         }
     }
 
-    private Optional<UserDO> getByIdOrLogin(long id, String login, EntityManager em) {
+    private List<UserDO> getByIdOrLogin(long id, String login, EntityManager em) {
 
-        try {
-            List<UserDO> list = em.createNamedQuery(UserDO.GET_BY_ID_OR_LOGIN, UserDO.class)
+        return em.createNamedQuery(UserDO.GET_BY_ID_OR_LOGIN, UserDO.class)
                     .setParameter("id", id).setParameter("login", login)
                     .getResultList();
-            if (list.size() == 1) {
-                return Optional.of(list.get(0));
-            }
-            return null;
-        } catch (NoResultException e) {
-            return Optional.empty();
-        }
+
+
     }
 }

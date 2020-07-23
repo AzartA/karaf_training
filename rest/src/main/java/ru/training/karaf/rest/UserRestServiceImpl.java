@@ -35,18 +35,19 @@ public class UserRestServiceImpl implements UserRestService {
         return new UserDTO(repo.create(user));
     }
 
-   /* @Override
+   @Override
     public UserDTO update(long id, UserDTO user) {
         Optional<? extends User> u = repo.update(id, user);
-        if(u == null) return null;//throw new ValidationException("This login is already exist");
+        if(u == null) throw new ValidationException("This login is already exist");
         return u.map(UserDTO::new)
                 .orElseThrow(() -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
-    }*/
-    @Override
+    }
+
+   /* @Override
     public UserDTO update(long id, UserDTO user) {
         return repo.updateById(id, user).map(UserDTO::new)
                 .orElseThrow(() -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
-    }
+    }*/
 
 
 
@@ -56,11 +57,11 @@ public class UserRestServiceImpl implements UserRestService {
                 .orElseThrow(() -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
     }
 
-    @Override
+   /* @Override
     public UserDTO getByLogin(String login) {
         return repo.getByLogin(login).map(UserDTO::new)
                 .orElseThrow(() -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
-    }
+    }*/
 
     @Override
     public void delete(long id) {

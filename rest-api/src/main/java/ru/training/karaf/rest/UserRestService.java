@@ -32,10 +32,10 @@ public interface UserRestService {
     UserDTO update(@PathParam("id") long id, @Valid  UserDTO user);
 
 
-    @GET
+   /* @GET
     @Path("{login}")
     UserDTO getByLogin(@PathParam("login") String login);
-
+    */
     @GET
     @Path("{id}")
     UserDTO get(@PathParam("id") long id);

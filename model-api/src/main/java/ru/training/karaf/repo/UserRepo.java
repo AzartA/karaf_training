@@ -15,11 +15,9 @@ public interface UserRepo {
 
     Optional<? extends User> updateById(long id, User user);
 
-    Optional<? extends User> updateByLogin(String login, User user);
-
     Optional<? extends User> get(long id);
 
-    Optional<? extends User> getByLogin(String login);
+   // Optional<? extends User> getByLogin(String login);
 
     Optional<? extends User> delete(long id);
 

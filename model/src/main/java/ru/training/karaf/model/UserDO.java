@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
         @NamedQuery(name = UserDO.GET_BY_ID_OR_LOGIN, query = "SELECT u FROM UserDO AS u WHERE u.id = :id OR u.login = :login")
 
 })
-public class UserDO implements User, UniqueFieldEntity {
+public class UserDO implements User {
     public static final String GET_ALL = "Users.getAll";
     public static final String GET_BY_LOGIN = "Users.getByLogin";
     public static final String GET_BY_ID = "Users.getById";
