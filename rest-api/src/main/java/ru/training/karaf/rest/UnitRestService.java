@@ -12,25 +12,26 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import ru.training.karaf.rest.dto.LocationDTO;
+import ru.training.karaf.rest.dto.UnitDTO;
 
-@Path("locations")
+@Path("units")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-public interface LocationRestService {
+public interface UnitRestService {
     @GET
-    List<LocationDTO> getAll();
+    List<UnitDTO> getAll();
 
     @POST
-    LocationDTO create(@Valid LocationDTO location);
+    UnitDTO create(@Valid UnitDTO entity);
 
     @PUT
     @Path("{id}")
-    LocationDTO update(@PathParam("id") long id, @Valid LocationDTO location);
+    UnitDTO update(@PathParam("id") long id, @Valid UnitDTO entity);
 
     @GET
+
     @Path("{id}")
-    LocationDTO get(@PathParam("id") long id);
+    UnitDTO get(@PathParam("id") long id);
 
     @DELETE
     @Path("{id}")

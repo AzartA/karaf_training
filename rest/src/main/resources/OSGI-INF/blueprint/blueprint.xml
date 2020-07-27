@@ -2,7 +2,9 @@
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
            xmlns:jaxrs="http://cxf.apache.org/blueprint/jaxrs">
     <reference id="userRepo" interface="ru.training.karaf.repo.UserRepo"/>
+    <reference id="unitRepo" interface="ru.training.karaf.repo.UnitRepo"/>
     <reference id="locationRepo" interface="ru.training.karaf.repo.LocationRepo"/>
+
     <reference id="uniqueValidationRepo" interface="ru.training.karaf.repo.UniqueValidationRepo"/>
 
     <bean id="userRestServiceBean" class="ru.training.karaf.rest.UserRestServiceImpl">
@@ -10,6 +12,9 @@
     </bean>
     <bean id="locationRestServiceBean" class="ru.training.karaf.rest.LocationRestServiceImpl">
         <property name="repo" ref="locationRepo"/>
+    </bean>
+    <bean id="unitRestServiceBean" class="ru.training.karaf.rest.UnitRestServiceImpl">
+        <property name="repo" ref="unitRepo"/>
     </bean>
 
     <bean id="uniqueKeyValidatorBean" activation="lazy" class="ru.training.karaf.rest.validation.UniqueKeyValidatorImpl">
@@ -36,6 +41,7 @@
         <jaxrs:serviceBeans>
             <ref component-id="userRestServiceBean"/>
             <ref component-id="locationRestServiceBean"/>
+            <ref component-id="unitRestServiceBean"/>
             <!--<ref component-id="uniqueKeyValidatorBean"/>-->
         </jaxrs:serviceBeans>
         <jaxrs:providers>

@@ -20,7 +20,7 @@
     </bean>
     <service ref="userRepo" interface="ru.training.karaf.repo.UserRepo"/>
     <service ref="locationRepo" interface="ru.training.karaf.repo.LocationRepo"/>
-    <service ref="unitRepo" interface="ru.training.karaf.repo.Repo"/>
+    <service ref="unitRepo" interface="ru.training.karaf.repo.UnitRepo"/>
 
     <service ref="uniqueValidationRepo" interface="ru.training.karaf.repo.UniqueValidationRepo"/>
 

@@ -1,7 +1,5 @@
 package ru.training.karaf.model;
 
-import java.util.Set;
-import java.util.stream.Collectors;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -9,13 +7,14 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @NamedQueries({
-        @NamedQuery(name = UnitDO.GET_ALL, query = "SELECT u FROM UnitDO AS l"),
+        @NamedQuery(name = UnitDO.GET_ALL, query = "SELECT u FROM UnitDO AS u"),
         @NamedQuery(name = UnitDO.GET_BY_NAME, query = "SELECT u FROM UnitDO AS u WHERE u.name = :name"),
         @NamedQuery(name = UnitDO.GET_BY_ID, query = "SELECT u FROM UnitDO AS u WHERE u.id = :id"),
         @NamedQuery(name = UnitDO.GET_BY_ID_OR_NAME, query = "SELECT u FROM UnitDO AS u WHERE u.id = :id OR u.name = :name")
-
 })
 @Entity
 public class UnitDO implements Unit {
@@ -28,16 +27,18 @@ public class UnitDO implements Unit {
     private long id;
     @Column(name = "name", length = 48, nullable = false, unique = true)
     private String name;
+    @Column(name = "notation", length = 32)
+    private String notation;
     @ManyToMany(mappedBy = "units")
     private Set<ClimateParameterDO> climateParameters;
 
     public UnitDO() {
     }
 
-    public UnitDO(String name) {
+    public UnitDO(String name, String notation) {
         this.name = name;
+        this.notation = notation;
     }
-
 
     public long getId() {
         return id;
@@ -54,6 +55,15 @@ public class UnitDO implements Unit {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public String getNotation() {
+        return notation;
+    }
+
+    public void setNotation(String notation) {
+        this.notation = notation;
     }
 
     public Set<ClimateParameterDO> getClimateParameters() {
@@ -87,6 +97,7 @@ public class UnitDO implements Unit {
         return "UnitDO{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
+                ", notation='" + notation + '\'' +
                 ", climateParameters=" + parametersNames +
                 '}';
     }
