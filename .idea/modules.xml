@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/container/container.iml" filepath="$PROJECT_DIR$/container/container.iml" />
+      <module fileurl="file://$PROJECT_DIR$/karaf.iml" filepath="$PROJECT_DIR$/karaf.iml" />
+      <module fileurl="file://$PROJECT_DIR$/model/model.iml" filepath="$PROJECT_DIR$/model/model.iml" />
+      <module fileurl="file://$PROJECT_DIR$/model-api/model-api.iml" filepath="$PROJECT_DIR$/model-api/model-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/rest/rest.iml" filepath="$PROJECT_DIR$/rest/rest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/rest-api/rest-api.iml" filepath="$PROJECT_DIR$/rest-api/rest-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/feature/training-feature.iml" filepath="$PROJECT_DIR$/feature/training-feature.iml" />
+    </modules>
+  </component>
+</project>

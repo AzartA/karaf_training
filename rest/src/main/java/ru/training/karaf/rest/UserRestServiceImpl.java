@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class UserRestServiceImpl implements UserRestService {
+    public class UserRestServiceImpl implements UserRestService {
 
     private UserRepo repo;
 
@@ -38,8 +38,7 @@ public class UserRestServiceImpl implements UserRestService {
    @Override
     public UserDTO update(long id, UserDTO user) {
         Optional<? extends User> u = repo.update(id, user);
-        if(u == null) throw new ValidationException("This login is already exist");
-        return u.map(UserDTO::new)
+        return u.map(user1 -> new UserDTO(user1))
                 .orElseThrow(() -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
     }
 

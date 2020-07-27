@@ -1,7 +1,9 @@
 package ru.training.karaf.rest;
 
 import ru.training.karaf.rest.dto.LocationDTO;
+import ru.training.karaf.rest.dto.LocationDTO;
 
+import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -21,17 +23,18 @@ public interface LocationRestService {
     List<LocationDTO> getAll();
 
     @POST
-    void create(LocationDTO location);
+    LocationDTO create(@Valid LocationDTO location);
 
     @PUT
-    @Path("{name}")
-    void update(@PathParam("name") String name, LocationDTO location);
+    @Path("{id}")
+    LocationDTO update(@PathParam("id") long id, @Valid  LocationDTO location);
+
 
     @GET
-    @Path("{name}")
-    LocationDTO get(@PathParam("name") String name);
+    @Path("{id}")
+    LocationDTO get(@PathParam("id") long id);
 
     @DELETE
-    @Path("{name}")
-    void delete(@PathParam("name") String name);
+    @Path("{id}")
+    void delete(@PathParam("id") long id);
 }

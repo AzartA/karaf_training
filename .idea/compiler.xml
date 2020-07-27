@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="rest" />
+        <module name="training-feature" />
+        <module name="rest-api" />
+        <module name="container" />
+        <module name="model" />
+        <module name="model-api" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="buisness-logic-services" target="1.8" />
+      <module name="buisness-logic-services-api" target="1.8" />
+      <module name="container" target="1.8" />
+      <module name="karaf" target="1.8" />
+      <module name="model" target="1.8" />
+      <module name="model-api" target="1.8" />
+      <module name="rest" target="1.8" />
+      <module name="rest-api" target="1.8" />
+      <module name="training-feature" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

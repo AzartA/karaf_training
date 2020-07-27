@@ -3,7 +3,7 @@
            xmlns:jaxrs="http://cxf.apache.org/blueprint/jaxrs">
     <reference id="userRepo" interface="ru.training.karaf.repo.UserRepo"/>
     <reference id="locationRepo" interface="ru.training.karaf.repo.LocationRepo"/>
-    <!--<reference id="uniqueValidationRepo" interface="ru.training.karaf.repo.UniqueValidationRepo"/>-->
+    <reference id="uniqueValidationRepo" interface="ru.training.karaf.repo.UniqueValidationRepo"/>
 
     <bean id="userRestServiceBean" class="ru.training.karaf.rest.UserRestServiceImpl">
         <property name="repo" ref="userRepo"/>
@@ -11,9 +11,10 @@
     <bean id="locationRestServiceBean" class="ru.training.karaf.rest.LocationRestServiceImpl">
         <property name="repo" ref="locationRepo"/>
     </bean>
-   <!-- <bean id="uniqueKeyValidatorBean" class="ru.training.karaf.rest.validation.UniqueKeyValidatorImpl">
-        <property name="repo" ref="uniqueValidationRepo"/>
-    </bean>-->
+
+    <bean id="uniqueKeyValidatorBean" activation="lazy" class="ru.training.karaf.rest.validation.UniqueKeyValidatorImpl">
+       <property name="repo" ref="uniqueValidationRepo"/>
+    </bean>
 
     <bean id="validationProviderResolver"
           class="ru.training.karaf.rest.validation.HibernateValidationProviderResolver"/>

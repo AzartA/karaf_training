@@ -1,18 +1,21 @@
 package ru.training.karaf.repo;
 
-import ru.training.karaf.model.Location;
-
 import java.util.List;
 import java.util.Optional;
+
+import ru.training.karaf.model.Location;
 
 public interface LocationRepo {
     List<? extends Location> getAll();
 
-    Location create(Location location);
+    Optional<? extends Location> create(Location location);
 
-    Optional<? extends Location> update(String name, Location location);
+    Optional<? extends Location> update(long id, Location location);
 
-    Optional<? extends Location> get(String name);
+    Optional<? extends Location> get(long id);
 
-    String delete(String name);
+    Optional<? extends Location> getByName(String name);
+
+    Optional<? extends Location> delete(long id);
+
 }

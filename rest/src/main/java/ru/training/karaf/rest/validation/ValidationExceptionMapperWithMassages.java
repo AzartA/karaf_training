@@ -24,7 +24,7 @@ public class ValidationExceptionMapperWithMassages extends ValidationExceptionMa
 
         List<String> responseText = new ArrayList<>();
 
-        Response.Status errorStatus = Response.Status.INTERNAL_SERVER_ERROR;
+        Response.Status errorStatus = Response.Status.BAD_REQUEST; //.INTERNAL_SERVER_ERROR;
         if (exception instanceof ConstraintViolationException) {
             final ConstraintViolationException constraint = (ConstraintViolationException) exception;
 
@@ -34,7 +34,7 @@ public class ValidationExceptionMapperWithMassages extends ValidationExceptionMa
                     .collect(Collectors.toList()));
 
             //if (!(constraint instanceof ResponseConstraintViolationException)) {
-            errorStatus = Response.Status.BAD_REQUEST;
+            //errorStatus = Response.Status.BAD_REQUEST;
             // }
             return buildResponse(errorStatus, responseText);
         }
@@ -46,13 +46,7 @@ public class ValidationExceptionMapperWithMassages extends ValidationExceptionMa
     private Response buildResponse(Response.Status errorStatus, List<String> responseText) {
         ResponseBuilder rb = JAXRSUtils.toResponseBuilder(errorStatus);
         if (responseText != null) {
-            //            ObjectMapper mapper = new ObjectMapper();
-            //            try {
             rb.type(MediaType.APPLICATION_JSON).entity(new ErrorsDTO(responseText));
-
-            //            } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
-            //                throw new IllegalArgumentException("Unable serialize response message to json", e);
-            //            }
         }
         return rb.build();
     }

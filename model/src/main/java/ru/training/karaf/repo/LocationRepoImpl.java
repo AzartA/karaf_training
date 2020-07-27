@@ -1,13 +1,15 @@
 package ru.training.karaf.repo;
 
-import org.apache.aries.jpa.template.JpaTemplate;
-import ru.training.karaf.model.Location;
-import ru.training.karaf.model.LocationDO;
-
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import java.util.List;
 import java.util.Optional;
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.validation.ValidationException;
+
+import org.apache.aries.jpa.template.JpaTemplate;
+import org.apache.aries.jpa.template.TransactionType;
+import ru.training.karaf.model.Location;
+import ru.training.karaf.model.LocationDO;
 
 public class LocationRepoImpl implements LocationRepo {
     private JpaTemplate template;
@@ -22,31 +24,50 @@ public class LocationRepoImpl implements LocationRepo {
     }
 
     @Override
-    public Location create(Location location) {
+    public Optional<? extends Location> create(Location location) {
         LocationDO locationToCreate = new LocationDO(location.getName());
-        template.tx(em -> em.persist(locationToCreate));
-        return null;
+        return template.txExpr(em -> {
+            if (!(getByName(location.getName(), em).isPresent())) {
+                em.persist(locationToCreate);
+                return Optional.of(locationToCreate);
+            }
+            return Optional.empty();
+        });
     }
 
     @Override
-    public Optional<? extends Location> update(String name, Location location) {
-        template.tx(em -> getByName(name, em).ifPresent(locationToUpdate -> {
-            locationToUpdate.setName(location.getName());
-            //locationToUpdate.getSensorSet(location.getSensorSet());
-            em.merge(locationToUpdate);
-        }));
-        return Optional.empty();
+    public Optional<? extends Location> update(long id, Location location) {
+        return template.txExpr(em -> {
+            List<LocationDO> l = getByIdOrName(id, location.getName(), em);
+            if (l.size() > 1) {
+                throw new ValidationException("This name is already exist");
+            }
+            LocationDO locationToUpdate = l.get(0);
+            if (locationToUpdate.getId() == id) {
+                locationToUpdate.setName(location.getName());
+                em.merge(locationToUpdate);
+                return Optional.of(locationToUpdate);
+            }
+            return Optional.empty();
+        });
     }
 
     @Override
-    public Optional<? extends Location> get(String name) {
+    public Optional<? extends Location> get(long id) {
+        return template.txExpr(TransactionType.Required, em -> getById(id, em));
+    }
+
+    @Override
+    public Optional<? extends Location> getByName(String name) {
         return template.txExpr(em -> getByName(name, em));
     }
 
     @Override
-    public String delete(String name) {
-        template.tx(em -> getByName(name, em).ifPresent(em::remove));
-        return "";
+    public Optional<LocationDO> delete(long id) {
+        return template.txExpr(em -> getById(id, em).map(l -> {
+            em.remove(l);
+            return l;
+        }));
     }
 
     private Optional<LocationDO> getByName(String name, EntityManager em) {
@@ -56,5 +77,15 @@ public class LocationRepoImpl implements LocationRepo {
         } catch (NoResultException e) {
             return Optional.empty();
         }
+    }
+
+    private Optional<LocationDO> getById(long id, EntityManager em) {
+        return Optional.ofNullable(em.find(LocationDO.class, id));
+    }
+
+    private List<LocationDO> getByIdOrName(long id, String name, EntityManager em) {
+        return em.createNamedQuery(LocationDO.GET_BY_ID_OR_NAME, LocationDO.class)
+                .setParameter("id", id).setParameter("name", name)
+                .getResultList();
     }
 }

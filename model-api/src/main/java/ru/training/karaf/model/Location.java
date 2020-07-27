@@ -3,7 +3,8 @@ package ru.training.karaf.model;
 import java.util.Set;
 
 public interface Location {
+    long getId();
     String getName();
-
-    Set<? extends Sensor> getSensorSet();
+    //ToDo
+    //Set<? extends Sensor> getSensorSet();
 }

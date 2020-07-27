@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
+import javax.validation.ValidationException;
 
 import org.apache.aries.jpa.template.JpaTemplate;
 import ru.training.karaf.model.User;
@@ -32,12 +33,13 @@ public class UserRepoImpl implements UserRepo {
         return userToCreate;
     }
 
+    //ToDo think about == 1
     @Override
     public Optional<? extends User> update(long id, User user) {
         return template.txExpr(em -> {
             List<UserDO> u = getByIdOrLogin(id, user.getLogin(), em);
             if (u.size() > 1) {
-                return null;
+                throw new ValidationException("This login is already exist");
             }
             if (u.size() == 1) {
                 UserDO userToUpdate = u.get(0);
@@ -62,18 +64,12 @@ public class UserRepoImpl implements UserRepo {
         }));
     }
 
-
     @Override
     public Optional<? extends User> get(long id) {
        // return template.txExpr(em -> getById(id, em));
         return Optional.ofNullable(template.txExpr(em -> em.find(UserDO.class, id)));
 
     }
-
-   /* @Override
-    public Optional<? extends User> getByLogin(String login) {
-        return template.txExpr(em -> getByLogin(login, em));
-    }*/
 
     @Override
     public Optional<UserDO> delete(long id) {

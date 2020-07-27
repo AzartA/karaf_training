@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: org.eclipse.tycho:org.eclipse.osgi:3.10.101.v20150820-1432">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/tycho/org.eclipse.osgi/3.10.101.v20150820-1432/org.eclipse.osgi-3.10.101.v20150820-1432.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/tycho/org.eclipse.osgi/3.10.101.v20150820-1432/org.eclipse.osgi-3.10.101.v20150820-1432-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/tycho/org.eclipse.osgi/3.10.101.v20150820-1432/org.eclipse.osgi-3.10.101.v20150820-1432-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

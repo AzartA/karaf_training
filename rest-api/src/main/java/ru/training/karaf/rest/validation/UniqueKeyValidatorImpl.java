@@ -1,5 +1,7 @@
 package ru.training.karaf.rest.validation;
 
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
 import ru.training.karaf.model.UniqueFieldEntity;
 import ru.training.karaf.repo.UniqueValidationRepo;
 
@@ -12,6 +14,11 @@ import java.util.Optional;
 public class UniqueKeyValidatorImpl implements ConstraintValidator<UniqueKey, UniqueFieldEntity> {
     private UniqueKey uniqueKey;
     private UniqueValidationRepo repo;
+    //private BundleContext bundleContext;
+
+    public UniqueKeyValidatorImpl(){
+    }
+
 
     public void setRepo(UniqueValidationRepo repo) {
         this.repo = repo;
@@ -20,6 +27,10 @@ public class UniqueKeyValidatorImpl implements ConstraintValidator<UniqueKey, Un
     @Override
     public void initialize(UniqueKey uniqueKey) {
         this.uniqueKey = uniqueKey;
+       // this.bundleContext = bundleContext;
+       // ServiceReference<UniqueValidationRepo> sr = bundleContext.getServiceReference(UniqueValidationRepo.class);
+       // repo = bundleContext.getService(sr);
+
     }
 
     @Override
@@ -62,5 +73,7 @@ public class UniqueKeyValidatorImpl implements ConstraintValidator<UniqueKey, Un
                             + "' on bean "
                             + entityClass + ".", e);
         }
+
+
     }
 }

@@ -62,10 +62,7 @@ public class UserDTO implements User, UniqueFieldEntity {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((login == null) ? 0 : login.hashCode());
-        return result;
+        return Long.hashCode(id);
     }
 
     @Override
@@ -78,7 +75,7 @@ public class UserDTO implements User, UniqueFieldEntity {
             return false;
         }
         UserDTO other = (UserDTO) obj;
-        return login.equals(other.getLogin());
+        return id == other.getId();
     }
 
     @Override

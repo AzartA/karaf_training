@@ -12,6 +12,6 @@ public interface Sensor {
 
     Set<? extends User> getUsers();
 
-    List<? extends Measuring> getMeasurings();
+   // List<? extends Measuring> getMeasurings();
 
 }
