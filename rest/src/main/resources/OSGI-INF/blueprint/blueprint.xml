@@ -4,6 +4,7 @@
     <reference id="userRepo" interface="ru.training.karaf.repo.UserRepo"/>
     <reference id="unitRepo" interface="ru.training.karaf.repo.UnitRepo"/>
     <reference id="locationRepo" interface="ru.training.karaf.repo.LocationRepo"/>
+    <reference id="paramRepo" interface="ru.training.karaf.repo.ClimateParameterRepo"/>
 
     <reference id="uniqueValidationRepo" interface="ru.training.karaf.repo.UniqueValidationRepo"/>
 
@@ -16,6 +17,9 @@
     <bean id="unitRestServiceBean" class="ru.training.karaf.rest.UnitRestServiceImpl">
         <property name="repo" ref="unitRepo"/>
     </bean>
+    <bean id="paramRestServiceBeen" class="ru.training.karaf.rest.ClimateParameterRestServiceImpl">
+            <property name="repo" ref="paramRepo"/>
+        </bean>
 
     <bean id="uniqueKeyValidatorBean" activation="lazy" class="ru.training.karaf.rest.validation.UniqueKeyValidatorImpl">
        <property name="repo" ref="uniqueValidationRepo"/>
@@ -42,6 +46,7 @@
             <ref component-id="userRestServiceBean"/>
             <ref component-id="locationRestServiceBean"/>
             <ref component-id="unitRestServiceBean"/>
+            <ref component-id="paramRestServiceBeen"/>
             <!--<ref component-id="uniqueKeyValidatorBean"/>-->
         </jaxrs:serviceBeans>
         <jaxrs:providers>

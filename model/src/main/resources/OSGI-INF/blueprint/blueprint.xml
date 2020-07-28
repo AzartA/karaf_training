@@ -13,6 +13,9 @@
     <bean id="unitRepo" class="ru.training.karaf.repo.UnitRepoIml">
         <argument ref="jpaTemplate"/>
     </bean>
+    <bean id="paramRepo" class="ru.training.karaf.repo.ClimateParameterRepoImpl">
+            <argument ref="jpaTemplate"/>
+        </bean>
 
 
     <bean id="uniqueValidationRepo" class="ru.training.karaf.repo.UniqueValidationRepoImpl">
@@ -21,6 +24,7 @@
     <service ref="userRepo" interface="ru.training.karaf.repo.UserRepo"/>
     <service ref="locationRepo" interface="ru.training.karaf.repo.LocationRepo"/>
     <service ref="unitRepo" interface="ru.training.karaf.repo.UnitRepo"/>
+    <service ref="paramRepo" interface="ru.training.karaf.repo.ClimateParameterRepo"/>
 
     <service ref="uniqueValidationRepo" interface="ru.training.karaf.repo.UniqueValidationRepo"/>
 

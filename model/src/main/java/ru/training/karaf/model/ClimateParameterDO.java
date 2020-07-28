@@ -1,33 +1,54 @@
 package ru.training.karaf.model;
 
-
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
+@NamedQueries({
+        @NamedQuery(name = ClimateParameterDO.GET_ALL, query = "SELECT u FROM ClimateParameterDO AS u"),
+        @NamedQuery(name = ClimateParameterDO.GET_BY_NAME, query = "SELECT u FROM ClimateParameterDO AS u WHERE u.name = :name"),
+        @NamedQuery(name = ClimateParameterDO.GET_BY_ID, query = "SELECT u FROM ClimateParameterDO AS u WHERE u.id = :id"),
+        @NamedQuery(name = ClimateParameterDO.GET_BY_ID_OR_NAME, query = "SELECT u FROM ClimateParameterDO AS u WHERE u.id = :id OR u.name = :name")
+})
 @Entity
 public class ClimateParameterDO implements ClimateParameter {
-
-    @Id
-    @GeneratedValue
-    private long id;
-    @Column(name = "name", length = 48)
-    private String name;
-    @ManyToMany(mappedBy = "parameters")
-    private Set<SensorTypeDO> sensorTypes;
+    public static final String GET_ALL = "Params.getAll";
+    public static final String GET_BY_NAME = "Params.getByName";
+    public static final String GET_BY_ID = "Params.getById";
+    public static final String GET_BY_ID_OR_NAME = "Params.getByIdOrName";
     @ManyToMany
     @JoinTable(name = "PARAMETER_UNIT_SET")
     Set<UnitDO> units;
+    @Id
+    @GeneratedValue
+    private long id;
+    @Column(name = "name", length = 48, nullable = false, unique = true)
+    private String name;
+    @ManyToMany(mappedBy = "parameters")
+    private Set<SensorTypeDO> sensorTypes;
     @OneToMany(mappedBy = "parameter")
     private List<MeasuringDO> measurings;
 
+    public ClimateParameterDO() {
+    }
+
+    public ClimateParameterDO(String name) {
+        this.name = name;
+    }
+
+    public ClimateParameterDO(String name, Set<? extends Unit> units) {
+        this.name = name;
+        this.units = (Set<UnitDO>) units;
+    }
 
     public long getId() {
         return id;
@@ -54,12 +75,12 @@ public class ClimateParameterDO implements ClimateParameter {
         this.sensorTypes = sensorTypes;
     }
 
-    public Set<UnitDO> getUnits() {
+    public Set<? extends Unit> getUnits() {
         return units;
     }
 
-    public void setUnits(Set<UnitDO> units) {
-        this.units = units;
+    public void setUnits(Set<? extends Unit> units) {
+        this.units = (Set<UnitDO>) units;
     }
 
     public List<MeasuringDO> getMeasurings() {
@@ -68,8 +89,12 @@ public class ClimateParameterDO implements ClimateParameter {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ClimateParameterDO)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof ClimateParameterDO)) {
+            return false;
+        }
         ClimateParameterDO that = (ClimateParameterDO) o;
         return id == that.id;
     }
