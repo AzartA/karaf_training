@@ -43,11 +43,13 @@ public class UserRepoImpl implements UserRepo {
             }
             if (u.size() == 1) {
                 UserDO userToUpdate = u.get(0);
-                userToUpdate.setLogin(user.getLogin());
-                userToUpdate.setName(user.getName());
-                userToUpdate.setProperties(user.getProperties());
-                em.merge(userToUpdate);
-                return Optional.of(userToUpdate);
+                if (userToUpdate.getId() == id) {
+                    userToUpdate.setLogin(user.getLogin());
+                    userToUpdate.setName(user.getName());
+                    userToUpdate.setProperties(user.getProperties());
+                    em.merge(userToUpdate);
+                    return Optional.of(userToUpdate);
+                }
             }
             return Optional.empty();
         });

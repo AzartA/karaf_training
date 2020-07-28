@@ -1,18 +1,15 @@
 package ru.training.karaf.rest;
 
-
-import ru.training.karaf.model.ClimateParameter;
-
-import ru.training.karaf.repo.ClimateParameterRepo;
-import ru.training.karaf.rest.dto.ClimateParameterDTO;
-import ru.training.karaf.rest.dto.LocationDTO;
-
-import javax.validation.ValidationException;
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import javax.validation.ValidationException;
+import javax.ws.rs.NotFoundException;
+import javax.ws.rs.core.Response;
+
+import ru.training.karaf.model.ClimateParameter;
+import ru.training.karaf.repo.ClimateParameterRepo;
+import ru.training.karaf.rest.dto.ClimateParameterDTO;
 
 public class ClimateParameterRestServiceImpl implements ClimateParameterRestService {
     private ClimateParameterRepo repo;
@@ -38,8 +35,15 @@ public class ClimateParameterRestServiceImpl implements ClimateParameterRestServ
     }
 
     @Override
+    public ClimateParameterDTO setUnits(long id, List<Long> unitIds) {
+        return repo.setUnits(id, unitIds).map(ClimateParameterDTO::new).orElseThrow(() ->
+                new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
+    }
+
+    @Override
     public ClimateParameterDTO get(long id) {
-        return repo.get(id).map(ClimateParameterDTO::new).orElseThrow(() -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
+        return repo.get(id).map(ClimateParameterDTO::new).orElseThrow(
+                () -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
     }
 
     @Override

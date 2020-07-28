@@ -1,19 +1,19 @@
 package ru.training.karaf.rest.dto;
 
+import java.util.Set;
+import java.util.stream.Collectors;
+import javax.validation.constraints.Pattern;
+
 import org.hibernate.validator.constraints.Length;
 import ru.training.karaf.model.ClimateParameter;
 import ru.training.karaf.model.Unit;
-
-import javax.validation.constraints.Pattern;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 public class ClimateParameterDTO implements ClimateParameter {
     private long id;
     @Pattern(regexp = "^(\\S+)[A-Za-z0-9_ -]*$", message = "Name must start with 3 letters min; can contain letters, digits, space or _ only.")
     @Length(min = 3, max = 48, message = "Name length must be from 3 to 48 symbols")
     private String name;
-    private Set<? extends Unit> units;
+    private Set<UnitDTO> units;
 
     public ClimateParameterDTO() {
     }
@@ -21,7 +21,7 @@ public class ClimateParameterDTO implements ClimateParameter {
     public ClimateParameterDTO(ClimateParameter parameter) {
         this.id = parameter.getId();
         this.name = parameter.getName();
-        this.units = parameter.getUnits();
+        this.units = (Set<UnitDTO>) parameter.getUnits();
     }
 
     @Override
@@ -48,15 +48,17 @@ public class ClimateParameterDTO implements ClimateParameter {
     }
 
     public void setUnits(Set<? extends Unit> units) {
-        this.units = units;
+        this.units = (Set<UnitDTO>)units;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
+        if (this == o) {
             return true;
-        if (!(o instanceof ClimateParameterDTO))
+        }
+        if (!(o instanceof ClimateParameterDTO)) {
             return false;
+        }
 
         ClimateParameterDTO that = (ClimateParameterDTO) o;
 
@@ -70,7 +72,7 @@ public class ClimateParameterDTO implements ClimateParameter {
 
     @Override
     public String toString() {
-        String unitsNames = "[" + units.stream().map(Unit::getName).collect(Collectors.joining(","))+"]";
+        String unitsNames = "[" + units.stream().map(Unit::getName).collect(Collectors.joining(",")) + "]";
         return "ClimateParameterDTO{" +
                 "id=" + id +
                 ", name=" + name +

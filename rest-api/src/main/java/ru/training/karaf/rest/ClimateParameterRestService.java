@@ -11,6 +11,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
 
@@ -28,8 +29,11 @@ public interface ClimateParameterRestService {
     @Path("{id}")
     ClimateParameterDTO update(@PathParam("id") long id, @Valid ClimateParameterDTO parameter);
 
-    @GET
+    @PUT
+    @Path("{id}/units")
+    ClimateParameterDTO setUnits(@PathParam("id") long id, @QueryParam("uId") List<Long> unitIds);
 
+    @GET
     @Path("{id}")
     ClimateParameterDTO get(@PathParam("id") long id);
 

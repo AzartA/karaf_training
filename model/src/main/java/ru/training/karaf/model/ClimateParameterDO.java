@@ -3,6 +3,7 @@ package ru.training.karaf.model;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -25,7 +26,7 @@ public class ClimateParameterDO implements ClimateParameter {
     public static final String GET_BY_NAME = "Params.getByName";
     public static final String GET_BY_ID = "Params.getById";
     public static final String GET_BY_ID_OR_NAME = "Params.getByIdOrName";
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "PARAMETER_UNIT_SET")
     Set<UnitDO> units;
     @Id
@@ -35,7 +36,7 @@ public class ClimateParameterDO implements ClimateParameter {
     private String name;
     @ManyToMany(mappedBy = "parameters")
     private Set<SensorTypeDO> sensorTypes;
-    @OneToMany(mappedBy = "parameter")
+    @OneToMany(mappedBy = "parameter", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<MeasuringDO> measurings;
 
     public ClimateParameterDO() {

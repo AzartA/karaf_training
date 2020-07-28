@@ -17,4 +17,7 @@ public interface ClimateParameterRepo {
     Optional<? extends ClimateParameter > getByName(String name);
 
     Optional<? extends ClimateParameter > delete(long id);
+
+    Optional<? extends ClimateParameter > setUnits(long id, List<Long> unitIds);
+
 }

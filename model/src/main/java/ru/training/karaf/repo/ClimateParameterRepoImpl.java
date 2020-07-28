@@ -1,22 +1,28 @@
 package ru.training.karaf.repo;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.validation.ValidationException;
+
 import org.apache.aries.jpa.template.JpaTemplate;
 import org.apache.aries.jpa.template.TransactionType;
 import ru.training.karaf.model.ClimateParameter;
 import ru.training.karaf.model.ClimateParameterDO;
-import ru.training.karaf.model.UnitDO;
-
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.validation.ValidationException;
-import java.util.List;
-import java.util.Optional;
+import ru.training.karaf.model.Unit;
 
 public class ClimateParameterRepoImpl implements ClimateParameterRepo {
     private JpaTemplate template;
+    private UnitRepoIml unitRepo;
 
     public ClimateParameterRepoImpl(JpaTemplate template) {
+
         this.template = template;
+        unitRepo = new UnitRepoIml(template);
     }
 
     @Override
@@ -26,7 +32,7 @@ public class ClimateParameterRepoImpl implements ClimateParameterRepo {
 
     @Override
     public Optional<? extends ClimateParameter> create(ClimateParameter parameter) {
-        ClimateParameter paramToCreate = new ClimateParameterDO(parameter.getName(),parameter.getUnits());
+        ClimateParameter paramToCreate = new ClimateParameterDO(parameter.getName(), parameter.getUnits());
         return template.txExpr(em -> {
             if (!(getByName(parameter.getName(), em).isPresent())) {
                 em.persist(paramToCreate);
@@ -36,7 +42,6 @@ public class ClimateParameterRepoImpl implements ClimateParameterRepo {
         });
     }
 
-
     @Override
     public Optional<? extends ClimateParameter> update(long id, ClimateParameter parameter) {
         return template.txExpr(em -> {
@@ -44,12 +49,14 @@ public class ClimateParameterRepoImpl implements ClimateParameterRepo {
             if (l.size() > 1) {
                 throw new ValidationException("This name is already exist");
             }
-            ClimateParameterDO parameterToUpdate = l.get(0);
-            if (parameterToUpdate.getId() == id) {
-                parameterToUpdate.setName(parameter.getName());
-                parameterToUpdate.setUnits(parameter.getUnits());
-                em.merge(parameterToUpdate);
-                return Optional.of(parameterToUpdate);
+            if (!l.isEmpty()) {
+                ClimateParameterDO parameterToUpdate = l.get(0);
+                if (parameterToUpdate.getId() == id) {
+                    parameterToUpdate.setName(parameter.getName());
+                    parameterToUpdate.setUnits(parameter.getUnits());
+                    em.merge(parameterToUpdate);
+                    return Optional.of(parameterToUpdate);
+                }
             }
             return Optional.empty();
         });
@@ -73,6 +80,20 @@ public class ClimateParameterRepoImpl implements ClimateParameterRepo {
         }));
     }
 
+    @Override
+    public Optional<? extends ClimateParameter> setUnits(long id, List<Long> unitIds) {
+        Set<Unit> units = new HashSet<>(4);
+        unitIds.stream().forEach(uId -> unitRepo.get(uId).ifPresent(units::add));
+        return template.txExpr(TransactionType.Required, em -> {
+            Optional<ClimateParameterDO> parameterToUpdate = getById(id, em);
+            parameterToUpdate.ifPresent(p -> {
+                p.setUnits(units);
+                em.merge(p);
+            });
+            return parameterToUpdate;
+        });
+    }
+
     private Optional<ClimateParameterDO> getByName(String name, EntityManager em) {
         try {
             return Optional.of(em.createNamedQuery(ClimateParameterDO.GET_BY_NAME, ClimateParameterDO.class).setParameter("name", name)
@@ -81,6 +102,7 @@ public class ClimateParameterRepoImpl implements ClimateParameterRepo {
             return Optional.empty();
         }
     }
+
     private List<ClimateParameterDO> getByIdOrName(long id, String name, EntityManager em) {
         return em.createNamedQuery(ClimateParameterDO.GET_BY_ID_OR_NAME, ClimateParameterDO.class)
                 .setParameter("id", id).setParameter("name", name)

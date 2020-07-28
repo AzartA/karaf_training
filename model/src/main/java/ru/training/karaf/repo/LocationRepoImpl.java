@@ -42,11 +42,13 @@ public class LocationRepoImpl implements LocationRepo {
             if (l.size() > 1) {
                 throw new ValidationException("This name is already exist");
             }
-            LocationDO locationToUpdate = l.get(0);
-            if (locationToUpdate.getId() == id) {
-                locationToUpdate.setName(location.getName());
-                em.merge(locationToUpdate);
-                return Optional.of(locationToUpdate);
+            if (!l.isEmpty()) {
+                LocationDO locationToUpdate = l.get(0);
+                if (locationToUpdate.getId() == id) {
+                    locationToUpdate.setName(location.getName());
+                    em.merge(locationToUpdate);
+                    return Optional.of(locationToUpdate);
+                }
             }
             return Optional.empty();
         });

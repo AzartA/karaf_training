@@ -42,12 +42,14 @@ public class UnitRepoIml implements UnitRepo {
             if (l.size() > 1) {
                 throw new ValidationException("This name is already exist");
             }
-            UnitDO unitToUpdate = l.get(0);
-            if (unitToUpdate.getId() == id) {
-                unitToUpdate.setName(unit.getName());
-                unitToUpdate.setNotation(unit.getNotation());
-                em.merge(unitToUpdate);
-                return Optional.of(unitToUpdate);
+            if (!l.isEmpty()) {
+                UnitDO unitToUpdate = l.get(0);
+                if (unitToUpdate.getId() == id) {
+                    unitToUpdate.setName(unit.getName());
+                    unitToUpdate.setNotation(unit.getNotation());
+                    em.merge(unitToUpdate);
+                    return Optional.of(unitToUpdate);
+                }
             }
             return Optional.empty();
         });
