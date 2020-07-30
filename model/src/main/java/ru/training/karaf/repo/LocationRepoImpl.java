@@ -12,7 +12,7 @@ import ru.training.karaf.model.Location;
 import ru.training.karaf.model.LocationDO;
 
 public class LocationRepoImpl implements LocationRepo {
-    private JpaTemplate template;
+    private final JpaTemplate template;
 
     public LocationRepoImpl(JpaTemplate template) {
         this.template = template;

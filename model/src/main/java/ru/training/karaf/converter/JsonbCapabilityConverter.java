@@ -9,7 +9,7 @@ import javax.persistence.Converter;
 
 @Converter
 public class JsonbCapabilityConverter implements AttributeConverter<Capability, String> {
-    private static ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     @Override
     public String convertToDatabaseColumn(Capability entity) {

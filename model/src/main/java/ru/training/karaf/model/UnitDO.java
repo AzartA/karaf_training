@@ -1,5 +1,13 @@
 package ru.training.karaf.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import ru.training.karaf.serializer.SetOfEntitiesSerializer;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -10,6 +18,7 @@ import javax.persistence.NamedQuery;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+//@JsonIdentityInfo(generator= ObjectIdGenerators.PropertyGenerator.class, property="id")
 @NamedQueries({
         @NamedQuery(name = UnitDO.GET_ALL, query = "SELECT u FROM UnitDO AS u"),
         @NamedQuery(name = UnitDO.GET_BY_NAME, query = "SELECT u FROM UnitDO AS u WHERE u.name = :name"),
@@ -29,7 +38,10 @@ public class UnitDO implements Unit {
     private String name;
     @Column(name = "notation", length = 32)
     private String notation;
-    @ManyToMany(mappedBy = "units")
+    //@JsonBackReference
+   // @JsonIdentityReference(alwaysAsId = true)
+    @JsonSerialize(using = SetOfEntitiesSerializer.class)
+    @ManyToMany(mappedBy = "units", cascade = {CascadeType.MERGE,CascadeType.PERSIST})
     private Set<ClimateParameterDO> climateParameters;
 
     public UnitDO() {
@@ -38,6 +50,12 @@ public class UnitDO implements Unit {
     public UnitDO(String name, String notation) {
         this.name = name;
         this.notation = notation;
+    }
+
+    public UnitDO(Unit unit) {
+        this.name = unit.getName();
+        this.notation = unit.getNotation();
+        this.climateParameters = (Set<ClimateParameterDO>)unit.getClimateParameters();
     }
 
     public long getId() {

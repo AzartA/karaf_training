@@ -1,7 +1,10 @@
 package ru.training.karaf.repo;
 
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.validation.ValidationException;
@@ -12,7 +15,7 @@ import ru.training.karaf.model.Unit;
 import ru.training.karaf.model.UnitDO;
 
 public class UnitRepoIml implements UnitRepo {
-    private JpaTemplate template;
+    private final JpaTemplate template;
 
     public UnitRepoIml(JpaTemplate template) {
         this.template = template;
@@ -68,6 +71,7 @@ public class UnitRepoIml implements UnitRepo {
     @Override
     public Optional<? extends Unit> delete(long id) {
         return template.txExpr(em -> getById(id, em).map(l -> {
+            l.getClimateParameters().forEach(p -> p.getUnits().remove(l));
             em.remove(l);
             return l;
         }));

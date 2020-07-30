@@ -1,6 +1,5 @@
 package ru.training.karaf.repo;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -13,11 +12,11 @@ import org.apache.aries.jpa.template.JpaTemplate;
 import org.apache.aries.jpa.template.TransactionType;
 import ru.training.karaf.model.ClimateParameter;
 import ru.training.karaf.model.ClimateParameterDO;
-import ru.training.karaf.model.Unit;
+import ru.training.karaf.model.UnitDO;
 
 public class ClimateParameterRepoImpl implements ClimateParameterRepo {
-    private JpaTemplate template;
-    private UnitRepoIml unitRepo;
+    private final JpaTemplate template;
+    private final UnitRepoIml unitRepo;
 
     public ClimateParameterRepoImpl(JpaTemplate template) {
 
@@ -32,7 +31,7 @@ public class ClimateParameterRepoImpl implements ClimateParameterRepo {
 
     @Override
     public Optional<? extends ClimateParameter> create(ClimateParameter parameter) {
-        ClimateParameter paramToCreate = new ClimateParameterDO(parameter.getName(), parameter.getUnits());
+        ClimateParameter paramToCreate = new ClimateParameterDO(parameter);
         return template.txExpr(em -> {
             if (!(getByName(parameter.getName(), em).isPresent())) {
                 em.persist(paramToCreate);
@@ -53,7 +52,7 @@ public class ClimateParameterRepoImpl implements ClimateParameterRepo {
                 ClimateParameterDO parameterToUpdate = l.get(0);
                 if (parameterToUpdate.getId() == id) {
                     parameterToUpdate.setName(parameter.getName());
-                    parameterToUpdate.setUnits(parameter.getUnits());
+                    parameterToUpdate.setUnits((Set<UnitDO>)parameter.getUnits());
                     em.merge(parameterToUpdate);
                     return Optional.of(parameterToUpdate);
                 }
@@ -75,6 +74,7 @@ public class ClimateParameterRepoImpl implements ClimateParameterRepo {
     @Override
     public Optional<? extends ClimateParameter> delete(long id) {
         return template.txExpr(em -> getById(id, em).map(l -> {
+            l.getUnits().forEach(u -> u.getClimateParameters().remove(l));
             em.remove(l);
             return l;
         }));
@@ -82,16 +82,32 @@ public class ClimateParameterRepoImpl implements ClimateParameterRepo {
 
     @Override
     public Optional<? extends ClimateParameter> setUnits(long id, List<Long> unitIds) {
-        Set<Unit> units = new HashSet<>(4);
-        unitIds.stream().forEach(uId -> unitRepo.get(uId).ifPresent(units::add));
+        Set<UnitDO> units = new HashSet<>(4);
         return template.txExpr(TransactionType.Required, em -> {
             Optional<ClimateParameterDO> parameterToUpdate = getById(id, em);
             parameterToUpdate.ifPresent(p -> {
+                unitIds.forEach(uId -> unitRepo.get(uId).ifPresent(un -> units.add((UnitDO)un)));
                 p.setUnits(units);
                 em.merge(p);
             });
             return parameterToUpdate;
         });
+    }
+
+    @Override
+    public Optional<? extends ClimateParameter> addUnits(long id, List<Long> unitIds) {
+        Set<UnitDO> units = new HashSet<>(4);
+        return template.txExpr(TransactionType.Required, em -> {
+            Optional<ClimateParameterDO> parameterToUpdate = getById(id, em);
+            parameterToUpdate.ifPresent(p -> {
+                unitIds.forEach(uId -> unitRepo.get(uId).ifPresent(un -> units.add((UnitDO)un)));
+                p.addUnits(units);
+                em.merge(p);
+            });
+            return parameterToUpdate;
+        });
+
+
     }
 
     private Optional<ClimateParameterDO> getByName(String name, EntityManager em) {

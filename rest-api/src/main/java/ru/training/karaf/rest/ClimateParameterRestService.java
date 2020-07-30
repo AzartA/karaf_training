@@ -31,7 +31,9 @@ public interface ClimateParameterRestService {
 
     @PUT
     @Path("{id}/units")
-    ClimateParameterDTO setUnits(@PathParam("id") long id, @QueryParam("uId") List<Long> unitIds);
+    ClimateParameterDTO addUnits(@PathParam("id") long id, @QueryParam("uId") List<Long> unitIds);
+
+
 
     @GET
     @Path("{id}")

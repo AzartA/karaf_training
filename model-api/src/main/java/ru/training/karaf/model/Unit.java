@@ -1,7 +1,10 @@
 package ru.training.karaf.model;
 
-public interface Unit {
-    long getId();
-    String getName();
+import java.util.Set;
+
+public interface Unit extends Entity {
+    //long getId();
+    //String getName();
     String getNotation();
+    Set<? extends Entity> getClimateParameters();
 }

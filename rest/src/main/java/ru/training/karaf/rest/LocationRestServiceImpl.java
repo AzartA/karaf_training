@@ -1,14 +1,11 @@
 package ru.training.karaf.rest;
 
 import ru.training.karaf.model.Location;
-import ru.training.karaf.model.User;
 import ru.training.karaf.repo.LocationRepo;
 import ru.training.karaf.rest.dto.LocationDTO;
-import ru.training.karaf.rest.dto.UserDTO;
 
 import javax.validation.ValidationException;
 import javax.ws.rs.NotFoundException;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.Optional;

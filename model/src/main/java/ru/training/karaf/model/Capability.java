@@ -1,7 +1,7 @@
 package ru.training.karaf.model;
 
 import java.io.Serializable;
-
+import java.util.Objects;
 
 public class Capability implements Serializable {
     private static final long serialVersionUID = 9874563217891L;
@@ -41,9 +41,9 @@ public class Capability implements Serializable {
 
         Capability that = (Capability) o;
 
-        if (range != null ? !range.equals(that.range) : that.range != null) return false;
-        if (accuracy != null ? !accuracy.equals(that.accuracy) : that.accuracy != null) return false;
-        return resolution != null ? resolution.equals(that.resolution) : that.resolution == null;
+        if (!Objects.equals(range, that.range)) return false;
+        if (!Objects.equals(accuracy, that.accuracy)) return false;
+        return Objects.equals(resolution, that.resolution);
     }
 
     @Override

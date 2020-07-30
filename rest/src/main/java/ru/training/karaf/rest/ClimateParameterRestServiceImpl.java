@@ -35,10 +35,12 @@ public class ClimateParameterRestServiceImpl implements ClimateParameterRestServ
     }
 
     @Override
-    public ClimateParameterDTO setUnits(long id, List<Long> unitIds) {
-        return repo.setUnits(id, unitIds).map(ClimateParameterDTO::new).orElseThrow(() ->
+    public ClimateParameterDTO addUnits(long id, List<Long> unitIds) {
+        return repo.addUnits(id, unitIds).map(ClimateParameterDTO::new).orElseThrow(() ->
                 new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
     }
+
+
 
     @Override
     public ClimateParameterDTO get(long id) {

@@ -1,13 +1,10 @@
 package ru.training.karaf.rest;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import ru.training.karaf.model.User;
 import ru.training.karaf.repo.UserRepo;
 import ru.training.karaf.rest.dto.UserDTO;
 
-import javax.validation.Valid;
 import javax.validation.ValidationException;
-import javax.validation.constraints.AssertTrue;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
 import java.util.List;
@@ -38,7 +35,7 @@ import java.util.stream.Collectors;
    @Override
     public UserDTO update(long id, UserDTO user) {
         Optional<? extends User> u = repo.update(id, user);
-        return u.map(user1 -> new UserDTO(user1))
+        return u.map(UserDTO::new)
                 .orElseThrow(() -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
     }
 
