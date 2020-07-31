@@ -41,7 +41,7 @@ public class ClimateParameterDO implements ClimateParameter {
     private long id;
     @Column(name = "name", length = 48, nullable = false, unique = true)
     private String name;
-    @JsonSerialize(using = SetOfEntitiesSerializer.class)
+    //@JsonSerialize(using = SetOfEntitiesSerializer.class)
     //@JsonBackReference
     //@JsonManagedReference
     //@JsonIdentityReference(alwaysAsId = true)

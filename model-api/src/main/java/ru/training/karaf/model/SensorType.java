@@ -1,5 +1,10 @@
 package ru.training.karaf.model;
 
-public interface SensorType {
-    String getName();
+import java.util.Set;
+
+public interface SensorType extends Entity {
+    Capability getCapability();
+    int getMinTime();
+    //Set<SensorDO> getSensors();
+    Set<? extends Entity> getParameters();
 }

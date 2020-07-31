@@ -6,7 +6,7 @@ import java.util.Optional;
 import ru.training.karaf.model.ClimateParameter;
 
 public interface ClimateParameterRepo {
-    List<? extends ClimateParameter> getAll();
+    List<? extends ClimateParameter> getAll(String sortBy, String sortOrder, int pg, int sz, String filterField, String filterValue);
 
     Optional<? extends ClimateParameter> create(ClimateParameter ClimateParameter);
 

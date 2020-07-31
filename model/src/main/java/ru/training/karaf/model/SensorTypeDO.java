@@ -5,18 +5,26 @@ import ru.training.karaf.converter.JsonbCapabilityConverter;
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@NamedQueries({
+        @NamedQuery(name = UnitDO.GET_ALL, query = "SELECT u FROM UnitDO AS u"),
+        @NamedQuery(name = UnitDO.GET_BY_NAME, query = "SELECT u FROM UnitDO AS u WHERE u.name = :name"),
+        @NamedQuery(name = UnitDO.GET_BY_ID_OR_NAME, query = "SELECT u FROM UnitDO AS u WHERE u.id = :id OR u.name = :name")
+})
 @Entity
 public class SensorTypeDO implements SensorType {
-
+    public static final String GET_ALL = "SensorType.getAll";
+    public static final String GET_BY_NAME = "SensorType.getByName";
+    public static final String GET_BY_ID_OR_NAME = "SensorType.getByIdOrName";
     @Id
     @GeneratedValue
     private long id;
@@ -24,14 +32,31 @@ public class SensorTypeDO implements SensorType {
     private String name;
     @Convert(converter = JsonbCapabilityConverter.class)
     @Column(columnDefinition = "jsonb")
-    private Capability capability;
+    private CapabilityImpl capability;
     @Column(name = "min_time")
     private int minTime;
-    @OneToMany(mappedBy = "type", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "type")
     private Set<SensorDO> sensors;
     @ManyToMany
     @JoinTable(name = "SENSOR_PARAMETER_SET")
-    Set<ClimateParameterDO> parameters;
+    private Set<ClimateParameterDO> parameters;
+
+    public SensorTypeDO() {
+    }
+
+    public SensorTypeDO(long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
+    public SensorTypeDO(SensorType type) {
+        this.id = type.getId();
+        this.name = type.getName();
+        this.capability = (CapabilityImpl) type.getCapability();
+        this.minTime = type.getMinTime();
+        //this.sensors = type.getSensors();
+        this.parameters = (Set<ClimateParameterDO>) type.getParameters();
+    }
 
     public long getId() {
         return id;
@@ -75,14 +100,27 @@ public class SensorTypeDO implements SensorType {
     }
 
     @Override
+    public CapabilityImpl getCapability() {
+        return capability;
+    }
+
+    public void setCapability(CapabilityImpl capability) {
+        this.capability = capability;
+    }
+
+    @Override
     public int hashCode() {
         return Long.hashCode(id);
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof SensorTypeDO)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof SensorTypeDO)) {
+            return false;
+        }
         SensorTypeDO that = (SensorTypeDO) o;
         return id == that.id;
     }
@@ -93,7 +131,8 @@ public class SensorTypeDO implements SensorType {
         String sensorNames = "[" + sensors.stream().map(Sensor::getName).collect(Collectors.joining(",")) + "]";
         return "SensorTypeDO{" +
                 "id=" + id +
-                ", name='" + name + '\'' +
+                ", name=" + name +
+                ", capability=" + capability.toString() +
                 ", minTime=" + minTime +
                 ", parameters=" + parameterNames +
                 ", sensors=" + sensorNames +

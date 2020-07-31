@@ -1,15 +1,15 @@
 package ru.training.karaf.rest;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import javax.validation.ValidationException;
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.core.Response;
-
 import ru.training.karaf.model.ClimateParameter;
 import ru.training.karaf.repo.ClimateParameterRepo;
 import ru.training.karaf.rest.dto.ClimateParameterDTO;
+
+import javax.validation.ValidationException;
+import javax.ws.rs.NotFoundException;
+import javax.ws.rs.core.Response;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class ClimateParameterRestServiceImpl implements ClimateParameterRestService {
     private ClimateParameterRepo repo;
@@ -19,8 +19,10 @@ public class ClimateParameterRestServiceImpl implements ClimateParameterRestServ
     }
 
     @Override
-    public List<ClimateParameterDTO> getAll() {
-        return repo.getAll().stream().map(ClimateParameterDTO::new).collect(Collectors.toList());
+    public List<ClimateParameterDTO> getAll(String sortBy, String sortOrder, int pg, int sz, String filterField, String filterValue) {
+
+        return repo.getAll(sortBy, sortOrder, pg, sz, filterField, filterValue)
+                .stream().map(ClimateParameterDTO::new).collect(Collectors.toList());
     }
 
     @Override
@@ -40,11 +42,15 @@ public class ClimateParameterRestServiceImpl implements ClimateParameterRestServ
                 new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
     }
 
-
-
     @Override
     public ClimateParameterDTO get(long id) {
         return repo.get(id).map(ClimateParameterDTO::new).orElseThrow(
+                () -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
+    }
+
+    @Override
+    public ClimateParameterDTO getByName(String name) {
+        return repo.getByName(name).map(ClimateParameterDTO::new).orElseThrow(
                 () -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
     }
 

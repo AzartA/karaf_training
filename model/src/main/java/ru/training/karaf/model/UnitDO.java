@@ -40,7 +40,7 @@ public class UnitDO implements Unit {
     private String notation;
    // @JsonBackReference
    // @JsonIdentityReference(alwaysAsId = true)
-    @JsonSerialize(using = SetOfEntitiesSerializer.class)
+    //@JsonSerialize(using = SetOfEntitiesSerializer.class)
     @ManyToMany(mappedBy = "units", cascade = {CascadeType.MERGE,CascadeType.PERSIST})
     private Set<ClimateParameterDO> climateParameters;
 
