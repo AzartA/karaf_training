@@ -4,9 +4,11 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.hibernate.validator.constraints.Length;
 import ru.training.karaf.model.ClimateParameter;
 import ru.training.karaf.model.Unit;
+import ru.training.karaf.rest.serializer.SetOfEntSerializer;
 
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -18,7 +20,8 @@ public class UnitDTO implements Unit {
     @Length(min = 3, max = 48, message = "Name length must be from 3 to 48 symbols")
     private String name;
     private String notation;
-    //@JsonBackReference
+
+   // @JsonSerialize(using = SetOfEntSerializer.class)
     private Set<EntityDTO> climateParameters;
 
     public UnitDTO() {

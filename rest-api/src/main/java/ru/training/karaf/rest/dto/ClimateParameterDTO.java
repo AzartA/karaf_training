@@ -6,10 +6,12 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.hibernate.validator.constraints.Length;
 import ru.training.karaf.model.ClimateParameter;
 import ru.training.karaf.model.Entity;
 import ru.training.karaf.model.Unit;
+import ru.training.karaf.rest.serializer.SetOfEntSerializer;
 
 public class ClimateParameterDTO implements ClimateParameter {
     private long id;
@@ -17,7 +19,7 @@ public class ClimateParameterDTO implements ClimateParameter {
     @Pattern(regexp = "^(\\S+)[A-Za-z0-9_ -]*$", message = "Name must start with 3 letters min; can contain letters, digits, space or _ only.")
     @Length(min = 3, max = 48, message = "Name length must be from 3 to 48 symbols")
     private String name;
-    //@JsonBackReference
+//    @JsonSerialize(using = SetOfEntSerializer.class)
     private Set<EntityDTO> units;
 
     public ClimateParameterDTO() {

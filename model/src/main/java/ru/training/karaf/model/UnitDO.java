@@ -38,7 +38,7 @@ public class UnitDO implements Unit {
     private String name;
     @Column(name = "notation", length = 32)
     private String notation;
-    //@JsonBackReference
+   // @JsonBackReference
    // @JsonIdentityReference(alwaysAsId = true)
     @JsonSerialize(using = SetOfEntitiesSerializer.class)
     @ManyToMany(mappedBy = "units", cascade = {CascadeType.MERGE,CascadeType.PERSIST})
