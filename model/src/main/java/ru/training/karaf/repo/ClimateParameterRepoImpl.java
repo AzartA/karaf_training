@@ -1,18 +1,5 @@
 package ru.training.karaf.repo;
 
-import org.apache.aries.jpa.template.JpaTemplate;
-import org.apache.aries.jpa.template.TransactionType;
-import ru.training.karaf.model.ClimateParameter;
-import ru.training.karaf.model.ClimateParameterDO;
-import ru.training.karaf.model.UnitDO;
-
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
-import javax.validation.ValidationException;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -20,6 +7,20 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+import javax.validation.ValidationException;
+
+import org.apache.aries.jpa.template.JpaTemplate;
+import org.apache.aries.jpa.template.TransactionType;
+import ru.training.karaf.model.ClimateParameter;
+import ru.training.karaf.model.ClimateParameterDO;
+import ru.training.karaf.model.Entity;
+import ru.training.karaf.model.UnitDO;
 
 public class ClimateParameterRepoImpl implements ClimateParameterRepo {
     private final JpaTemplate template;
@@ -40,20 +41,20 @@ public class ClimateParameterRepoImpl implements ClimateParameterRepo {
             Root<ClimateParameterDO> root = cr.from(enClass);
             cr.select(root);
             List<String> fieldNames = Arrays.asList(enClass.getDeclaredFields()).stream().map(Field::getName).collect(Collectors.toList());
-            if(filterField != null && filterValue != null) {
+            if (filterField != null && filterValue != null) {
                 if (!fieldNames.contains(filterField)) {
                     throw new ValidationException("There is no such field: " + filterField);
                 }
-                cr.where(cb.equal(root.get(filterField),filterValue));
+                cr.where(cb.equal(root.get(filterField), filterValue));
             }
-            if(sortBy != null && sortOrder != null){
-                if(!fieldNames.contains(sortBy)){
-                    throw new ValidationException("There is no such field: " + sortBy );
+            if (sortBy != null && sortOrder != null) {
+                if (!fieldNames.contains(sortBy)) {
+                    throw new ValidationException("There is no such field: " + sortBy);
                 }
-                if("asc".equalsIgnoreCase(sortOrder)) {
+                if ("asc".equalsIgnoreCase(sortOrder)) {
                     cr.orderBy(cb.asc(root.get(sortBy)));
                 }
-                if("desc".equalsIgnoreCase(sortOrder)) {
+                if ("desc".equalsIgnoreCase(sortOrder)) {
                     cr.orderBy(cb.desc(root.get(sortBy)));
                 }
             }
@@ -71,10 +72,11 @@ public class ClimateParameterRepoImpl implements ClimateParameterRepo {
 
     @Override
     public Optional<? extends ClimateParameter> create(ClimateParameter parameter) {
-        ClimateParameter paramToCreate = new ClimateParameterDO(parameter);
+        ClimateParameterDO paramToCreate = new ClimateParameterDO(parameter.getName());
         return template.txExpr(em -> {
             if (!(getByName(parameter.getName(), em).isPresent())) {
                 em.persist(paramToCreate);
+                paramToCreate.setUnits(getUnitsById(parameter));
                 return Optional.of(paramToCreate);
             }
             return Optional.empty();
@@ -92,7 +94,7 @@ public class ClimateParameterRepoImpl implements ClimateParameterRepo {
                 ClimateParameterDO parameterToUpdate = l.get(0);
                 if (parameterToUpdate.getId() == id) {
                     parameterToUpdate.setName(parameter.getName());
-                    parameterToUpdate.setUnits((Set<UnitDO>) parameter.getUnits());
+                    parameterToUpdate.setUnits(getUnitsById(parameter));
                     em.merge(parameterToUpdate);
                     return Optional.of(parameterToUpdate);
                 }
@@ -120,19 +122,17 @@ public class ClimateParameterRepoImpl implements ClimateParameterRepo {
         }));
     }
 
-    @Override
+ /*   @Override
     public Optional<? extends ClimateParameter> setUnits(long id, List<Long> unitIds) {
-        Set<UnitDO> units = new HashSet<>(4);
         return template.txExpr(TransactionType.Required, em -> {
             Optional<ClimateParameterDO> parameterToUpdate = getById(id, em);
             parameterToUpdate.ifPresent(p -> {
-                unitIds.forEach(uId -> unitRepo.get(uId).ifPresent(un -> units.add((UnitDO) un)));
-                p.setUnits(units);
+                p.setUnits(getUnitsById(unitIds));
                 em.merge(p);
             });
             return parameterToUpdate;
         });
-    }
+    }*/
 
     @Override
     public Optional<? extends ClimateParameter> addUnits(long id, List<Long> unitIds) {
@@ -140,8 +140,7 @@ public class ClimateParameterRepoImpl implements ClimateParameterRepo {
         return template.txExpr(TransactionType.Required, em -> {
             Optional<ClimateParameterDO> parameterToUpdate = getById(id, em);
             parameterToUpdate.ifPresent(p -> {
-                unitIds.forEach(uId -> unitRepo.get(uId).ifPresent(un -> units.add((UnitDO) un)));
-                p.addUnits(units);
+                p.addUnits(getUnitsById(unitIds));
                 em.merge(p);
             });
             return parameterToUpdate;
@@ -165,5 +164,20 @@ public class ClimateParameterRepoImpl implements ClimateParameterRepo {
 
     private Optional<ClimateParameterDO> getById(long id, EntityManager em) {
         return Optional.ofNullable(em.find(ClimateParameterDO.class, id));
+    }
+
+    private Set<UnitDO> getUnitsById(List<Long> unitIds) {
+        Set<UnitDO> units = new HashSet<>(4);
+        unitIds.forEach(uId -> unitRepo.get(uId).ifPresent(un -> units.add((UnitDO) un)));
+        return units;
+    }
+
+    private Set<UnitDO> getUnitsById(ClimateParameter parameter) {
+        Set<UnitDO> units = new HashSet<>(4);
+        if (parameter.getUnits() != null) {
+            List<Long> unitIds = parameter.getUnits().stream().map(Entity::getId).collect(Collectors.toList());
+            unitIds.forEach(uId -> unitRepo.get(uId).ifPresent(un -> units.add((UnitDO) un)));
+        }
+        return units;
     }
 }

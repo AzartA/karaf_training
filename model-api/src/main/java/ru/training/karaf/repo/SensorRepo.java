@@ -14,5 +14,5 @@ public interface SensorRepo {
 
     Optional<? extends Sensor> get(String name);
 
-    List<? extends Sensor> getAll();
+    List<? extends Sensor> getAll(String sortBy, String sortOrder, int pg, int sz, String filterField, String filterValue);
 }

@@ -1,13 +1,9 @@
 package ru.training.karaf.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIdentityReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import ru.training.karaf.serializer.SetOfEntitiesSerializer;
-
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -18,10 +14,6 @@ import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @NamedQueries({
         @NamedQuery(name = ClimateParameterDO.GET_ALL, query = "SELECT u FROM ClimateParameterDO AS u"),
@@ -36,37 +28,29 @@ public class ClimateParameterDO implements ClimateParameter {
     public static final String GET_BY_NAME = "Params.getByName";
     public static final String GET_BY_ID = "Params.getById";
     public static final String GET_BY_ID_OR_NAME = "Params.getByIdOrName";
+
     @Id
     @GeneratedValue
     private long id;
     @Column(name = "name", length = 48, nullable = false, unique = true)
     private String name;
-    //@JsonSerialize(using = SetOfEntitiesSerializer.class)
-    //@JsonBackReference
-    //@JsonManagedReference
-    //@JsonIdentityReference(alwaysAsId = true)
-    @ManyToMany(cascade = {CascadeType.MERGE,CascadeType.PERSIST})
-    @JoinTable(name = "PARAMETER_UNIT_SET")
-    Set<UnitDO> units = new HashSet<>();
     @ManyToMany(mappedBy = "parameters")
     private Set<SensorTypeDO> sensorTypes;
     @OneToMany(mappedBy = "parameter", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<MeasuringDO> measurings;
+    //@JsonSerialize(using = SetOfEntitiesSerializer.class)
+    //@JsonBackReference
+    //@JsonManagedReference
+    //@JsonIdentityReference(alwaysAsId = true)
+    @ManyToMany(cascade = {CascadeType.PERSIST})
+    @JoinTable(name = "PARAMETER_UNIT_SET")
+    Set<UnitDO> units = new HashSet<>();
 
     public ClimateParameterDO() {
     }
 
     public ClimateParameterDO(String name) {
         this.name = name;
-    }
-
-    public ClimateParameterDO(String name, Set<? extends Unit> units) {
-        this.name = name;
-        this.units = (Set<UnitDO>)units;
-    }
-    public ClimateParameterDO(ClimateParameter param){
-        this.name = param.getName();
-        this.units = (Set<UnitDO>)param.getUnits();
     }
 
     public long getId() {
@@ -104,14 +88,14 @@ public class ClimateParameterDO implements ClimateParameter {
 
     public boolean addUnits(Set<UnitDO> units) {
         boolean unitsAdded = this.units.addAll(units);
-        boolean paramAdded = units.stream().map(u -> u.getClimateParameters().add(this)).reduce(true,(a,b) -> a && b);
+        boolean paramAdded = units.stream().map(u -> u.getClimateParameters().add(this)).reduce(true, (a, b) -> a && b);
         return unitsAdded && paramAdded;
     }
 
     public boolean removeUnits(Set<? extends Unit> units) {
-        Set<UnitDO> unitDOSet = (Set<UnitDO>)units;
+        Set<UnitDO> unitDOSet = (Set<UnitDO>) units;
         boolean unitsRemoved = this.units.removeAll(unitDOSet);
-        boolean paramRemoved = unitDOSet.stream().map(u -> u.getClimateParameters().remove(this)).reduce(true,(a,b) -> a && b);
+        boolean paramRemoved = unitDOSet.stream().map(u -> u.getClimateParameters().remove(this)).reduce(true, (a, b) -> a && b);
         return unitsRemoved && paramRemoved;
     }
 

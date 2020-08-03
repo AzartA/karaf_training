@@ -27,12 +27,14 @@ public class SensorRepoImpl implements SensorRepo {
     }
 
     @Override
+    public List<? extends Sensor> getAll(String sortBy, String sortOrder, int pg, int sz, String filterField, String filterValue) {
+        return null;
+    }
+
+    @Override
     public void delete(String name) {
 
     }
 
-    @Override
-    public List<? extends Sensor> getAll() {
-        return null;
-    }
+
 }
