@@ -25,49 +25,18 @@ import ru.training.karaf.model.UnitDO;
 public class ClimateParameterRepoImpl implements ClimateParameterRepo {
     private final JpaTemplate template;
     private final UnitRepoIml unitRepo;
+    private final RepoImpl<ClimateParameterDO> repoImpl;
 
     public ClimateParameterRepoImpl(JpaTemplate template) {
 
         this.template = template;
         unitRepo = new UnitRepoIml(template);
+        repoImpl = new RepoImpl<>(template);
     }
 
     @Override
     public List<? extends ClimateParameter> getAll(String sortBy, String sortOrder, int pg, int sz, String filterField, String filterValue) {
-        return template.txExpr(em -> {
-            CriteriaBuilder cb = em.getCriteriaBuilder();
-            Class<ClimateParameterDO> enClass = ClimateParameterDO.class;
-            CriteriaQuery<ClimateParameterDO> cr = cb.createQuery(enClass);
-            Root<ClimateParameterDO> root = cr.from(enClass);
-            cr.select(root);
-            List<String> fieldNames = Arrays.asList(enClass.getDeclaredFields()).stream().map(Field::getName).collect(Collectors.toList());
-            if (filterField != null && filterValue != null) {
-                if (!fieldNames.contains(filterField)) {
-                    throw new ValidationException("There is no such field: " + filterField);
-                }
-                cr.where(cb.equal(root.get(filterField), filterValue));
-            }
-            if (sortBy != null && sortOrder != null) {
-                if (!fieldNames.contains(sortBy)) {
-                    throw new ValidationException("There is no such field: " + sortBy);
-                }
-                if ("asc".equalsIgnoreCase(sortOrder)) {
-                    cr.orderBy(cb.asc(root.get(sortBy)));
-                }
-                if ("desc".equalsIgnoreCase(sortOrder)) {
-                    cr.orderBy(cb.desc(root.get(sortBy)));
-                }
-            }
-
-            TypedQuery query = em.createQuery(cr);
-
-            if (pg > 0 && sz > 0) {
-                int offset = (pg - 1) * sz;
-                query.setFirstResult(offset)
-                        .setMaxResults(sz);
-            }
-            return query.getResultList();
-        });
+        return repoImpl.getAll(sortBy, sortOrder, pg, sz, filterField, filterValue, ClimateParameterDO.class);
     }
 
     @Override
