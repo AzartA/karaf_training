@@ -1,17 +1,12 @@
 package ru.training.karaf.rest.dto;
 
-import java.util.Set;
-import java.util.stream.Collectors;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.hibernate.validator.constraints.Length;
 import ru.training.karaf.model.ClimateParameter;
-import ru.training.karaf.model.Entity;
-import ru.training.karaf.model.Unit;
-import ru.training.karaf.rest.serializer.SetOfEntSerializer;
+
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class ClimateParameterDTO implements ClimateParameter {
     private long id;
@@ -19,8 +14,9 @@ public class ClimateParameterDTO implements ClimateParameter {
     @Pattern(regexp = "^(\\S+)[A-Za-z0-9_ -]*$", message = "Name must start with 3 letters min; can contain letters, digits, space or _ only.")
     @Length(min = 3, max = 48, message = "Name length must be from 3 to 48 symbols")
     private String name;
-//    @JsonSerialize(using = SetOfEntSerializer.class)
+    //    @JsonSerialize(using = SetOfEntSerializer.class)
     private Set<EntityDTO> units;
+    private Set<EntityDTO> sensorTypes;
 
     public ClimateParameterDTO() {
     }
@@ -36,8 +32,8 @@ public class ClimateParameterDTO implements ClimateParameter {
         /*this.units = parameter.getUnits().stream().map(u -> new UnitDTO(u.getId(),u.getName(),u.getNotation())).collect(Collectors.toSet());
          */
         this.units = parameter.getUnits().stream().map(EntityDTO::new).collect(Collectors.toSet());
-
         //this.units = (Set<UnitDTO>) parameter.getUnits();
+        this.sensorTypes = parameter.getSensorTypes().stream().map(EntityDTO::new).collect(Collectors.toSet());
     }
 
     @Override
@@ -68,6 +64,15 @@ public class ClimateParameterDTO implements ClimateParameter {
     }
 
     @Override
+    public Set<EntityDTO> getSensorTypes() {
+        return sensorTypes;
+    }
+
+    public void setSensorTypes(Set<EntityDTO> sensorTypes) {
+        this.sensorTypes = sensorTypes;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -89,10 +94,12 @@ public class ClimateParameterDTO implements ClimateParameter {
     @Override
     public String toString() {
         String unitsNames = "[" + units.stream().map(EntityDTO::getName).collect(Collectors.joining(",")) + "]";
+        String typesNames = "[" + sensorTypes.stream().map(EntityDTO::getName).collect(Collectors.joining(",")) + "]";
         return "ClimateParameterDTO{" +
                 "id=" + id +
                 ", name=" + name +
                 ", units=" + unitsNames +
+                ", sensorTypes=" + typesNames +
                 '}';
     }
 }

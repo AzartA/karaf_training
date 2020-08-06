@@ -3,6 +3,7 @@ package ru.training.karaf.model;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -30,7 +31,7 @@ public class LocationDO implements Location {
     private long id;
     @Column(name = "name", length = 48, nullable = false, unique = true)
     private String name;
-    @OneToMany(mappedBy = "location", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "location", cascade = {CascadeType.MERGE})
     private Set<SensorDO> sensorSet;
 
     public LocationDO() {
@@ -63,6 +64,12 @@ public class LocationDO implements Location {
 
     public void setSensorSet(Set<SensorDO> sensorSet) {
         this.sensorSet = sensorSet;
+    }
+
+    public boolean addSensors(Set<SensorDO> sensors) {
+        boolean unitsAdded = this.sensorSet.addAll(sensors);
+        sensors.forEach(s -> s.setLocation(this));
+        return unitsAdded;
     }
 
     @Override

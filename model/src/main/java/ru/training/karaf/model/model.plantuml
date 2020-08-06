@@ -1,0 +1,259 @@
+@startuml
+
+title __MODEL's Class Diagram__\n
+
+  namespace ru.training.karaf.model {
+    class ru.training.karaf.model.CapabilityImpl {
+        - accuracy : String
+        - range : String
+        - resolution : String
+        {static} - serialVersionUID : long
+        + CapabilityImpl()
+        + CapabilityImpl()
+        + equals()
+        + getAccuracy()
+        + getRange()
+        + getResolution()
+        + hashCode()
+        + setAccuracy()
+        + setRange()
+        + setResolution()
+        + toString()
+    }
+  }
+
+
+  namespace ru.training.karaf.model {
+    class ru.training.karaf.model.ClimateParameterDO {
+        {static} + GET_ALL : String
+        {static} + GET_BY_ID : String
+        {static} + GET_BY_ID_OR_NAME : String
+        {static} + GET_BY_NAME : String
+        - id : long
+        - measurings : List<MeasuringDO>
+        - name : String
+        - sensorTypes : Set<SensorTypeDO>
+        - units : Set<UnitDO>
+        + ClimateParameterDO()
+        + ClimateParameterDO()
+        + addSensorTypes()
+        + addUnits()
+        + equals()
+        + getId()
+        + getMeasurings()
+        + getName()
+        + getSensorTypes()
+        + getUnits()
+        + hashCode()
+        + removeSensorTypes()
+        + removeUnits()
+        + setId()
+        + setMeasurings()
+        + setName()
+        + setSensorTypes()
+        + setUnits()
+        + toString()
+    }
+  }
+
+
+  namespace ru.training.karaf.model {
+    class ru.training.karaf.model.LocationDO {
+        {static} + GET_ALL : String
+        {static} + GET_BY_ID : String
+        {static} + GET_BY_ID_OR_NAME : String
+        {static} + GET_BY_NAME : String
+        - id : long
+        - name : String
+        - sensorSet : Set<SensorDO>
+        + LocationDO()
+        + LocationDO()
+        + addSensors()
+        + equals()
+        + getId()
+        + getName()
+        + getSensorSet()
+        + hashCode()
+        + setId()
+        + setName()
+        + setSensorSet()
+        + toString()
+    }
+  }
+
+
+  namespace ru.training.karaf.model {
+    class ru.training.karaf.model.MeasuringDO {
+        - DATE_TIME_FORMAT : SimpleDateFormat
+        - id : long
+        - timestamp : Timestamp
+        - sensor : SensorDO
+        - parameter : ClimateParameterDO
+        - value : float
+        + equals()
+        + getId()
+        + getParameter()
+        + getSensor()
+        + getTimestamp()
+        + getValue()
+        + hashCode()
+        + setId()
+        + setParameter()
+        + setSensor()
+        + setValue()
+        + toString()
+    }
+  }
+
+
+  namespace ru.training.karaf.model {
+    class ru.training.karaf.model.SensorDO {
+        - id : long
+        - name : String
+        - location : LocationDO
+        - type : SensorTypeDO
+        - users : Set<UserDO>
+        - measurings : List<MeasuringDO>
+        + SensorDO()
+        + SensorDO()
+        + SensorDO()
+        + addUsers()
+        + equals()
+        + getId()
+        + getLocation()
+        + getMeasurings()
+        + getName()
+        + getType()
+        + getUsers()
+        + hashCode()
+        + setId()
+        + setLocation()
+        + setName()
+        + setType()
+        + setUsers()
+        + toString()
+    }
+  }
+
+
+  namespace ru.training.karaf.model {
+    class ru.training.karaf.model.SensorTypeDO {
+        - id : long
+        - minTime : int
+        - name : String
+        - capability : CapabilityImpl
+        - parameters : Set<ClimateParameterDO>
+        - sensors : Set<SensorDO>
+        + SensorTypeDO()
+        + SensorTypeDO()
+        + SensorTypeDO()
+        + SensorTypeDO()
+        + addParameters()
+        + addSensors()
+        + equals()
+        + getCapability()
+        + getId()
+        + getMinTime()
+        + getName()
+        + getParameters()
+        + getSensors()
+        + hashCode()
+        + setCapability()
+        + setId()
+        + setMinTime()
+        + setName()
+        + setParameters()
+        + setSensors()
+        + toString()
+        + update()
+    }
+  }
+
+
+  namespace ru.training.karaf.model {
+    class ru.training.karaf.model.UnitDO {
+        {static} + GET_ALL : String
+        {static} + GET_BY_ID : String
+        {static} + GET_BY_ID_OR_NAME : String
+        {static} + GET_BY_NAME : String
+        - id : long
+        - name : String
+        - notation : String
+        - climateParameters : Set<ClimateParameterDO>
+        + UnitDO()
+        + UnitDO()
+        + UnitDO()
+        + equals()
+        + getClimateParameters()
+        + getId()
+        + getName()
+        + getNotation()
+        + hashCode()
+        + setClimateParameters()
+        + setId()
+        + setName()
+        + setNotation()
+        + toString()
+    }
+  }
+
+
+  namespace ru.training.karaf.model {
+    class ru.training.karaf.model.UserDO {
+        {static} + GET_ALL : String
+        {static} + GET_BY_ID : String
+        {static} + GET_BY_ID_OR_LOGIN : String
+        {static} + GET_BY_LOGIN : String
+        - id : long
+        - login : String
+        - name : String
+        - properties : Set<String>
+        - sensors : Set<SensorDO>
+        + UserDO()
+        + UserDO()
+        + addSensors()
+        + equals()
+        + getId()
+        + getLogin()
+        + getName()
+        + getProperties()
+        + getSensors()
+        + hashCode()
+        + setId()
+        + setLogin()
+        + setName()
+        + setProperties()
+        + setSensors()
+        + toString()
+    }
+  }
+
+
+  ru.training.karaf.model.CapabilityImpl .down.|> java.io.Serializable
+  ru.training.karaf.model.CapabilityImpl .right.|> ru.training.karaf.model.Capability
+  ru.training.karaf.model.ClimateParameterDO .up.|> ru.training.karaf.model.ClimateParameter
+  ru.training.karaf.model.LocationDO .up.|> ru.training.karaf.model.Location
+  ru.training.karaf.model.MeasuringDO .up.|> ru.training.karaf.model.Measuring
+  ru.training.karaf.model.MeasuringDO o-- ru.training.karaf.model.ClimateParameterDO : parameter
+  ru.training.karaf.model.MeasuringDO o-- ru.training.karaf.model.SensorDO : sensor
+  ru.training.karaf.model.SensorDO .up.|> ru.training.karaf.model.Sensor
+  ru.training.karaf.model.SensorDO o-- ru.training.karaf.model.LocationDO : location
+  ru.training.karaf.model.SensorDO o-- ru.training.karaf.model.SensorTypeDO : type
+  ru.training.karaf.model.SensorTypeDO .up.|> ru.training.karaf.model.SensorType
+  ru.training.karaf.model.SensorTypeDO o-right- ru.training.karaf.model.CapabilityImpl : capability
+  ru.training.karaf.model.UnitDO .up.|> ru.training.karaf.model.Unit
+  ru.training.karaf.model.UserDO .up.|> ru.training.karaf.model.User
+  ru.training.karaf.model.UserDO "0..*" -- "0..*" ru.training.karaf.model.SensorDO
+  ru.training.karaf.model.UnitDO "0..*" -- "0..*" ru.training.karaf.model.ClimateParameterDO
+  ru.training.karaf.model.ClimateParameterDO "0..*" -- "0..*" ru.training.karaf.model.SensorTypeDO
+
+
+
+right footer
+
+
+PlantUML diagram generated by SketchIt! (https://bitbucket.org/pmesmeur/sketch.it)
+For more information about this tool, please contact philippe.mesmeur@gmail.com
+endfooter
+
+@enduml

@@ -5,6 +5,8 @@
     <reference id="unitRepo" interface="ru.training.karaf.repo.UnitRepo"/>
     <reference id="locationRepo" interface="ru.training.karaf.repo.LocationRepo"/>
     <reference id="paramRepo" interface="ru.training.karaf.repo.ClimateParameterRepo"/>
+    <reference id="typeRepo" interface="ru.training.karaf.repo.SensorTypeRepo"/>
+    <reference id="sensorRepo" interface="ru.training.karaf.repo.SensorRepo"/>
 
     <reference id="uniqueValidationRepo" interface="ru.training.karaf.repo.UniqueValidationRepo"/>
 
@@ -18,11 +20,17 @@
         <property name="repo" ref="unitRepo"/>
     </bean>
     <bean id="paramRestServiceBeen" class="ru.training.karaf.rest.ClimateParameterRestServiceImpl">
-            <property name="repo" ref="paramRepo"/>
-        </bean>
+        <property name="repo" ref="paramRepo"/>
+    </bean>
+    <bean id="typeRestServiceBeen" class="ru.training.karaf.rest.SensorTypeRestServiceImpl">
+        <property name="repo" ref="typeRepo"/>
+    </bean>
+    <bean id="sensorRestServiceBeen" class="ru.training.karaf.rest.SensorRestServiceImpl">
+        <property name="repo" ref="sensorRepo"/>
+    </bean>
 
     <bean id="uniqueKeyValidatorBean" activation="lazy" class="ru.training.karaf.rest.validation.UniqueKeyValidatorImpl">
-       <property name="repo" ref="uniqueValidationRepo"/>
+        <property name="repo" ref="uniqueValidationRepo"/>
     </bean>
 
     <bean id="validationProviderResolver"
@@ -47,6 +55,8 @@
             <ref component-id="locationRestServiceBean"/>
             <ref component-id="unitRestServiceBean"/>
             <ref component-id="paramRestServiceBeen"/>
+            <ref component-id="typeRestServiceBeen"/>
+            <ref component-id="sensorRestServiceBeen"/>
             <!--<ref component-id="uniqueKeyValidatorBean"/>-->
         </jaxrs:serviceBeans>
         <jaxrs:providers>

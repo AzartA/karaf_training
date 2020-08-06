@@ -2,6 +2,7 @@ package ru.training.karaf.rest;
 
 import ru.training.karaf.model.User;
 import ru.training.karaf.repo.UserRepo;
+import ru.training.karaf.rest.dto.SensorDTO;
 import ru.training.karaf.rest.dto.UserDTO;
 
 import javax.validation.ValidationException;
@@ -20,8 +21,8 @@ import java.util.stream.Collectors;
     }
 
     @Override
-    public List<UserDTO> getAll() {
-        return repo.getAll().stream().map(UserDTO::new).collect(Collectors.toList());
+    public List<UserDTO> getAll(List<String> by, List<String> order, List<String> field, List<String> cond, List<String> value, int pg,int sz) {
+        return repo.getAll(by, order, field, cond, value, pg, sz).stream().map(UserDTO::new).collect(Collectors.toList());
     }
 
     @Override
@@ -29,7 +30,7 @@ import java.util.stream.Collectors;
         if (repo.loginIsPresent(user.getLogin())) {
             throw new ValidationException("login must be unique");
         }
-        return new UserDTO(repo.create(user));
+        return repo.create(user).map(UserDTO::new).orElseThrow(() -> new ValidationException("login must be unique"));
     }
 
    @Override
@@ -39,25 +40,17 @@ import java.util.stream.Collectors;
                 .orElseThrow(() -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
     }
 
-   /* @Override
-    public UserDTO update(long id, UserDTO user) {
-        return repo.updateById(id, user).map(UserDTO::new)
-                .orElseThrow(() -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
-    }*/
-
-
-
-    @Override
+   @Override
     public UserDTO get(long id) {
         return repo.get(id).map(UserDTO::new)
                 .orElseThrow(() -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
     }
 
-   /* @Override
+    @Override
     public UserDTO getByLogin(String login) {
         return repo.getByLogin(login).map(UserDTO::new)
                 .orElseThrow(() -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
-    }*/
+    }
 
     @Override
     public void delete(long id) {
@@ -66,5 +59,9 @@ import java.util.stream.Collectors;
 
     }
 
-
-}
+        @Override
+        public UserDTO addSensors(long id, List<Long> sensorIds) {
+            return repo.addSensors(id, sensorIds).map(UserDTO::new).orElseThrow(() ->
+                    new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
+        }
+    }

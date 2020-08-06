@@ -27,7 +27,7 @@ public class MeasuringDO implements Measuring {
     @JoinColumn(name = "parameter")
     private ClimateParameterDO parameter;
     @Column(columnDefinition = "real")
-    float value;
+    private float value;
 
     public long getId() {
         return id;

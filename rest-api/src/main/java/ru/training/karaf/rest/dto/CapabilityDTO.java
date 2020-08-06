@@ -1,23 +1,22 @@
-package ru.training.karaf.model;
+package ru.training.karaf.rest.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import ru.training.karaf.model.Capability;
 
-import java.io.Serializable;
-import java.util.Objects;
-
-public class CapabilityImpl implements Serializable, Capability {
-    private static final long serialVersionUID = 9874563217891L;
-    @JsonProperty
+public class CapabilityDTO implements Capability {
     private String range;
-    @JsonProperty
     private String accuracy;
-    @JsonProperty
     private String resolution;
 
-    public CapabilityImpl() {
+    public CapabilityDTO() {
     }
 
-    public CapabilityImpl(Capability capability) {
+    public CapabilityDTO(String range, String accuracy, String resolution) {
+        this.range = range;
+        this.accuracy = accuracy;
+        this.resolution = resolution;
+    }
+
+    public CapabilityDTO(Capability capability) {
         this.range = capability.getRange();
         this.accuracy = capability.getAccuracy();
         this.resolution = capability.getResolution();
@@ -28,22 +27,22 @@ public class CapabilityImpl implements Serializable, Capability {
         return range;
     }
 
-    public void setRange(String range) {
-        this.range = range;
-    }
-
     @Override
     public String getAccuracy() {
         return accuracy;
     }
 
-    public void setAccuracy(String accuracy) {
-        this.accuracy = accuracy;
-    }
-
     @Override
     public String getResolution() {
         return resolution;
+    }
+
+    public void setRange(String range) {
+        this.range = range;
+    }
+
+    public void setAccuracy(String accuracy) {
+        this.accuracy = accuracy;
     }
 
     public void setResolution(String resolution) {
@@ -52,22 +51,18 @@ public class CapabilityImpl implements Serializable, Capability {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
+        if (this == o)
             return true;
-        }
-        if (!(o instanceof CapabilityImpl)) {
+        if (!(o instanceof CapabilityDTO))
             return false;
-        }
 
-        CapabilityImpl that = (CapabilityImpl) o;
+        CapabilityDTO that = (CapabilityDTO) o;
 
-        if (!Objects.equals(range, that.range)) {
+        if (range != null ? !range.equals(that.range) : that.range != null)
             return false;
-        }
-        if (!Objects.equals(accuracy, that.accuracy)) {
+        if (accuracy != null ? !accuracy.equals(that.accuracy) : that.accuracy != null)
             return false;
-        }
-        return Objects.equals(resolution, that.resolution);
+        return resolution != null ? resolution.equals(that.resolution) : that.resolution == null;
     }
 
     @Override
@@ -80,7 +75,7 @@ public class CapabilityImpl implements Serializable, Capability {
 
     @Override
     public String toString() {
-        return "Capability{" +
+        return "CapabilityDTO{" +
                 "range='" + range + '\'' +
                 ", accuracy='" + accuracy + '\'' +
                 ", resolution='" + resolution + '\'' +

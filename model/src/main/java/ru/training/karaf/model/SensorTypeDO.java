@@ -1,7 +1,9 @@
 package ru.training.karaf.model;
 
-import ru.training.karaf.converter.JsonbCapabilityConverter;
-
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
@@ -9,22 +11,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
-import java.util.Set;
-import java.util.stream.Collectors;
 
-@NamedQueries({
-        @NamedQuery(name = UnitDO.GET_ALL, query = "SELECT u FROM UnitDO AS u"),
-        @NamedQuery(name = UnitDO.GET_BY_NAME, query = "SELECT u FROM UnitDO AS u WHERE u.name = :name"),
-        @NamedQuery(name = UnitDO.GET_BY_ID_OR_NAME, query = "SELECT u FROM UnitDO AS u WHERE u.id = :id OR u.name = :name")
-})
+import ru.training.karaf.converter.JsonbCapabilityConverter;
+
 @Entity
 public class SensorTypeDO implements SensorType {
-    public static final String GET_ALL = "SensorType.getAll";
-    public static final String GET_BY_NAME = "SensorType.getByName";
-    public static final String GET_BY_ID_OR_NAME = "SensorType.getByIdOrName";
     @Id
     @GeneratedValue
     private long id;
@@ -35,7 +27,7 @@ public class SensorTypeDO implements SensorType {
     private CapabilityImpl capability;
     @Column(name = "min_time")
     private int minTime;
-    @OneToMany(mappedBy = "type")
+    @OneToMany(mappedBy = "type", cascade = {CascadeType.ALL})
     private Set<SensorDO> sensors;
     @ManyToMany
     @JoinTable(name = "SENSOR_PARAMETER_SET")
@@ -44,18 +36,30 @@ public class SensorTypeDO implements SensorType {
     public SensorTypeDO() {
     }
 
-    public SensorTypeDO(long id, String name) {
-        this.id = id;
+    public SensorTypeDO(String name) {
         this.name = name;
     }
 
+    public SensorTypeDO(long id, String name, CapabilityImpl capability) {
+        this.id = id;
+        this.name = name;
+        this.capability = capability;
+    }
+
     public SensorTypeDO(SensorType type) {
-        this.id = type.getId();
         this.name = type.getName();
-        this.capability = (CapabilityImpl) type.getCapability();
         this.minTime = type.getMinTime();
-        //this.sensors = type.getSensors();
-        this.parameters = (Set<ClimateParameterDO>) type.getParameters();
+        this.capability = type.getCapability() == null ? null : new CapabilityImpl(type.getCapability());
+        parameters = new HashSet<>();
+        sensors = new HashSet<>();
+    }
+
+    public void update(SensorType type) {
+        this.name = type.getName();
+        this.minTime = type.getMinTime();
+        this.capability = type.getCapability() == null ? null : new CapabilityImpl(type.getCapability());
+        parameters = new HashSet<>();
+        sensors = new HashSet<>();
     }
 
     public long getId() {
@@ -68,7 +72,7 @@ public class SensorTypeDO implements SensorType {
 
     @Override
     public String getName() {
-        return null;
+        return name;
     }
 
     public void setName(String name) {
@@ -98,6 +102,25 @@ public class SensorTypeDO implements SensorType {
     public void setParameters(Set<ClimateParameterDO> parameters) {
         this.parameters = parameters;
     }
+
+    public boolean addParameters(Set<ClimateParameterDO> parameters) {
+        boolean parametersAdded = this.parameters.addAll(parameters);
+        boolean paramAdded = parameters.stream().map(u -> u.getSensorTypes().add(this)).reduce(true, (a, b) -> a && b);
+        return parametersAdded && paramAdded;
+    }
+
+    public boolean addSensors(Set<SensorDO> sensors) {
+        boolean sensorsAdded = this.sensors.addAll(sensors);
+        sensors.forEach(s -> s.setType(this));
+        return sensorsAdded;
+    }
+
+    /*public boolean removeParameters(Set<? extends ClimateParameter> parameters) {
+        Set<ClimateParameterDO> paramDOSet = (Set<ClimateParameterDO>) parameters;
+        boolean parametersRemoved = this.parameters.removeAll(parameters);
+        boolean paramRemoved = paramDOSet.stream().map(u -> u.getSensorTypes().remove(this)).reduce(true, (a, b) -> a && b);
+        return parametersRemoved && paramRemoved;
+    }*/
 
     @Override
     public CapabilityImpl getCapability() {

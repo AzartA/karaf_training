@@ -28,8 +28,19 @@ public class SensorDO implements Sensor {
     private SensorTypeDO type;
     @ManyToMany(mappedBy = "sensors")
     private Set<UserDO> users;
-    @OneToMany(mappedBy = "sensor")
+    @OneToMany(mappedBy = "sensor", cascade = {CascadeType.ALL})
     private List<MeasuringDO> measurings;
+
+    public SensorDO() {
+    }
+
+    public SensorDO(String name) {
+        this.name = name;
+    }
+
+    public SensorDO(Sensor sensor) {
+        this.name = sensor.getName();
+    }
 
     public long getId() {
         return id;
@@ -52,7 +63,6 @@ public class SensorDO implements Sensor {
     }
 
     public void setLocation(LocationDO location) {
-        location.getSensorSet().add(this);
         this.location = location;
     }
 
@@ -77,6 +87,12 @@ public class SensorDO implements Sensor {
         return measurings;
     }
 
+    public boolean addUsers(Set<UserDO> users) {
+        boolean usersAdded = this.users.addAll(users);
+        boolean sensorAdded = users.stream().map(u -> u.getSensors().add(this)).reduce(true, (a, b) -> a && b);
+        return usersAdded && sensorAdded;
+    }
+
     @Override
     public int hashCode() {
         return Long.hashCode(id);
@@ -93,12 +109,11 @@ public class SensorDO implements Sensor {
     @Override
     public String toString() {
         String userNames = "[" + users.stream().map(User::getName).collect(Collectors.joining(",")) + "]";
-
         return "SensorDO{" +
                 "id=" + id +
                 ", name=" + name +
-                ", location=" + location.getName() +
-                ", type=" + type.getName() +
+                ", location=" + (location!= null? location.getName(): "null") +
+                ", type=" + (type!= null? type.getName():"null") +
                 ", users=" + userNames +
                 '}';
     }

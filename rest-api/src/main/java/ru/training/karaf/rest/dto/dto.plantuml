@@ -1,0 +1,207 @@
+@startuml
+
+title __DTO's Class Diagram__\n
+
+  namespace ru.training.karaf.rest {
+    namespace dto {
+      class ru.training.karaf.rest.dto.CapabilityDTO {
+          - accuracy : String
+          - range : String
+          - resolution : String
+          + CapabilityDTO()
+          + CapabilityDTO()
+          + CapabilityDTO()
+          + equals()
+          + getAccuracy()
+          + getRange()
+          + getResolution()
+          + hashCode()
+          + setAccuracy()
+          + setRange()
+          + setResolution()
+          + toString()
+      }
+
+      class ru.training.karaf.rest.dto.ClimateParameterDTO {
+          - id : long
+          - name : String
+          - sensorTypes : Set<EntityDTO>
+          - units : Set<EntityDTO>
+          + ClimateParameterDTO()
+          + ClimateParameterDTO()
+          + ClimateParameterDTO()
+          + equals()
+          + getId()
+          + getName()
+          + getSensorTypes()
+          + getUnits()
+          + hashCode()
+          + setId()
+          + setName()
+          + setSensorTypes()
+          + setUnits()
+          + toString()
+      }
+
+
+
+
+      class ru.training.karaf.rest.dto.DTO {
+          + DTO()
+          + getValue()
+          + setValue()
+      }
+
+
+
+
+      class ru.training.karaf.rest.dto.EntityDTO {
+          - id : long
+          - name : String
+          + EntityDTO()
+          + EntityDTO()
+          + EntityDTO()
+          + equals()
+          + getId()
+          + getName()
+          + hashCode()
+          + setId()
+          + setName()
+          + toString()
+      }
+
+
+
+
+      class ru.training.karaf.rest.dto.LocationDTO {
+          - id : long
+          - name : String
+          + LocationDTO()
+          + LocationDTO()
+          + equals()
+          + getId()
+          + getName()
+          + hashCode()
+          + setName()
+          + toString()
+      }
+
+
+
+
+      class ru.training.karaf.rest.dto.SensorDTO {
+          - users : Set<EntityDTO>
+          + SensorDTO()
+          + SensorDTO()
+          + equals()
+          + getLocation()
+          + getType()
+          + getUsers()
+          + hashCode()
+          + setLocation()
+          + setType()
+          + setUsers()
+          + toString()
+      }
+
+
+
+
+      class ru.training.karaf.rest.dto.SensorTypeDTO {
+          - minTime : int
+          - parameters : Set<EntityDTO>
+          - sensors : Set<EntityDTO>
+          + SensorTypeDTO()
+          + SensorTypeDTO()
+          + SensorTypeDTO()
+          + equals()
+          + getCapability()
+          + getMinTime()
+          + getParameters()
+          + getSensors()
+          + hashCode()
+          + setCapability()
+          + setMinTime()
+          + setParameters()
+          + setSensors()
+          + toString()
+      }
+
+
+        class ru.training.karaf.rest.dto.UserDTO {
+            - id : long
+            - login : String
+            - name : String
+            - properties : Set<String>
+            - sensors : Set<EntityDTO>
+            + UserDTO()
+            + UserDTO()
+            + equals()
+            + getId()
+            + getLogin()
+            + getName()
+            + getProperties()
+            + getSensors()
+            + hashCode()
+            + setId()
+            + setLogin()
+            + setName()
+            + setProperties()
+            + setSensors()
+            + toString()
+        }
+
+
+
+      class ru.training.karaf.rest.dto.UnitDTO {
+          - climateParameters : Set<EntityDTO>
+          - id : long
+          - name : String
+          - notation : String
+          + UnitDTO()
+          + UnitDTO()
+          + UnitDTO()
+          + equals()
+          + getClimateParameters()
+          + getId()
+          + getName()
+          + getNotation()
+          + hashCode()
+          + setClimateParameters()
+          + setId()
+          + setName()
+          + setNotation()
+          + toString()
+      }
+    }
+  }
+
+
+
+
+
+  ru.training.karaf.rest.dto.CapabilityDTO .up.|> ru.training.karaf.model.Capability
+  ru.training.karaf.rest.dto.ClimateParameterDTO .up.|> ru.training.karaf.model.ClimateParameter
+  ru.training.karaf.rest.dto.DTO o-- T : value
+  ru.training.karaf.rest.dto.EntityDTO .up.|> ru.training.karaf.model.Entity
+  ru.training.karaf.rest.dto.LocationDTO .up.|> ru.training.karaf.model.Location
+  ru.training.karaf.rest.dto.SensorDTO .up.|> ru.training.karaf.model.Sensor
+  ru.training.karaf.rest.dto.SensorDTO -up-|> ru.training.karaf.rest.dto.EntityDTO
+  ru.training.karaf.rest.dto.SensorDTO o-- ru.training.karaf.rest.dto.LocationDTO : location
+  ru.training.karaf.rest.dto.SensorDTO o-- ru.training.karaf.rest.dto.SensorTypeDTO : type
+  ru.training.karaf.rest.dto.SensorTypeDTO .up.|> ru.training.karaf.model.SensorType
+  ru.training.karaf.rest.dto.SensorTypeDTO -up-|> ru.training.karaf.rest.dto.EntityDTO
+  ru.training.karaf.rest.dto.SensorTypeDTO o-- ru.training.karaf.rest.dto.CapabilityDTO : capability
+  ru.training.karaf.rest.dto.UnitDTO .up.|> ru.training.karaf.model.Unit
+  ru.training.karaf.rest.dto.UserDTO .up.|> ru.training.karaf.model.UniqueFieldEntity
+  ru.training.karaf.rest.dto.UserDTO .up.|> ru.training.karaf.model.User
+
+
+right footer
+
+
+PlantUML diagram generated by SketchIt! (https://bitbucket.org/pmesmeur/sketch.it)
+For more information about this tool, please contact philippe.mesmeur@gmail.com
+endfooter
+
+@enduml

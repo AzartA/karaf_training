@@ -67,6 +67,7 @@ public class LocationRepoImpl implements LocationRepo {
     @Override
     public Optional<LocationDO> delete(long id) {
         return template.txExpr(em -> getById(id, em).map(l -> {
+            l.getSensorSet().forEach(s -> s.setLocation(null));
             em.remove(l);
             return l;
         }));

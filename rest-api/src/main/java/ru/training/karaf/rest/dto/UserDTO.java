@@ -1,6 +1,8 @@
 package ru.training.karaf.rest.dto;
 
+import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -18,6 +20,7 @@ public class UserDTO implements User, UniqueFieldEntity {
     @Size(min = 5, max = 48, message = "Name must contain from 5 to 48 symbols")
     private String name;
     private Set<String> properties;
+    private Set<EntityDTO> sensors;
 
     public UserDTO() {
     }
@@ -27,6 +30,7 @@ public class UserDTO implements User, UniqueFieldEntity {
         login = user.getLogin();
         name = user.getName();
         properties = user.getProperties();
+        sensors = user.getSensors().stream().map(EntityDTO::new).collect(Collectors.toSet());
     }
 
     @Override
@@ -60,6 +64,14 @@ public class UserDTO implements User, UniqueFieldEntity {
 
     public void setProperties(Set<String> properties) {
         this.properties = properties;
+    }
+
+    public Set<EntityDTO> getSensors() {
+        return sensors;
+    }
+
+    public void setSensors(Set<EntityDTO> sensors) {
+        this.sensors = sensors;
     }
 
     @Override

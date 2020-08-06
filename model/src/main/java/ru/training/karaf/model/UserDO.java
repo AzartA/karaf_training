@@ -11,6 +11,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -40,9 +41,16 @@ public class UserDO implements User {
     private Set<String> properties;
     @ManyToMany
     @JoinTable(name = "USER_SENSOR_SET")
-    Set<SensorDO> sensors;
+    private Set<SensorDO> sensors;
 
     public UserDO() {
+    }
+
+    public UserDO(User user) {
+        name = user.getName();
+        login = user.getLogin();
+        properties = user.getProperties();
+        sensors = new HashSet<>();
     }
 
     public long getId() {
@@ -86,6 +94,12 @@ public class UserDO implements User {
         this.sensors = sensors;
     }
 
+    public boolean addSensors(Set<SensorDO> sensors) {
+        boolean sensorAdded = this.sensors.addAll(sensors);
+        boolean usersAdded = sensors.stream().map(s -> s.getUsers().add(this)).reduce(true, (a, b) -> a && b);
+        return usersAdded && sensorAdded;
+    }
+
     @Override
     public int hashCode() {
         return Long.hashCode(id);
@@ -102,7 +116,11 @@ public class UserDO implements User {
     @Override
     public String toString() {
         String sensorNames = "[" + sensors.stream().map(Sensor::getName).collect(Collectors.joining(",")) + "]";
-        return "UserDO [id=" + id + ", firstName=" + name + ", login=" + login
-                + ", properties=" + properties + ", sensors=" + sensorNames + "]";
+        return "UserDO [id=" + id +
+                ", firstName=" + name +
+                ", login=" + login +
+                ", properties=" + properties +
+                ", sensors=" + sensorNames +
+                "]";
     }
 }

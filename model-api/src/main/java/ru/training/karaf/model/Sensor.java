@@ -2,14 +2,14 @@ package ru.training.karaf.model;
 
 import java.util.Set;
 
-public interface Sensor {
-    String getName();
+public interface Sensor extends Entity {
 
     Location getLocation();
 
-    SensorType getType();
+    //SensorType getType();
+    Entity getType();
 
-    Set<? extends User> getUsers();
+    Set<? extends Entity> getUsers();
 
    // List<? extends Measuring> getMeasurings();
 
