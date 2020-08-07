@@ -13,6 +13,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
@@ -47,10 +48,10 @@ public class RepoImpl<T extends Entity> {//implements Repo<T> {
                 if (!fieldNames.contains(sortBy)) {
                     throw new ValidationException("There is no such field: " + sortBy);
                 }
-                if ("asc" .equalsIgnoreCase(sortOrder)) {
+                if ("asc".equalsIgnoreCase(sortOrder)) {
                     cr.orderBy(cb.asc(root.get(sortBy)));
                 }
-                if ("desc" .equalsIgnoreCase(sortOrder)) {
+                if ("desc".equalsIgnoreCase(sortOrder)) {
                     cr.orderBy(cb.desc(root.get(sortBy)));
                 }
             }
@@ -66,9 +67,12 @@ public class RepoImpl<T extends Entity> {//implements Repo<T> {
         });
     }
 
-    public List<? extends T> getAll(List<String> by, List<String> order,
-                                    List<String> field, List<String> cond, List<String> value,
-                                    int pg, int sz) {
+    public List<? extends T> getAll(
+            List<String> by, List<String> order,
+            List<String> field, List<String> cond, List<String> value,
+            int pg, int sz
+    ) {
+
         return template.txExpr(em -> {
             CriteriaBuilder cb = em.getCriteriaBuilder();
             CriteriaQuery<T> cr = cb.createQuery(t);
@@ -77,52 +81,69 @@ public class RepoImpl<T extends Entity> {//implements Repo<T> {
             List<String> fieldNames = Arrays.stream(t.getDeclaredFields()).map(Field::getName).collect(Collectors.toList());
             //filtering
             if (field != null && cond != null && value != null &&
-                field.size() == cond.size() && field.size() == value.size()) {
+                    field.size() == cond.size() && field.size() == value.size()) {
                 List<Predicate> predicates = new ArrayList<>();
-                for(int i = 0; i<field.size();i++){
-
-                    if (!fieldNames.contains(field.get(i))) {
+                for (int i = 0; i < field.size(); i++) {
+                    Expression<String> path;
+                    try {
+                        Class<?> fType = t.getDeclaredField(field.get(i)).getType();
+                        if (!(fType.equals(String.class) || fType.equals(Long.TYPE) || fType.equals(Float.TYPE))) {
+                            path = root.get(field.get(i)).get("name");
+                        } else {
+                            path = root.get(field.get(i));
+                        }
+                    } catch (NoSuchFieldException | SecurityException e) {
                         throw new ValidationException("There is no such field: " + field.get(i));
                     }
-
                     switch (cond.get(i)) {
                         case ">":
-                            predicates.add(cb.greaterThanOrEqualTo(root.get(field.get(i)), value.get(i)));
+                            predicates.add(cb.greaterThanOrEqualTo(path, value.get(i)));
                             break;
                         case "<":
-                            predicates.add(cb.lessThanOrEqualTo(root.get(field.get(i)), value.get(i)));
+                            predicates.add(cb.lessThanOrEqualTo(path, value.get(i)));
                             break;
                         case "contain":
-                            predicates.add(cb.like(root.get(field.get(i)), "%" + value.get(i) + "%"));
+                            predicates.add(cb.like(path, "%" + value.get(i) + "%"));
                             break;
                         case "like":
-                            predicates.add(cb.like(root.get(field.get(i)), value.get(i)));
+                            predicates.add(cb.like(path, value.get(i)));
                             break;
                         case "equals":
                         default:
-                            predicates.add(cb.equal(root.get(field.get(i)), value.get(i)));
+                            predicates.add(cb.equal(path, value.get(i)));
                             break;
                     }
-
                 }
                 Predicate[] predicateArray = predicates.toArray(new Predicate[0]);
                 cr.where(cb.and(predicateArray));
             }
             //sorting
-            if(by != null && order != null &&
-                    by.size() == order.size() ) {
+            if (by != null && order != null &&
+                    by.size() == order.size()) {
                 List<Order> orders = new ArrayList<>();
-                for(int i = 0; i<by.size();i++){
+                for (int i = 0; i < by.size(); i++) {
 
-                        if (!fieldNames.contains(by.get(i))) {
-                            throw new ValidationException("There is no such field: " + by.get(i));
+                    if (!fieldNames.contains(by.get(i))) {
+                        throw new ValidationException("There is no such field: " + by.get(i));
+                    }
+                    Expression<String> path;
+                    try {
+                        Class<?> fType = t.getDeclaredField(by.get(i)).getType();
+
+                        if (!(fType.equals(String.class) || fType.equals(Long.TYPE) || fType.equals(Float.TYPE))) {
+                            path = root.get(by.get(i)).get("name");
+                        } else {
+                            path = root.get(by.get(i));
                         }
-                        if ("asc".equalsIgnoreCase(order.get(i))) {
-                            orders.add(cb.asc(root.get(by.get(i))));
-                        }
-                        if ("desc".equalsIgnoreCase(order.get(i))) {
-                            orders.add(cb.desc(root.get(by.get(i))));
-                        }
+                    } catch (NoSuchFieldException | SecurityException e) {
+                        throw new ValidationException("There is no such field: " + by.get(i));
+                    }
+                    if ("asc".equalsIgnoreCase(order.get(i))) {
+                        orders.add(cb.asc(path));
+                    }
+                    if ("desc".equalsIgnoreCase(order.get(i))) {
+                        orders.add(cb.desc(path));
+                    }
                 }
                 cr.orderBy(orders);
             }

@@ -7,6 +7,7 @@
     <reference id="paramRepo" interface="ru.training.karaf.repo.ClimateParameterRepo"/>
     <reference id="typeRepo" interface="ru.training.karaf.repo.SensorTypeRepo"/>
     <reference id="sensorRepo" interface="ru.training.karaf.repo.SensorRepo"/>
+    <reference id="measuringRepo" interface="ru.training.karaf.repo.MeasuringRepo"/>
 
     <reference id="uniqueValidationRepo" interface="ru.training.karaf.repo.UniqueValidationRepo"/>
 
@@ -28,6 +29,10 @@
     <bean id="sensorRestServiceBeen" class="ru.training.karaf.rest.SensorRestServiceImpl">
         <property name="repo" ref="sensorRepo"/>
     </bean>
+    <bean id="measuringRestServiceBeen" class="ru.training.karaf.rest.MeasuringRestServiceImpl">
+        <property name="repo" ref="measuringRepo"/>
+    </bean>
+
 
     <bean id="uniqueKeyValidatorBean" activation="lazy" class="ru.training.karaf.rest.validation.UniqueKeyValidatorImpl">
         <property name="repo" ref="uniqueValidationRepo"/>
@@ -57,6 +62,7 @@
             <ref component-id="paramRestServiceBeen"/>
             <ref component-id="typeRestServiceBeen"/>
             <ref component-id="sensorRestServiceBeen"/>
+            <ref component-id="measuringRestServiceBeen"/>
             <!--<ref component-id="uniqueKeyValidatorBean"/>-->
         </jaxrs:serviceBeans>
         <jaxrs:providers>

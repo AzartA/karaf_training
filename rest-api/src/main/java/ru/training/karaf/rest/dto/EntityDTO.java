@@ -9,7 +9,8 @@ import javax.validation.constraints.Pattern;
 public class EntityDTO implements Entity {
     private long id;
     @NotNull(message = "Name should be present")
-    @Pattern(regexp = "^(\\S+)[A-Za-z0-9_ -]*$", message = "Name must start with 3 letters min; can contain letters, digits, space or _ only.")
+    @Pattern(regexp = "^(\\S+)[A-Za-z0-9_ ,-]*$",
+            message = "Name must start with 3 letters min; can contain letters, digits, space, \"_\" or \",\" only.")
     @Length(min = 3, max = 48, message = "Name length must be from 3 to 48 symbols")
     private  String name;
 

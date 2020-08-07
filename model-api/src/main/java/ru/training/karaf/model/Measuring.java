@@ -1,8 +1,15 @@
 package ru.training.karaf.model;
 
-public interface Measuring {
+import java.beans.Transient;
+import java.text.SimpleDateFormat;
+
+public interface Measuring extends Entity {
+    SimpleDateFormat DATE_TIME_FORMAT = new SimpleDateFormat("dd.MM.yyyy hh:mm:ss");
     java.sql.Timestamp getTimestamp();
 
-    float getValue();
+    Entity getSensor();
 
+    Entity getParameter();
+
+    float getValue();
 }

@@ -20,7 +20,7 @@ public class SensorDO implements Sensor {
     private long id;
     @Column(name = "name", nullable = false, length = 48, unique = true)
     private String name;
-    @ManyToOne(optional = false, cascade = {CascadeType.ALL})
+    @ManyToOne(optional = false, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinColumn(name = "location")
     private LocationDO location;
     @ManyToOne(optional = false, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
