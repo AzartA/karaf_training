@@ -1,5 +1,9 @@
 package ru.training.karaf.repo;
 
+import java.util.List;
+import java.util.Optional;
+import javax.validation.ValidationException;
+
 import org.apache.aries.jpa.template.JpaTemplate;
 import org.apache.aries.jpa.template.TransactionType;
 import ru.training.karaf.model.LocationDO;
@@ -7,10 +11,6 @@ import ru.training.karaf.model.Sensor;
 import ru.training.karaf.model.SensorDO;
 import ru.training.karaf.model.SensorTypeDO;
 import ru.training.karaf.model.UserDO;
-
-import javax.validation.ValidationException;
-import java.util.List;
-import java.util.Optional;
 
 public class SensorRepoImpl implements SensorRepo {
     private final JpaTemplate template;
@@ -87,19 +87,17 @@ public class SensorRepoImpl implements SensorRepo {
     @Override
     public Optional<? extends Sensor> delete(long id) {
         return template.txExpr(em -> sensorRepo.getById(id, em).map(l -> {
-                    if (l.getLocation() != null) {
-                        l.getLocation().getSensorSet().remove(l);
-                    }
-                    if (l.getLocation() != null) {
-                        l.getType().getSensors().remove(l);
-                    }
-                    l.getUsers().forEach(u -> u.getSensors().remove(l));
-                    //l.getMeasurings().forEach(s -> s.setSensor(null)); //  delete cascade.ALL in SensorDO for this case
-                    em.remove(l);
-                    return l;
-                })
-
-        );
+            if (l.getLocation() != null) {
+                l.getLocation().getSensorSet().remove(l);
+            }
+            if (l.getLocation() != null) {
+                l.getType().getSensors().remove(l);
+            }
+            l.getUsers().forEach(u -> u.getSensors().remove(l));
+            //l.getMeasurings().forEach(s -> s.setSensor(null)); //  delete cascade.ALL in SensorDO for this case
+            em.remove(l);
+            return l;
+        }));
     }
 
     @Override

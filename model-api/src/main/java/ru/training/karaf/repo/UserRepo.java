@@ -11,4 +11,6 @@ public interface UserRepo extends Repo<User> {
    // Optional<? extends User> getByLogin(String login);
     boolean loginIsPresent(String login);
     Optional<? extends User> getByLogin(String login);
+    Optional<? extends User> addRoles(long id, List<Long> rolesIds);
+    Optional<? extends User> removeRoles(long id, List<Long> rolesIds);
 }

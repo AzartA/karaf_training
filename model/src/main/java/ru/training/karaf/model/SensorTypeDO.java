@@ -29,7 +29,7 @@ public class SensorTypeDO implements SensorType {
     private int minTime;
     @OneToMany(mappedBy = "type", cascade = {CascadeType.ALL})
     private Set<SensorDO> sensors;
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "SENSOR_PARAMETER_SET")
     private Set<ClimateParameterDO> parameters;
 

@@ -1,30 +1,30 @@
 package ru.training.karaf.repo;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
+import javax.sql.DataSource;
 import javax.validation.ValidationException;
 
 import org.apache.aries.jpa.template.JpaTemplate;
 import org.apache.aries.jpa.template.TransactionType;
-import ru.training.karaf.model.Entity;
-import ru.training.karaf.model.Sensor;
+import ru.training.karaf.model.RoleDO;
 import ru.training.karaf.model.SensorDO;
 import ru.training.karaf.model.User;
 import ru.training.karaf.model.UserDO;
 
 public class UserRepoImpl implements UserRepo {
     private final JpaTemplate template;
+
+
     private final RepoImpl<UserDO> repo;
     private final Class<UserDO> stdClass = UserDO.class;
 
     public UserRepoImpl(JpaTemplate template) {
         this.template = template;
         repo = new RepoImpl<>(template, stdClass);
+
     }
 
     @Override
@@ -43,6 +43,8 @@ public class UserRepoImpl implements UserRepo {
         return template.txExpr(em -> {
             UserDO userToCreate = new UserDO(user);
             em.persist(userToCreate);
+            userToCreate.setSensors(repo.getEntitySet(user.getSensors(),em,SensorDO.class));
+            userToCreate.setRoles(repo.getEntitySet(user.getRoles(),em,RoleDO.class));
             return Optional.of(userToCreate);
         });
     }
@@ -57,10 +59,17 @@ public class UserRepoImpl implements UserRepo {
             if (!u.isEmpty()) {
                 UserDO userToUpdate = u.get(0);
                 if (userToUpdate.getId() == id) {
-                    userToUpdate.setLogin(user.getLogin());
-                    userToUpdate.setName(user.getName());
-                    userToUpdate.setProperties(user.getProperties());
+                    if(user.getLogin()!= null) {
+                        userToUpdate.setLogin(user.getLogin());
+                    }
+                    if(user.getName()!= null) {
+                        userToUpdate.setName(user.getName());
+                    }
+                    if(user.getProperties()!= null) {
+                        userToUpdate.setProperties(user.getProperties());
+                    }
                     userToUpdate.setSensors(repo.getEntitySet(user.getSensors(),em,SensorDO.class));
+                    userToUpdate.setRoles(repo.getEntitySet(user.getRoles(),em,RoleDO.class));
                     em.merge(userToUpdate);
                     return Optional.of(userToUpdate);
                 }
@@ -96,6 +105,8 @@ public class UserRepoImpl implements UserRepo {
         });
     }
 
+
+
     @Override
     public boolean loginIsPresent(String login) {
         return template.txExpr(em -> getByLogin(login, em).isPresent());
@@ -106,6 +117,30 @@ public class UserRepoImpl implements UserRepo {
         return template.txExpr(em -> getByLogin(login, em));
     }
 
+    @Override
+    public Optional<? extends User> addRoles(long id, List<Long> rolesIds) {
+        return template.txExpr(TransactionType.Required, em -> {
+            Optional<UserDO> userToUpdate = repo.getById(id, em);
+            userToUpdate.ifPresent(p -> {
+                p.addRoles(repo.getEntitySet(rolesIds, em, RoleDO.class));
+                em.merge(p);
+            });
+            return userToUpdate;
+        });
+    }
+
+    @Override
+    public Optional<? extends User> removeRoles(long id, List<Long> rolesIds) {
+        return template.txExpr(TransactionType.Required, em -> {
+            Optional<UserDO> userToUpdate = repo.getById(id, em);
+            userToUpdate.ifPresent(p -> {
+                p.removeRoles(repo.getEntitySet(rolesIds, em, RoleDO.class));
+                em.merge(p);
+            });
+            return userToUpdate;
+        });
+    }
+
     private Optional<UserDO> getByLogin(String login, EntityManager em) {
         try {
             return Optional.of(em.createNamedQuery(UserDO.GET_BY_LOGIN, UserDO.class).setParameter("login", login)
@@ -114,5 +149,7 @@ public class UserRepoImpl implements UserRepo {
             return Optional.empty();
         }
     }
+
+
 
 }

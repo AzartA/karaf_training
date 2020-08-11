@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
@@ -19,7 +18,6 @@ import javax.persistence.OneToMany;
         @NamedQuery(name = LocationDO.GET_BY_NAME, query = "SELECT l FROM LocationDO AS l WHERE l.name = :name"),
         @NamedQuery(name = LocationDO.GET_BY_ID, query = "SELECT l FROM LocationDO AS l WHERE l.id = :id"),
         @NamedQuery(name = LocationDO.GET_BY_ID_OR_NAME, query = "SELECT l FROM LocationDO AS l WHERE l.id = :id OR l.name = :name")
-
 })
 public class LocationDO implements Location {
     public static final String GET_ALL = "Locations.getAll";
@@ -31,8 +29,10 @@ public class LocationDO implements Location {
     private long id;
     @Column(name = "name", length = 48, nullable = false, unique = true)
     private String name;
-    @OneToMany(mappedBy = "location", cascade = {CascadeType.MERGE})
+    @OneToMany(mappedBy = "location", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Set<SensorDO> sensorSet;
+    @Column(columnDefinition = "oid")
+    private long planOid;
 
     public LocationDO() {
     }
@@ -66,6 +66,14 @@ public class LocationDO implements Location {
         this.sensorSet = sensorSet;
     }
 
+    public long getPlanOid() {
+        return planOid;
+    }
+
+    public void setPlanOid(long planOid) {
+        this.planOid = planOid;
+    }
+
     public boolean addSensors(Set<SensorDO> sensors) {
         boolean unitsAdded = this.sensorSet.addAll(sensors);
         sensors.forEach(s -> s.setLocation(this));
@@ -91,6 +99,6 @@ public class LocationDO implements Location {
     @Override
     public String toString() {
         String sensorsNames = sensorSet.stream().map(Sensor::getName).collect(Collectors.joining(","));
-        return "UserDO [id=" + id + ", name=" + name + ", sensorSet=" + sensorsNames + "]";
+        return "UserDO [id=" + id + ", name=" + name + ", planOid=" + planOid + ", sensorSet=" + sensorsNames + "]";
     }
 }

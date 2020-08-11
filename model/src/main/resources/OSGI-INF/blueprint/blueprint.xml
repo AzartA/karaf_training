@@ -9,6 +9,7 @@
     </bean>
     <bean id="locationRepo" class="ru.training.karaf.repo.LocationRepoImpl">
         <argument ref="jpaTemplate"/>
+        <argument ref="datasource"/>
     </bean>
     <bean id="unitRepo" class="ru.training.karaf.repo.UnitRepoIml">
         <argument ref="jpaTemplate"/>
@@ -25,6 +26,10 @@
     <bean id="measuringRepo" class="ru.training.karaf.repo.MesuringRepoImpl">
             <argument ref="jpaTemplate"/>
     </bean>
+    <bean id="roleRepo" class="ru.training.karaf.repo.RoleRepoImpl">
+            <argument ref="jpaTemplate"/>
+    </bean>
+
 
 
     <bean id="uniqueValidationRepo" class="ru.training.karaf.repo.UniqueValidationRepoImpl">
@@ -37,6 +42,7 @@
     <service ref="typeRepo" interface="ru.training.karaf.repo.SensorTypeRepo"/>
     <service ref="sensorRepo" interface="ru.training.karaf.repo.SensorRepo"/>
     <service ref="measuringRepo" interface="ru.training.karaf.repo.MeasuringRepo"/>
+    <service ref="roleRepo" interface="ru.training.karaf.repo.RoleRepo"/>
 
     <service ref="uniqueValidationRepo" interface="ru.training.karaf.repo.UniqueValidationRepo"/>
 

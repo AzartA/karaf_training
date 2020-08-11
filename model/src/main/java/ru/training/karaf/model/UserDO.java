@@ -1,5 +1,6 @@
 package ru.training.karaf.model;
 
+import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -39,9 +40,13 @@ public class UserDO implements User {
     @CollectionTable(name = "user_properties",
             joinColumns = @JoinColumn(name = "user_id"))
     private Set<String> properties;
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "USER_SENSOR_SET")
     private Set<SensorDO> sensors;
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(name = "USER_ROLE_SET")
+    private Set<RoleDO> roles;
+
 
     public UserDO() {
     }
@@ -51,6 +56,7 @@ public class UserDO implements User {
         login = user.getLogin();
         properties = user.getProperties();
         sensors = new HashSet<>();
+        roles = new HashSet<>();
     }
 
     public long getId() {
@@ -94,6 +100,27 @@ public class UserDO implements User {
         this.sensors = sensors;
     }
 
+    @Override
+    public Set<RoleDO> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<RoleDO> roles) {
+        this.roles = roles;
+    }
+
+    public boolean addRoles(Set<RoleDO> roles) {
+        boolean addedRoles = this.roles.addAll(roles);
+        boolean rolesAdded = roles.stream().map(s -> s.getUsers().add(this)).reduce(true, (a, b) -> a && b);
+        return rolesAdded && addedRoles;
+    }
+
+    public boolean removeRoles(Set<RoleDO> roles){
+        boolean rolesRemoved = this.roles.removeAll(roles);
+        boolean removedRoles = roles.stream().map(s -> s.getUsers().remove(this)).reduce(true, (a, b) -> a && b);
+        return rolesRemoved && removedRoles;
+    }
+
     public boolean addSensors(Set<SensorDO> sensors) {
         boolean sensorAdded = this.sensors.addAll(sensors);
         boolean usersAdded = sensors.stream().map(s -> s.getUsers().add(this)).reduce(true, (a, b) -> a && b);
@@ -116,11 +143,13 @@ public class UserDO implements User {
     @Override
     public String toString() {
         String sensorNames = "[" + sensors.stream().map(Sensor::getName).collect(Collectors.joining(",")) + "]";
+        String roleNames = "[" + roles.stream().map(RoleDO::getName).collect(Collectors.joining(",")) + "]";
         return "UserDO [id=" + id +
                 ", firstName=" + name +
                 ", login=" + login +
                 ", properties=" + properties +
                 ", sensors=" + sensorNames +
+                ", roles=" + roleNames +
                 "]";
     }
 }

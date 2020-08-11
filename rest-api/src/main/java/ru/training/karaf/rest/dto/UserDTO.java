@@ -7,6 +7,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import ru.training.karaf.model.Entity;
+import ru.training.karaf.model.Sensor;
 import ru.training.karaf.model.UniqueFieldEntity;
 import ru.training.karaf.model.User;
 import ru.training.karaf.rest.validation.UniqueKey;
@@ -21,6 +23,7 @@ public class UserDTO implements User, UniqueFieldEntity {
     private String name;
     private Set<String> properties;
     private Set<EntityDTO> sensors;
+    private Set<EntityDTO> roles;
 
     public UserDTO() {
     }
@@ -31,6 +34,7 @@ public class UserDTO implements User, UniqueFieldEntity {
         name = user.getName();
         properties = user.getProperties();
         sensors = user.getSensors().stream().map(EntityDTO::new).collect(Collectors.toSet());
+        roles = user.getRoles().stream().map(EntityDTO::new).collect(Collectors.toSet());
     }
 
     @Override
@@ -75,6 +79,15 @@ public class UserDTO implements User, UniqueFieldEntity {
     }
 
     @Override
+    public Set<EntityDTO> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<EntityDTO> roles) {
+        this.roles = roles;
+    }
+
+    @Override
     public int hashCode() {
         return Long.hashCode(id);
     }
@@ -94,6 +107,15 @@ public class UserDTO implements User, UniqueFieldEntity {
 
     @Override
     public String toString() {
-        return "UserDTO [id =" + id + ", login=" + login + ", name=" + name + ", properties=" + properties + "]";
+        String sensorNames = "[" + sensors.stream().map(Entity::getName).collect(Collectors.joining(",")) + "]";
+        String roleNames = "[" + roles.stream().map(Entity::getName).collect(Collectors.joining(",")) + "]";
+
+        return "UserDTO [id =" + id +
+                ", firstName=" + name +
+                ", login=" + login +
+                ", properties=" + properties +
+                ", sensors=" + sensorNames +
+                ", roles=" + roleNames +
+                "]";
     }
 }

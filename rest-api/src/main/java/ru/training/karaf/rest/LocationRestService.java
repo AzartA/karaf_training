@@ -1,5 +1,6 @@
 package ru.training.karaf.rest;
 
+import java.io.InputStream;
 import java.util.List;
 import javax.validation.Valid;
 import javax.ws.rs.Consumes;
@@ -11,7 +12,9 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.StreamingOutput;
 
+import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import ru.training.karaf.rest.dto.LocationDTO;
 
 @Path("locations")
@@ -35,4 +38,12 @@ public interface LocationRestService {
     @DELETE
     @Path("{id}")
     void delete(@PathParam("id") long id);
+
+    @GET
+    @Path("{id}/plan")
+    StreamingOutput getPlan(@PathParam("id") long id);
+
+    @POST
+    @Path("{id}/plan")
+    LocationDTO putPlan(@PathParam("id") long id, @Multipart("plan") InputStream plan); //byte[] picture);
 }

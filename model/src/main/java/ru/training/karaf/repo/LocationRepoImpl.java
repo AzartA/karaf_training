@@ -1,9 +1,11 @@
 package ru.training.karaf.repo;
 
+import java.io.OutputStream;
 import java.util.List;
 import java.util.Optional;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
+import javax.sql.DataSource;
 import javax.validation.ValidationException;
 
 import org.apache.aries.jpa.template.JpaTemplate;
@@ -13,9 +15,11 @@ import ru.training.karaf.model.LocationDO;
 
 public class LocationRepoImpl implements LocationRepo {
     private final JpaTemplate template;
+    private final DataSource dataSource;
 
-    public LocationRepoImpl(JpaTemplate template) {
+    public LocationRepoImpl(JpaTemplate template, DataSource dataSource) {
         this.template = template;
+        this.dataSource = dataSource;
     }
 
     @Override
@@ -73,6 +77,12 @@ public class LocationRepoImpl implements LocationRepo {
         }));
     }
 
+    public OutputStream getPlan(long id, OutputStream outputStream){
+
+    }
+
+
+
     private Optional<LocationDO> getByName(String name, EntityManager em) {
         try {
             return Optional.of(em.createNamedQuery(LocationDO.GET_BY_NAME, LocationDO.class).setParameter("name", name)
@@ -91,4 +101,6 @@ public class LocationRepoImpl implements LocationRepo {
                 .setParameter("id", id).setParameter("name", name)
                 .getResultList();
     }
+
+
 }

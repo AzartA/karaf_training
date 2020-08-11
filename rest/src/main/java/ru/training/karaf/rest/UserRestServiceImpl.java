@@ -2,12 +2,14 @@ package ru.training.karaf.rest;
 
 import ru.training.karaf.model.User;
 import ru.training.karaf.repo.UserRepo;
+import ru.training.karaf.rest.dto.RoleDTO;
 import ru.training.karaf.rest.dto.SensorDTO;
 import ru.training.karaf.rest.dto.UserDTO;
 
 import javax.validation.ValidationException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.StreamingOutput;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -64,4 +66,17 @@ import java.util.stream.Collectors;
             return repo.addSensors(id, sensorIds).map(UserDTO::new).orElseThrow(() ->
                     new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
         }
+
+        @Override
+        public UserDTO addRoles(long id, List<Long> roleIds) {
+            return repo.addRoles(id, roleIds).map(UserDTO::new).orElseThrow(() ->
+                    new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
+        }
+
+        @Override
+        public UserDTO deleteRoles(long id, List<Long> roleIds) {
+            return repo.removeRoles(id, roleIds).map(UserDTO::new).orElseThrow(() ->
+                    new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
+        }
+
     }

@@ -7,6 +7,7 @@ import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -25,10 +26,10 @@ public class MeasuringDO implements Measuring {
     private long id;
     @Column(name = "measured_on", insertable = false, updatable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP")
     private java.sql.Timestamp timestamp;
-    @ManyToOne(optional = false, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @ManyToOne(optional = false, fetch= FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinColumn(name = "sensor")
     private SensorDO sensor;
-    @ManyToOne(optional = false, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @ManyToOne(optional = false, fetch= FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinColumn(name = "parameter")
     private ClimateParameterDO parameter;
     @Column(columnDefinition = "real")

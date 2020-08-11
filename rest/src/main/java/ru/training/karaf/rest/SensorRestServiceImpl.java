@@ -4,16 +4,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.validation.ValidationException;
-import javax.ws.rs.MatrixParam;
 import javax.ws.rs.NotFoundException;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.PathSegment;
 import javax.ws.rs.core.Response;
 
-import ru.training.karaf.model.ClimateParameter;
 import ru.training.karaf.model.Sensor;
 import ru.training.karaf.repo.SensorRepo;
-import ru.training.karaf.rest.dto.ClimateParameterDTO;
 import ru.training.karaf.rest.dto.SensorDTO;
 
 public class SensorRestServiceImpl implements SensorRestService {

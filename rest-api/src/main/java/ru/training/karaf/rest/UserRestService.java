@@ -1,5 +1,8 @@
 package ru.training.karaf.rest;
 
+import org.apache.cxf.jaxrs.ext.PATCH;
+import org.apache.cxf.jaxrs.ext.multipart.Multipart;
+import ru.training.karaf.rest.dto.RoleDTO;
 import ru.training.karaf.rest.dto.SensorDTO;
 import ru.training.karaf.rest.dto.UserDTO;
 
@@ -14,6 +17,8 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.StreamingOutput;
+import java.io.InputStream;
 import java.util.List;
 
 @Path("users")
@@ -54,4 +59,13 @@ public interface UserRestService {
     @PUT
     @Path("{id}/sensors")
     UserDTO addSensors(@PathParam("id") long id, @QueryParam("sId") List<Long> sensorIds);
+
+    @PUT
+    @Path("{id}/roles")
+    UserDTO addRoles(@PathParam("id") long id, @QueryParam("rId") List<Long> roleIds);
+
+    @DELETE
+    @Path("{id}/roles")
+    UserDTO deleteRoles(@PathParam("id") long id, @QueryParam("rId") List<Long> roleIds);
+
 }

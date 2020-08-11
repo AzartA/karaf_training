@@ -1,6 +1,7 @@
 package ru.training.karaf.repo;
 
 import java.lang.reflect.Field;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -87,7 +88,7 @@ public class RepoImpl<T extends Entity> {//implements Repo<T> {
                     Expression<String> path;
                     try {
                         Class<?> fType = t.getDeclaredField(field.get(i)).getType();
-                        if (!(fType.equals(String.class) || fType.equals(Long.TYPE) || fType.equals(Float.TYPE))) {
+                        if (!(fType.equals(String.class) || fType.equals(Long.TYPE) || fType.equals(Float.TYPE) )) {
                             path = root.get(field.get(i)).get("name");
                         } else {
                             path = root.get(field.get(i));
@@ -105,9 +106,9 @@ public class RepoImpl<T extends Entity> {//implements Repo<T> {
                         case "contain":
                             predicates.add(cb.like(path, "%" + value.get(i) + "%"));
                             break;
-                        case "like":
+                        /*case "like":
                             predicates.add(cb.like(path, value.get(i)));
-                            break;
+                            break;*/
                         case "equals":
                         default:
                             predicates.add(cb.equal(path, value.get(i)));

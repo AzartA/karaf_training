@@ -38,10 +38,10 @@ public class ClimateParameterDO implements ClimateParameter {
     //@JsonBackReference
     //@JsonManagedReference
     //@JsonIdentityReference(alwaysAsId = true)
-    @ManyToMany(cascade = {CascadeType.PERSIST})
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "PARAMETER_UNIT_SET")
     private Set<UnitDO> units;
-    @ManyToMany(mappedBy = "parameters")
+    @ManyToMany(mappedBy = "parameters", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Set<SensorTypeDO> sensorTypes;
     @OneToMany(mappedBy = "parameter", cascade = {CascadeType.ALL}) //{CascadeType.PERSIST, CascadeType.MERGE})
     private List<MeasuringDO> measurings;

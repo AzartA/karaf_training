@@ -3,6 +3,7 @@ package ru.training.karaf.model;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -20,13 +21,15 @@ public class SensorDO implements Sensor {
     private long id;
     @Column(name = "name", nullable = false, length = 48, unique = true)
     private String name;
-    @ManyToOne(optional = false, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @ManyToOne(optional = false, fetch= FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinColumn(name = "location")
     private LocationDO location;
-    @ManyToOne(optional = false, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @ManyToOne(optional = false, fetch= FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    private long x;
+    private long y;
     @JoinColumn(name = "type")
     private SensorTypeDO type;
-    @ManyToMany(mappedBy = "sensors")
+    @ManyToMany(mappedBy = "sensors", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Set<UserDO> users;
     @OneToMany(mappedBy = "sensor", cascade = {CascadeType.ALL})
     private List<MeasuringDO> measurings;

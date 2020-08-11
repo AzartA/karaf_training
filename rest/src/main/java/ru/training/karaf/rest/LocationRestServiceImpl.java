@@ -7,6 +7,9 @@ import ru.training.karaf.rest.dto.LocationDTO;
 import javax.validation.ValidationException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.StreamingOutput;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -45,4 +48,16 @@ public class LocationRestServiceImpl implements LocationRestService {
     public void delete(long id) {
         repo.delete(id).orElseThrow(() -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
     }
+
+    @Override
+    public StreamingOutput getPlan(long id, OutputStream outputStream) {
+        return repo.getPlan(id, outputStream).orElseThrow(() -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
+    }
+
+    @Override
+    public LocationDTO putPlan(long id, InputStream plan) {
+        return null;
+    }
+
+
 }
