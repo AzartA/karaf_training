@@ -12,7 +12,7 @@ public class LocationDTO implements Location {
     @Pattern(regexp = "^(\\S+)[A-Za-z0-9_ -]*$", message = "Name must start with 3 letters min; can contain letters, digits, space or _ only.")
     @Length(min = 3, max = 48, message = "Name length must be from 3 to 48 symbols")
     private String name;
-    private long planOid;
+    private long pictureSize;
 
 
     public LocationDTO() {
@@ -21,7 +21,6 @@ public class LocationDTO implements Location {
     public LocationDTO(Location location) {
         id = location.getId();
         this.name = location.getName();
-        planOid = location.getPlanOid();
     }
 
     @Override
@@ -36,11 +35,20 @@ public class LocationDTO implements Location {
 
     @Override
     public long getPlanOid() {
-        return planOid;
+        return 0;
     }
 
-    public void setPlanOid(long planOid) {
-        this.planOid = planOid;
+    @Override
+    public String getPictureType() {
+        return null;
+    }
+
+    public long getPictureSize() {
+        return pictureSize;
+    }
+
+    public void setPictureSize(long pictureSize) {
+        this.pictureSize = pictureSize;
     }
 
     public void setName(String name) {
@@ -66,7 +74,7 @@ public class LocationDTO implements Location {
         return "LocationDTO{" +
                 "id=" + id +
                 ", name=" + name +
-                ", planOid=" + planOid +
+                ", pictureSize=" + pictureSize +
                 '}';
     }
 }

@@ -60,19 +60,5 @@ public class ValidationExceptionMapperWithMassages extends ValidationExceptionMa
                 violation.getMessage();
     }
 
-    private class ErrorsDTO {
-        private List<String> errors;
 
-        public ErrorsDTO(List<String> errors) {
-            this.errors = errors;
-        }
-
-        public List<String> getErrors() {
-            return errors;
-        }
-
-        public void setErrors(List<String> errors) {
-            this.errors = errors;
-        }
-    }
 }

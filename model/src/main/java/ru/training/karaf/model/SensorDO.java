@@ -25,8 +25,8 @@ public class SensorDO implements Sensor {
     @JoinColumn(name = "location")
     private LocationDO location;
     @ManyToOne(optional = false, fetch= FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
-    private long x;
-    private long y;
+    //private long x;
+   // private long y;
     @JoinColumn(name = "type")
     private SensorTypeDO type;
     @ManyToMany(mappedBy = "sensors", cascade = {CascadeType.PERSIST, CascadeType.MERGE})

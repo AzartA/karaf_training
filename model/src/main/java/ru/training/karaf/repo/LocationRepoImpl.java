@@ -1,6 +1,10 @@
 package ru.training.karaf.repo;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 import javax.persistence.EntityManager;
@@ -10,6 +14,10 @@ import javax.validation.ValidationException;
 
 import org.apache.aries.jpa.template.JpaTemplate;
 import org.apache.aries.jpa.template.TransactionType;
+import org.apache.commons.io.IOUtils;
+import org.postgresql.PGConnection;
+import org.postgresql.largeobject.LargeObject;
+import org.postgresql.largeobject.LargeObjectManager;
 import ru.training.karaf.model.Location;
 import ru.training.karaf.model.LocationDO;
 
@@ -77,11 +85,55 @@ public class LocationRepoImpl implements LocationRepo {
         }));
     }
 
-    public OutputStream getPlan(long id, OutputStream outputStream){
-
+    public void getPlan(long id, OutputStream outputStream) {
+        try (Connection conn = dataSource.getConnection()) {
+            try {
+                conn.setAutoCommit(false);
+                LargeObjectManager largeObjectManager = conn.unwrap(PGConnection.class).getLargeObjectAPI();
+                long oid = template.txExpr(em -> em.find(LocationDO.class, id)).getPlanOid();
+                LargeObject lob = largeObjectManager.open(oid, LargeObjectManager.READ);
+                IOUtils.copy(lob.getInputStream(), outputStream);
+                lob.close();
+                conn.commit();
+            } catch (IOException e) {
+                //LOG.error("Exception: {}", e.getMessage());
+                conn.rollback();
+            } finally {
+                conn.setAutoCommit(true);
+            }
+        } catch (SQLException ex) {
+            //LOG.error("Exception: {}", ex.getMessage());
+        }
     }
 
-
+    @Override
+    public long setPlan(long id, InputStream inputStream, String type) {
+        try (Connection conn = dataSource.getConnection()) {
+            try {
+                conn.setAutoCommit(false);
+                LargeObjectManager largeObjectManager = conn.unwrap(PGConnection.class).getLargeObjectAPI();
+                long oid = largeObjectManager.createLO(LargeObjectManager.READ | LargeObjectManager.WRITE);
+                LargeObject lob = largeObjectManager.open(oid, LargeObjectManager.WRITE);
+                long size = IOUtils.copy(inputStream, lob.getOutputStream());
+                lob.close();
+                conn.commit();
+                template.tx(em -> {
+                    LocationDO location = em.find(LocationDO.class, id);
+                    location.setPlanOid(oid);
+                    location.setPictureType(type);
+                });
+                return size;
+            } catch (IOException ex) {
+                //LOG.error("Exception: {}", ex.getMessage());
+                conn.rollback();
+            } finally {
+                conn.setAutoCommit(true);
+            }
+        } catch (SQLException ex) {
+            //LOG.error("Exception: {}", ex.getMessage());
+        }
+        return -1L;
+    }
 
     private Optional<LocationDO> getByName(String name, EntityManager em) {
         try {
@@ -101,6 +153,4 @@ public class LocationRepoImpl implements LocationRepo {
                 .setParameter("id", id).setParameter("name", name)
                 .getResultList();
     }
-
-
 }

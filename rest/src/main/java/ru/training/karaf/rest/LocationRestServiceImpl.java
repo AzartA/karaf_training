@@ -1,18 +1,19 @@
 package ru.training.karaf.rest;
 
-import ru.training.karaf.model.Location;
-import ru.training.karaf.repo.LocationRepo;
-import ru.training.karaf.rest.dto.LocationDTO;
-
-import javax.validation.ValidationException;
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.StreamingOutput;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import javax.validation.ValidationException;
+import javax.ws.rs.InternalServerErrorException;
+import javax.ws.rs.NotFoundException;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.StreamingOutput;
+
+import ru.training.karaf.model.Location;
+import ru.training.karaf.repo.LocationRepo;
+import ru.training.karaf.rest.dto.LocationDTO;
+import ru.training.karaf.rest.validation.ErrorsDTO;
 
 public class LocationRestServiceImpl implements LocationRestService {
 
@@ -50,14 +51,23 @@ public class LocationRestServiceImpl implements LocationRestService {
     }
 
     @Override
-    public StreamingOutput getPlan(long id, OutputStream outputStream) {
-        return repo.getPlan(id, outputStream).orElseThrow(() -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
+    public Response getPlan(long id) {
+        String type = repo.get(id).map(Location::getPictureType)
+                .orElseThrow(() -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
+        StreamingOutput op = outputStream -> repo.getPlan(id, outputStream);
+        return Response.ok(op).type(type).build();
     }
 
     @Override
-    public LocationDTO putPlan(long id, InputStream plan) {
-        return null;
+    public LocationDTO putPlan(long id, InputStream plan, String type) {
+        LocationDTO location = repo.get(id).map(LocationDTO::new)
+                .orElseThrow(() -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
+        long size = repo.setPlan(id, plan, type);
+        if (size < 0) {
+            throw new InternalServerErrorException(Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(new ErrorsDTO("Can't put plan")).build());
+        }
+        location.setPictureSize(size);
+        return location;
     }
-
-
 }

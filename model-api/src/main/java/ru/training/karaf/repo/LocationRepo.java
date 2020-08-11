@@ -1,5 +1,6 @@
 package ru.training.karaf.repo;
 
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 import java.util.Optional;
@@ -19,7 +20,8 @@ public interface LocationRepo {
 
     Optional<? extends Location> delete(long id);
 
-    public OutputStream getPlan(long id, OutputStream outputStream);
+    void getPlan(long id, OutputStream outputStream);
 
+    long setPlan(long id, InputStream inputStream, String type);
 
 }

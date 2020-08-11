@@ -33,6 +33,8 @@ public class LocationDO implements Location {
     private Set<SensorDO> sensorSet;
     @Column(columnDefinition = "oid")
     private long planOid;
+    @Column(name = "picturetype", length = 32)
+    private String pictureType;
 
     public LocationDO() {
     }
@@ -74,6 +76,14 @@ public class LocationDO implements Location {
         this.planOid = planOid;
     }
 
+    public String getPictureType() {
+        return pictureType;
+    }
+
+    public void setPictureType(String pictureType) {
+        this.pictureType = pictureType;
+    }
+
     public boolean addSensors(Set<SensorDO> sensors) {
         boolean unitsAdded = this.sensorSet.addAll(sensors);
         sensors.forEach(s -> s.setLocation(this));
@@ -99,6 +109,11 @@ public class LocationDO implements Location {
     @Override
     public String toString() {
         String sensorsNames = sensorSet.stream().map(Sensor::getName).collect(Collectors.joining(","));
-        return "UserDO [id=" + id + ", name=" + name + ", planOid=" + planOid + ", sensorSet=" + sensorsNames + "]";
+        return "UserDO [id=" + id +
+                ", name=" + name +
+                ", planOid=" + planOid +
+                ", pictureType=" + pictureType +
+                ", sensorSet=" + sensorsNames +
+                "]";
     }
 }
