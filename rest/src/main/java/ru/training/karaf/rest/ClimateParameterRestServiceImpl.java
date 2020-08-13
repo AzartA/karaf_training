@@ -3,6 +3,7 @@ package ru.training.karaf.rest;
 import ru.training.karaf.model.ClimateParameter;
 import ru.training.karaf.repo.ClimateParameterRepo;
 import ru.training.karaf.rest.dto.ClimateParameterDTO;
+import ru.training.karaf.rest.dto.SensorDTO;
 
 import javax.validation.ValidationException;
 import javax.ws.rs.NotFoundException;
@@ -19,10 +20,15 @@ public class ClimateParameterRestServiceImpl implements ClimateParameterRestServ
     }
 
     @Override
-    public List<ClimateParameterDTO> getAll(String sortBy, String sortOrder, int pg, int sz, String filterField, String filterValue) {
-
-        return repo.getAll(sortBy, sortOrder, pg, sz, filterField, filterValue)
+    public List<ClimateParameterDTO> getAll(List<String> by, List<String> order,
+                                            List<String> field, List<String> cond, List<String> value, int pg, int sz) {
+        return repo.getAll(by, order, field, cond, value, pg, sz)
                 .stream().map(ClimateParameterDTO::new).collect(Collectors.toList());
+    }
+
+    @Override
+    public long getCount(List<String> field, List<String> cond, List<String> value, int pg, int sz) {
+        return repo.getCount(field, cond, value, pg, sz);
     }
 
     @Override

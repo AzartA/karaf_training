@@ -30,12 +30,16 @@ public interface SensorRestService {
                            @QueryParam("value") List<String> value,
                            @QueryParam("pg") int pg,
                            @QueryParam("sz") int sz);
-    /*
-        (sort);by=field1;order=asc;by=field2;order=desc;
-        (filter)field=field1;field=field2;condition=>;condition=contain;value=val1;value=val_e%;
-        (pgn)pg=1;sz=4
-        conditions:[>,<,equal,contain,like]
-    */
+
+    @GET
+    @Path("count")
+    long getCount(
+            @QueryParam("field") List<String> field,
+            @QueryParam("condition") List<String> cond,
+            @QueryParam("value") List<String> value,
+            @QueryParam("pg") int pg,
+            @QueryParam("sz") int sz
+    );
 
     @POST
     SensorDTO create(@Valid SensorDTO type);

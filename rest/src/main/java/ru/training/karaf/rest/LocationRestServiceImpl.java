@@ -12,6 +12,7 @@ import javax.ws.rs.core.StreamingOutput;
 
 import ru.training.karaf.model.Location;
 import ru.training.karaf.repo.LocationRepo;
+import ru.training.karaf.rest.dto.ClimateParameterDTO;
 import ru.training.karaf.rest.dto.DTO;
 import ru.training.karaf.rest.dto.LocationDTO;
 import ru.training.karaf.rest.validation.ErrorsDTO;
@@ -25,8 +26,15 @@ public class LocationRestServiceImpl implements LocationRestService {
     }
 
     @Override
-    public List<LocationDTO> getAll() {
-        return repo.getAll().stream().map(LocationDTO::new).collect(Collectors.toList());
+    public List<LocationDTO> getAll(List<String> by, List<String> order,
+                                            List<String> field, List<String> cond, List<String> value, int pg, int sz) {
+        return repo.getAll(by, order, field, cond, value, pg, sz)
+                .stream().map(LocationDTO::new).collect(Collectors.toList());
+    }
+
+    @Override
+    public long getCount(List<String> field, List<String> cond, List<String> value, int pg, int sz) {
+        return repo.getCount(field, cond, value, pg, sz);
     }
 
     @Override

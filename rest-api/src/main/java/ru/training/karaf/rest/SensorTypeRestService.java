@@ -31,6 +31,16 @@ public interface SensorTypeRestService {
                 @QueryParam("filterValue") String filterValue
         );
 
+    @GET
+    @Path("count")
+    long getCount(
+            @QueryParam("field") List<String> field,
+            @QueryParam("condition") List<String> cond,
+            @QueryParam("value") List<String> value,
+            @QueryParam("pg") int pg,
+            @QueryParam("sz") int sz
+    );
+
         @POST
         SensorTypeDTO create(@Valid SensorTypeDTO type);
 

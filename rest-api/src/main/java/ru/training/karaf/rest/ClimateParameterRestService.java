@@ -22,12 +22,23 @@ import java.util.List;
 public interface ClimateParameterRestService {
     @GET
     List<ClimateParameterDTO> getAll(
-            @QueryParam("sortBy") String sortBy,
-            @QueryParam("sortOrder") String sortOrder,
+            @QueryParam("by") List<String> by,
+            @QueryParam("order") List<String> order,
+            @QueryParam("field") List<String> field,
+            @QueryParam("condition") List<String> cond,
+            @QueryParam("value") List<String> value,
             @QueryParam("pg") int pg,
-            @QueryParam("sz") int sz,
-            @QueryParam("filterField") String filterField,
-            @QueryParam("filterValue") String filterValue
+            @QueryParam("sz") int sz
+    );
+
+    @GET
+    @Path("count")
+    long getCount(
+            @QueryParam("field") List<String> field,
+            @QueryParam("condition") List<String> cond,
+            @QueryParam("value") List<String> value,
+            @QueryParam("pg") int pg,
+            @QueryParam("sz") int sz
     );
 
     @POST

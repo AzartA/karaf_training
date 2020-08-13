@@ -18,21 +18,36 @@ import org.apache.commons.io.IOUtils;
 import org.postgresql.PGConnection;
 import org.postgresql.largeobject.LargeObject;
 import org.postgresql.largeobject.LargeObjectManager;
+import ru.training.karaf.model.ClimateParameterDO;
 import ru.training.karaf.model.Location;
 import ru.training.karaf.model.LocationDO;
 
 public class LocationRepoImpl implements LocationRepo {
     private final JpaTemplate template;
+    private final RepoImpl<LocationDO> repo;
+    private final Class<LocationDO> cpdClass = LocationDO.class;
     private final DataSource dataSource;
 
     public LocationRepoImpl(JpaTemplate template, DataSource dataSource) {
         this.template = template;
         this.dataSource = dataSource;
+        repo = new RepoImpl<>(template,cpdClass);
     }
 
     @Override
-    public List<? extends Location> getAll() {
-        return template.txExpr(em -> em.createNamedQuery(LocationDO.GET_ALL, LocationDO.class).getResultList());
+    public List<? extends Location> getAll(String sortBy, String sortOrder, int pg, int sz, String filterField, String filterValue) {
+        return repo.getAll(sortBy, sortOrder, pg, sz, filterField, filterValue);
+    }
+
+    @Override
+    public List<? extends Location> getAll(
+            List<String> by, List<String> order, List<String> field, List<String> cond, List<String> value, int pg, int sz) {
+        return repo.getAll(by, order, field, cond, value, pg, sz);
+    }
+
+    @Override
+    public long getCount(List<String> field, List<String> cond, List<String> value, int pg, int sz) {
+        return repo.getCount(field, cond, value, pg, sz);
     }
 
     @Override

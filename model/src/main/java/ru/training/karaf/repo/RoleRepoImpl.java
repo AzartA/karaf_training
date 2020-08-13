@@ -58,6 +58,11 @@ public class RoleRepoImpl implements RoleRepo {
     }
 
     @Override
+    public long getCount(List<String> field, List<String> cond, List<String> value, int pg, int sz) {
+        return repo.getCount(field, cond, value, pg, sz);
+    }
+
+    @Override
     public Optional<? extends Role> create(Role role) {
         return template.txExpr(em -> {
             if (!(repo.getByName(role.getName(), em).isPresent())) {

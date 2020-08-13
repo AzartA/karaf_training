@@ -39,6 +39,11 @@ public class UserRepoImpl implements UserRepo {
     }
 
     @Override
+    public long getCount(List<String> field, List<String> cond, List<String> value, int pg, int sz) {
+        return repo.getCount(field, cond, value, pg, sz);
+    }
+
+    @Override
     public Optional<? extends User> create(User user) {
         return template.txExpr(em -> {
             UserDO userToCreate = new UserDO(user);

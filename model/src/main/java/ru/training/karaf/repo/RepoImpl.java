@@ -1,14 +1,8 @@
 package ru.training.karaf.repo;
 
-import java.lang.reflect.Field;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
+import org.apache.aries.jpa.template.JpaTemplate;
+import ru.training.karaf.model.Entity;
+
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
@@ -19,9 +13,14 @@ import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.validation.ValidationException;
-
-import org.apache.aries.jpa.template.JpaTemplate;
-import ru.training.karaf.model.Entity;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class RepoImpl<T extends Entity> {//implements Repo<T> {
     private final JpaTemplate template;
@@ -68,6 +67,60 @@ public class RepoImpl<T extends Entity> {//implements Repo<T> {
         });
     }
 
+    public long getCount(List<String> field, List<String> cond, List<String> value, int pg, int sz) {
+        return template.txExpr(em -> {
+            CriteriaBuilder cb = em.getCriteriaBuilder();
+            CriteriaQuery<Long> cr = cb.createQuery(Long.class);
+            Root<T> root = cr.from(t);
+            cr.select(cb.count(root));
+            List<String> fieldNames = Arrays.stream(t.getDeclaredFields()).map(Field::getName).collect(Collectors.toList());
+            //filtering
+            if (field != null && cond != null && value != null &&
+                    field.size() == cond.size() && field.size() == value.size()) {
+                List<Predicate> predicates = new ArrayList<>();
+                for (int i = 0; i < field.size(); i++) {
+                    Expression<String> path;
+                    try {
+                        Class<?> fType = t.getDeclaredField(field.get(i)).getType();
+                        if (!(fType.equals(String.class) || fType.equals(Long.TYPE) || fType.equals(Float.TYPE))) {
+                            path = root.get(field.get(i)).get("name");
+                        } else {
+                            path = root.get(field.get(i));
+                        }
+                    } catch (NoSuchFieldException | SecurityException e) {
+                        throw new ValidationException("There is no such field: " + field.get(i));
+                    }
+                    switch (cond.get(i)) {
+                        case ">":
+                            predicates.add(cb.greaterThanOrEqualTo(path, value.get(i)));
+                            break;
+                        case "<":
+                            predicates.add(cb.lessThanOrEqualTo(path, value.get(i)));
+                            break;
+                        case "contain":
+                            predicates.add(cb.like(path, "%" + value.get(i) + "%"));
+                            break;
+                        case "equals":
+                        default:
+                            predicates.add(cb.equal(path, value.get(i)));
+                            break;
+                    }
+                }
+                Predicate[] predicateArray = predicates.toArray(new Predicate[0]);
+                cr.where(cb.and(predicateArray));
+            }
+
+            TypedQuery<Long> query = em.createQuery(cr);
+            //pagination
+            long result = query.getSingleResult();
+            if (pg > 0 && sz > 0) {
+                long threshold = result / sz + 1;
+                result = pg > threshold ? 0 : pg < threshold ? sz : result % sz;
+            }
+            return result;
+        });
+    }
+
     public List<? extends T> getAll(
             List<String> by, List<String> order,
             List<String> field, List<String> cond, List<String> value,
@@ -88,7 +141,7 @@ public class RepoImpl<T extends Entity> {//implements Repo<T> {
                     Expression<String> path;
                     try {
                         Class<?> fType = t.getDeclaredField(field.get(i)).getType();
-                        if (!(fType.equals(String.class) || fType.equals(Long.TYPE) || fType.equals(Float.TYPE) )) {
+                        if (!(fType.equals(String.class) || fType.equals(Long.TYPE) || fType.equals(Float.TYPE))) {
                             path = root.get(field.get(i)).get("name");
                         } else {
                             path = root.get(field.get(i));

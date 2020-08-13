@@ -44,9 +44,13 @@ public class SensorTypeRepoImpl implements SensorTypeRepo {
 
     @Override
     public List<? extends SensorType> getAll(
-            List<String> by, List<String> order, List<String> field, List<String> cond, List<String> value, int pg, int sz
-    ) {
-        return null;
+            List<String> by, List<String> order, List<String> field, List<String> cond, List<String> value, int pg, int sz) {
+        return typeRepo.getAll(by, order, field, cond, value, pg, sz);
+    }
+
+    @Override
+    public long getCount(List<String> field, List<String> cond, List<String> value, int pg, int sz) {
+        return typeRepo.getCount(field, cond, value, pg, sz);
     }
 
     @Override

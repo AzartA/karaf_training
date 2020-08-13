@@ -7,18 +7,8 @@ import java.util.Optional;
 
 import ru.training.karaf.model.Location;
 
-public interface LocationRepo {
-    List<? extends Location> getAll();
-
-    Optional<? extends Location> create(Location location);
-
-    Optional<? extends Location> update(long id, Location location);
-
-    Optional<? extends Location> get(long id);
-
+public interface LocationRepo extends Repo<Location> {
     Optional<? extends Location> getByName(String name);
-
-    Optional<? extends Location> delete(long id);
 
     Optional<Object> getPlan(long id, OutputStream outputStream);
 

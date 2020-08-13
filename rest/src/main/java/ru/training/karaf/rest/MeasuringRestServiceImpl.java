@@ -28,6 +28,11 @@ public class MeasuringRestServiceImpl implements MeasuringRestService {
     }
 
     @Override
+    public long getCount(List<String> field, List<String> cond, List<String> value, int pg, int sz) {
+        return repo.getCount(field, cond, value, pg, sz);
+    }
+
+    @Override
     public MeasuringDTO create(MeasuringDTO type) {
         return repo.create(type).map(MeasuringDTO::new).orElse(null);
     }

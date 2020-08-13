@@ -11,19 +11,39 @@ import javax.validation.ValidationException;
 
 import org.apache.aries.jpa.template.JpaTemplate;
 import org.apache.aries.jpa.template.TransactionType;
+import ru.training.karaf.model.RoleDO;
 import ru.training.karaf.model.Unit;
 import ru.training.karaf.model.UnitDO;
 
 public class UnitRepoIml implements UnitRepo {
     private final JpaTemplate template;
+    private final RepoImpl<UnitDO> repo;
+    private final Class<UnitDO> stdClass = UnitDO.class;
 
     public UnitRepoIml(JpaTemplate template) {
         this.template = template;
+        repo = new RepoImpl<>(template,stdClass);
+    }
+
+    public List<? extends Unit> getAll() {
+        return template.txExpr(em -> em.createNamedQuery(UnitDO.GET_ALL, UnitDO.class).getResultList());
     }
 
     @Override
-    public List<? extends Unit> getAll() {
-        return template.txExpr(em -> em.createNamedQuery(UnitDO.GET_ALL, UnitDO.class).getResultList());
+    public List<? extends Unit> getAll(String sortBy, String sortOrder, int pg, int sz, String filterField, String filterValue) {
+        return repo.getAll(sortBy, sortOrder, pg, sz, filterField, filterValue);
+    }
+
+    @Override
+    public List<? extends Unit> getAll(
+            List<String> by, List<String> order, List<String> field, List<String> cond, List<String> value, int pg, int sz
+    ) {
+        return repo.getAll(by, order, field, cond, value, pg, sz);
+    }
+
+    @Override
+    public long getCount(List<String> field, List<String> cond, List<String> value, int pg, int sz) {
+        return repo.getCount(field, cond, value, pg, sz);
     }
 
     @Override

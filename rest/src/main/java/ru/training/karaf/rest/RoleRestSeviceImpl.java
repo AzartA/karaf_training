@@ -28,6 +28,11 @@ public class RoleRestSeviceImpl implements  RoleRestService {
     }
 
     @Override
+    public long getCount(List<String> field, List<String> cond, List<String> value, int pg, int sz) {
+        return repo.getCount(field, cond, value, pg, sz);
+    }
+
+    @Override
     public RoleDTO create(RoleDTO role) {
         return repo.create(role).map(RoleDTO::new).orElseThrow(() -> new ValidationException("Name is already exist"));
     }

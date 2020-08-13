@@ -27,7 +27,12 @@ import java.util.stream.Collectors;
         return repo.getAll(by, order, field, cond, value, pg, sz).stream().map(UserDTO::new).collect(Collectors.toList());
     }
 
-    @Override
+        @Override
+        public long getCount(List<String> field, List<String> cond, List<String> value, int pg, int sz) {
+            return repo.getCount(field, cond, value, pg, sz);
+        }
+
+        @Override
     public UserDTO create(UserDTO user) {
         if (repo.loginIsPresent(user.getLogin())) {
             throw new ValidationException("login must be unique");

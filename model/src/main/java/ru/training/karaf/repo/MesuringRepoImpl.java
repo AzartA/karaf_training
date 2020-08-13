@@ -87,7 +87,6 @@ public class MesuringRepoImpl implements MeasuringRepo {
                             predicates.add(cb.lessThanOrEqualTo(path, value.get(i)));
                             break;
                         case "contain":
-                            path = path.as(String.class);
                             predicates.add(cb.like(path, "%" + value.get(i) + "%"));
                             break;
                         case "equals":
@@ -145,6 +144,11 @@ public class MesuringRepoImpl implements MeasuringRepo {
 
 
 
+    }
+
+    @Override
+    public long getCount(List<String> field, List<String> cond, List<String> value, int pg, int sz) {
+        return repo.getCount(field, cond, value, pg, sz);
     }
 
     @Override

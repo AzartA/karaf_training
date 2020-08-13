@@ -30,6 +30,11 @@ public class SensorRepoImpl implements SensorRepo {
     }
 
     @Override
+    public long getCount(List<String> field, List<String> cond, List<String> value, int pg, int sz) {
+        return sensorRepo.getCount(field, cond, value, pg, sz);
+    }
+
+    @Override
     public List<? extends Sensor> getAll(String sortBy, String sortOrder, int pg, int sz, String filterField, String filterValue) {
         return null;
     }

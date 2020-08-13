@@ -25,6 +25,11 @@ public class SensorRestServiceImpl implements SensorRestService {
     }
 
     @Override
+    public long getCount(List<String> field, List<String> cond, List<String> value, int pg, int sz) {
+        return repo.getCount(field, cond, value, pg, sz);
+    }
+
+    @Override
     public SensorDTO create(SensorDTO type) {
         return repo.create(type).map(SensorDTO::new).orElseThrow(() -> new ValidationException("Name is already exist"));
     }

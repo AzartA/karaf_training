@@ -13,12 +13,14 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
+import ru.training.karaf.rest.dto.ClimateParameterDTO;
 import ru.training.karaf.rest.dto.DTO;
 import ru.training.karaf.rest.dto.LocationDTO;
 import ru.training.karaf.rest.validation.PictureType;
@@ -28,7 +30,25 @@ import ru.training.karaf.rest.validation.PictureType;
 @Consumes(MediaType.APPLICATION_JSON)
 public interface LocationRestService {
     @GET
-    List<LocationDTO> getAll();
+    List<LocationDTO> getAll(
+            @QueryParam("by") List<String> by,
+            @QueryParam("order") List<String> order,
+            @QueryParam("field") List<String> field,
+            @QueryParam("condition") List<String> cond,
+            @QueryParam("value") List<String> value,
+            @QueryParam("pg") int pg,
+            @QueryParam("sz") int sz
+    );
+
+    @GET
+    @Path("count")
+    long getCount(
+            @QueryParam("field") List<String> field,
+            @QueryParam("condition") List<String> cond,
+            @QueryParam("value") List<String> value,
+            @QueryParam("pg") int pg,
+            @QueryParam("sz") int sz
+    );
 
     @POST
     LocationDTO create(@Valid LocationDTO location);

@@ -35,6 +35,16 @@ public interface UserRestService {
                          @QueryParam("pg") int pg,
                          @QueryParam("sz") int sz);
 
+    @GET
+    @Path("count")
+    long getCount(
+            @QueryParam("field") List<String> field,
+            @QueryParam("condition") List<String> cond,
+            @QueryParam("value") List<String> value,
+            @QueryParam("pg") int pg,
+            @QueryParam("sz") int sz
+    );
+
     @POST
     UserDTO create(@Valid UserDTO user);
 

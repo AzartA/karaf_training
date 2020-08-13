@@ -40,6 +40,11 @@ public class ClimateParameterRepoImpl implements ClimateParameterRepo {
     }
 
     @Override
+    public long getCount(List<String> field, List<String> cond, List<String> value, int pg, int sz) {
+        return repoImpl.getCount(field, cond, value, pg, sz);
+    }
+
+    @Override
     public Optional<? extends ClimateParameter> create(ClimateParameter parameter) {
         ClimateParameterDO paramToCreate = new ClimateParameterDO(parameter.getName());
         return template.txExpr(em -> {

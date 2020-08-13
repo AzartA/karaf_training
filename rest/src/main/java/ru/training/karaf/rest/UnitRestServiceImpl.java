@@ -2,6 +2,7 @@ package ru.training.karaf.rest;
 
 import ru.training.karaf.model.Unit;
 import ru.training.karaf.repo.UnitRepo;
+import ru.training.karaf.rest.dto.LocationDTO;
 import ru.training.karaf.rest.dto.UnitDTO;
 
 import javax.validation.ValidationException;
@@ -21,8 +22,15 @@ public class UnitRestServiceImpl implements UnitRestService {
     }
 
     @Override
-    public List<UnitDTO> getAll() {
-        return repo.getAll().stream().map(UnitDTO::new).collect(Collectors.toList());
+    public List<UnitDTO> getAll(List<String> by, List<String> order,
+                                    List<String> field, List<String> cond, List<String> value, int pg, int sz) {
+        return repo.getAll(by, order, field, cond, value, pg, sz)
+                .stream().map(UnitDTO::new).collect(Collectors.toList());
+    }
+
+    @Override
+    public long getCount(List<String> field, List<String> cond, List<String> value, int pg, int sz) {
+        return repo.getCount(field, cond, value, pg, sz);
     }
 
     @Override
