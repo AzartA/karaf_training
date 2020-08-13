@@ -1,5 +1,6 @@
 package ru.training.karaf.rest;
 
+import ru.training.karaf.rest.dto.DTO;
 import ru.training.karaf.rest.dto.RoleDTO;
 
 import javax.validation.Valid;
@@ -30,7 +31,7 @@ public interface RoleRestService {
 
     @GET
     @Path("count")
-    long getCount(
+    DTO<Long> getCount(
             @QueryParam("field") List<String> field,
             @QueryParam("condition") List<String> cond,
             @QueryParam("value") List<String> value,

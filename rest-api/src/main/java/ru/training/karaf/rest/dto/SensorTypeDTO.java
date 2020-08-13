@@ -62,7 +62,6 @@ public class SensorTypeDTO extends EntityDTO implements SensorType {
         this.sensors = sensors;
     }
 
-    //ToDo equals by super.equals?
     @Override
     public boolean equals(Object o) {
         if (this == o)

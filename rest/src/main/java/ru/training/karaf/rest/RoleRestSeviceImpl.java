@@ -2,10 +2,9 @@ package ru.training.karaf.rest;
 
 
 import ru.training.karaf.model.Role;
-import ru.training.karaf.model.Sensor;
 import ru.training.karaf.repo.RoleRepo;
+import ru.training.karaf.rest.dto.DTO;
 import ru.training.karaf.rest.dto.RoleDTO;
-import ru.training.karaf.rest.dto.SensorDTO;
 
 import javax.validation.ValidationException;
 import javax.ws.rs.NotFoundException;
@@ -28,8 +27,8 @@ public class RoleRestSeviceImpl implements  RoleRestService {
     }
 
     @Override
-    public long getCount(List<String> field, List<String> cond, List<String> value, int pg, int sz) {
-        return repo.getCount(field, cond, value, pg, sz);
+    public DTO<Long> getCount(List<String> field, List<String> cond, List<String> value, int pg, int sz) {
+        return new DTO<>(repo.getCount(field, cond, value, pg, sz));
     }
 
     @Override

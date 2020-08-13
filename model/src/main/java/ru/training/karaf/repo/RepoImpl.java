@@ -75,41 +75,7 @@ public class RepoImpl<T extends Entity> {//implements Repo<T> {
             cr.select(cb.count(root));
             List<String> fieldNames = Arrays.stream(t.getDeclaredFields()).map(Field::getName).collect(Collectors.toList());
             //filtering
-            if (field != null && cond != null && value != null &&
-                    field.size() == cond.size() && field.size() == value.size()) {
-                List<Predicate> predicates = new ArrayList<>();
-                for (int i = 0; i < field.size(); i++) {
-                    Expression<String> path;
-                    try {
-                        Class<?> fType = t.getDeclaredField(field.get(i)).getType();
-                        if (!(fType.equals(String.class) || fType.equals(Long.TYPE) || fType.equals(Float.TYPE))) {
-                            path = root.get(field.get(i)).get("name");
-                        } else {
-                            path = root.get(field.get(i));
-                        }
-                    } catch (NoSuchFieldException | SecurityException e) {
-                        throw new ValidationException("There is no such field: " + field.get(i));
-                    }
-                    switch (cond.get(i)) {
-                        case ">":
-                            predicates.add(cb.greaterThanOrEqualTo(path, value.get(i)));
-                            break;
-                        case "<":
-                            predicates.add(cb.lessThanOrEqualTo(path, value.get(i)));
-                            break;
-                        case "contain":
-                            predicates.add(cb.like(path, "%" + value.get(i) + "%"));
-                            break;
-                        case "equals":
-                        default:
-                            predicates.add(cb.equal(path, value.get(i)));
-                            break;
-                    }
-                }
-                Predicate[] predicateArray = predicates.toArray(new Predicate[0]);
-                cr.where(cb.and(predicateArray));
-            }
-
+            filtering( field, cond, value, cb, root, cr);
             TypedQuery<Long> query = em.createQuery(cr);
             //pagination
             long result = query.getSingleResult();
@@ -122,8 +88,7 @@ public class RepoImpl<T extends Entity> {//implements Repo<T> {
     }
 
     public List<? extends T> getAll(
-            List<String> by, List<String> order,
-            List<String> field, List<String> cond, List<String> value,
+            List<String> by, List<String> order, List<String> field, List<String> cond, List<String> value,
             int pg, int sz
     ) {
 
@@ -134,43 +99,7 @@ public class RepoImpl<T extends Entity> {//implements Repo<T> {
             cr.select(root);
             List<String> fieldNames = Arrays.stream(t.getDeclaredFields()).map(Field::getName).collect(Collectors.toList());
             //filtering
-            if (field != null && cond != null && value != null &&
-                    field.size() == cond.size() && field.size() == value.size()) {
-                List<Predicate> predicates = new ArrayList<>();
-                for (int i = 0; i < field.size(); i++) {
-                    Expression<String> path;
-                    try {
-                        Class<?> fType = t.getDeclaredField(field.get(i)).getType();
-                        if (!(fType.equals(String.class) || fType.equals(Long.TYPE) || fType.equals(Float.TYPE))) {
-                            path = root.get(field.get(i)).get("name");
-                        } else {
-                            path = root.get(field.get(i));
-                        }
-                    } catch (NoSuchFieldException | SecurityException e) {
-                        throw new ValidationException("There is no such field: " + field.get(i));
-                    }
-                    switch (cond.get(i)) {
-                        case ">":
-                            predicates.add(cb.greaterThanOrEqualTo(path, value.get(i)));
-                            break;
-                        case "<":
-                            predicates.add(cb.lessThanOrEqualTo(path, value.get(i)));
-                            break;
-                        case "contain":
-                            predicates.add(cb.like(path, "%" + value.get(i) + "%"));
-                            break;
-                        /*case "like":
-                            predicates.add(cb.like(path, value.get(i)));
-                            break;*/
-                        case "equals":
-                        default:
-                            predicates.add(cb.equal(path, value.get(i)));
-                            break;
-                    }
-                }
-                Predicate[] predicateArray = predicates.toArray(new Predicate[0]);
-                cr.where(cb.and(predicateArray));
-            }
+            filtering( field, cond, value, cb, root, cr);
             //sorting
             if (by != null && order != null &&
                     by.size() == order.size()) {
@@ -210,6 +139,43 @@ public class RepoImpl<T extends Entity> {//implements Repo<T> {
             }
             return query.getResultList();
         });
+    }
+
+    private void filtering( List<String> field, List<String> cond, List<String> value, CriteriaBuilder cb, Root root, CriteriaQuery cr){
+        if (field != null && cond != null && value != null &&
+                field.size() == cond.size() && field.size() == value.size()) {
+            List<Predicate> predicates = new ArrayList<>();
+            for (int i = 0; i < field.size(); i++) {
+                Expression<String> path;
+                try {
+                    Class<?> fType = t.getDeclaredField(field.get(i)).getType();
+                    if (!(fType.equals(String.class) || fType.equals(Long.TYPE) || fType.equals(Float.TYPE))) {
+                        path = root.get(field.get(i)).get("name");
+                    } else {
+                        path = root.get(field.get(i));
+                    }
+                } catch (NoSuchFieldException | SecurityException e) {
+                    throw new ValidationException("There is no such field: " + field.get(i));
+                }
+                switch (cond.get(i)) {
+                    case ">":
+                        predicates.add(cb.greaterThanOrEqualTo(path, value.get(i)));
+                        break;
+                    case "<":
+                        predicates.add(cb.lessThanOrEqualTo(path, value.get(i)));
+                        break;
+                    case "contain":
+                        predicates.add(cb.like(path, "%" + value.get(i) + "%"));
+                        break;
+                    case "equals":
+                    default:
+                        predicates.add(cb.equal(path, value.get(i)));
+                        break;
+                }
+            }
+            Predicate[] predicateArray = predicates.toArray(new Predicate[0]);
+            cr.where(cb.and(predicateArray));
+        }
     }
 
     public Optional<T> getById(long id, EntityManager em) {

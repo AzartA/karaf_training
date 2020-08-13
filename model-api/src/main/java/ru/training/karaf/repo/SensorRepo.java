@@ -13,4 +13,5 @@ public interface SensorRepo extends Repo<Sensor> {
     Optional<? extends Sensor> setLocation(long id, long locationId);
     Optional<? extends Sensor> addUsers(long id, List<Long> userIds);
 
+    Optional<? extends Sensor> setXY(long id, long x, long y);
 }

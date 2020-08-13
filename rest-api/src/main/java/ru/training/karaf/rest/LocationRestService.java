@@ -1,8 +1,6 @@
 package ru.training.karaf.rest;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.List;
 import javax.validation.Valid;
 import javax.ws.rs.Consumes;
@@ -14,13 +12,10 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.StreamingOutput;
 
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
-import ru.training.karaf.rest.dto.ClimateParameterDTO;
 import ru.training.karaf.rest.dto.DTO;
 import ru.training.karaf.rest.dto.LocationDTO;
 import ru.training.karaf.rest.validation.PictureType;
@@ -42,7 +37,7 @@ public interface LocationRestService {
 
     @GET
     @Path("count")
-    long getCount(
+    DTO<Long> getCount(
             @QueryParam("field") List<String> field,
             @QueryParam("condition") List<String> cond,
             @QueryParam("value") List<String> value,

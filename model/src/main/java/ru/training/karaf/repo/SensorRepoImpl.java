@@ -142,4 +142,17 @@ public class SensorRepoImpl implements SensorRepo {
             return sensorToUpdate;
         });
     }
+
+    @Override
+    public Optional<? extends Sensor> setXY(long id, long x, long y) {
+        return template.txExpr(TransactionType.Required, em -> {
+            Optional<SensorDO> sensorToUpdate = sensorRepo.getById(id, em);
+            sensorToUpdate.ifPresent(p -> {
+                p.setX(x);
+                p.setY(y);
+                em.merge(p);
+            });
+            return sensorToUpdate;
+        });
+    }
 }

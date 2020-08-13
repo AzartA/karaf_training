@@ -2,6 +2,7 @@ package ru.training.karaf.rest;
 
 import org.apache.cxf.jaxrs.ext.PATCH;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
+import ru.training.karaf.rest.dto.DTO;
 import ru.training.karaf.rest.dto.RoleDTO;
 import ru.training.karaf.rest.dto.SensorDTO;
 import ru.training.karaf.rest.dto.UserDTO;
@@ -37,7 +38,7 @@ public interface UserRestService {
 
     @GET
     @Path("count")
-    long getCount(
+    DTO<Long> getCount(
             @QueryParam("field") List<String> field,
             @QueryParam("condition") List<String> cond,
             @QueryParam("value") List<String> value,

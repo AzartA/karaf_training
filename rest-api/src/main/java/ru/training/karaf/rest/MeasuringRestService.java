@@ -13,6 +13,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import ru.training.karaf.rest.dto.DTO;
 import ru.training.karaf.rest.dto.MeasuringDTO;
 
 @Path("measurings")
@@ -31,7 +32,7 @@ public interface MeasuringRestService {
     );
     @GET
     @Path("count")
-    long getCount(
+    DTO<Long> getCount(
             @QueryParam("field") List<String> field,
             @QueryParam("condition") List<String> cond,
             @QueryParam("value") List<String> value,

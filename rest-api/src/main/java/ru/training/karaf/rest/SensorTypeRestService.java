@@ -1,5 +1,6 @@
 package ru.training.karaf.rest;
 
+import ru.training.karaf.rest.dto.DTO;
 import ru.training.karaf.rest.dto.SensorTypeDTO;
 import ru.training.karaf.rest.dto.SensorTypeDTO;
 
@@ -33,7 +34,7 @@ public interface SensorTypeRestService {
 
     @GET
     @Path("count")
-    long getCount(
+    DTO<Long> getCount(
             @QueryParam("field") List<String> field,
             @QueryParam("condition") List<String> cond,
             @QueryParam("value") List<String> value,

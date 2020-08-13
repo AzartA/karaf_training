@@ -23,7 +23,7 @@
     <bean id="sensorRepo" class="ru.training.karaf.repo.SensorRepoImpl">
         <argument ref="jpaTemplate"/>
     </bean>
-    <bean id="measuringRepo" class="ru.training.karaf.repo.MesuringRepoImpl">
+    <bean id="measuringRepo" class="ru.training.karaf.repo.MeasuringRepoImpl">
             <argument ref="jpaTemplate"/>
     </bean>
     <bean id="roleRepo" class="ru.training.karaf.repo.RoleRepoImpl">

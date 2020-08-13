@@ -60,6 +60,10 @@ public interface SensorRestService {
     @Path("{id}/users")
     SensorDTO addUsers(@PathParam("id") long id, @QueryParam("uId") List<Long> userIds);
 
+    @PUT
+    @Path("{id}/{x}/{y}")
+    SensorDTO setXY(@PathParam("id") long id, @PathParam("x") long x, @PathParam("y") long y);
+
     @GET
     @Path("{id}")
     SensorDTO get(@PathParam("id") long id);

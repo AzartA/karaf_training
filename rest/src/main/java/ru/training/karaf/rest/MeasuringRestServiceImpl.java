@@ -1,13 +1,10 @@
 package ru.training.karaf.rest;
 
 import ru.training.karaf.model.Measuring;
-import ru.training.karaf.model.Sensor;
 import ru.training.karaf.repo.MeasuringRepo;
-import ru.training.karaf.repo.SensorRepo;
+import ru.training.karaf.rest.dto.DTO;
 import ru.training.karaf.rest.dto.MeasuringDTO;
-import ru.training.karaf.rest.dto.SensorDTO;
 
-import javax.validation.ValidationException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
 import java.util.List;
@@ -28,8 +25,8 @@ public class MeasuringRestServiceImpl implements MeasuringRestService {
     }
 
     @Override
-    public long getCount(List<String> field, List<String> cond, List<String> value, int pg, int sz) {
-        return repo.getCount(field, cond, value, pg, sz);
+    public DTO<Long> getCount(List<String> field, List<String> cond, List<String> value, int pg, int sz) {
+        return new DTO<>(repo.getCount(field, cond, value, pg, sz));
     }
 
     @Override

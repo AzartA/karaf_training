@@ -1,9 +1,8 @@
 package ru.training.karaf.rest;
 
-import ru.training.karaf.model.ClimateParameter;
 import ru.training.karaf.model.SensorType;
 import ru.training.karaf.repo.SensorTypeRepo;
-import ru.training.karaf.rest.dto.ClimateParameterDTO;
+import ru.training.karaf.rest.dto.DTO;
 import ru.training.karaf.rest.dto.SensorTypeDTO;
 
 import javax.validation.ValidationException;
@@ -27,8 +26,8 @@ public class SensorTypeRestServiceImpl implements SensorTypeRestService {
     }
 
     @Override
-    public long getCount(List<String> field, List<String> cond, List<String> value, int pg, int sz) {
-        return repo.getCount(field, cond, value, pg, sz);
+    public DTO<Long> getCount(List<String> field, List<String> cond, List<String> value, int pg, int sz) {
+        return new DTO<>(repo.getCount(field, cond, value, pg, sz));
     }
 
     @Override

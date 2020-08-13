@@ -16,7 +16,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
-@Cacheable(value = false)
+//@Cacheable(value = false)  // entity without JPA cache
 @Entity
 public class MeasuringDO implements Measuring {
     @Transient

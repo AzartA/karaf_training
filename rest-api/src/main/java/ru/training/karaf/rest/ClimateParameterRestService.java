@@ -1,6 +1,7 @@
 package ru.training.karaf.rest;
 
 import ru.training.karaf.rest.dto.ClimateParameterDTO;
+import ru.training.karaf.rest.dto.DTO;
 
 import javax.validation.Valid;
 import javax.ws.rs.Consumes;
@@ -33,7 +34,7 @@ public interface ClimateParameterRestService {
 
     @GET
     @Path("count")
-    long getCount(
+    DTO<Long> getCount(
             @QueryParam("field") List<String> field,
             @QueryParam("condition") List<String> cond,
             @QueryParam("value") List<String> value,

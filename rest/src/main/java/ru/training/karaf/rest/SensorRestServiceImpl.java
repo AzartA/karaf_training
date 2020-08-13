@@ -1,15 +1,15 @@
 package ru.training.karaf.rest;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import javax.validation.ValidationException;
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.core.Response;
-
 import ru.training.karaf.model.Sensor;
 import ru.training.karaf.repo.SensorRepo;
 import ru.training.karaf.rest.dto.SensorDTO;
+
+import javax.validation.ValidationException;
+import javax.ws.rs.NotFoundException;
+import javax.ws.rs.core.Response;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class SensorRestServiceImpl implements SensorRestService {
     private SensorRepo repo;
@@ -55,6 +55,12 @@ public class SensorRestServiceImpl implements SensorRestService {
     @Override
     public SensorDTO addUsers(long id, List<Long> userIds) {
         return repo.addUsers(id, userIds).map(SensorDTO::new).orElseThrow(() ->
+                new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
+    }
+
+    @Override
+    public SensorDTO setXY(long id, long x, long y) {
+        return repo.setXY(id, x, y).map(SensorDTO::new).orElseThrow(() ->
                 new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
     }
 
