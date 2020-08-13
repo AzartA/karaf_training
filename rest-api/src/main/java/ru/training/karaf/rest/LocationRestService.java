@@ -19,6 +19,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
+import ru.training.karaf.rest.dto.DTO;
 import ru.training.karaf.rest.dto.LocationDTO;
 import ru.training.karaf.rest.validation.PictureType;
 
@@ -52,9 +53,13 @@ public interface LocationRestService {
     @POST
     @Path("{id}/plan")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    LocationDTO putPlan(@PathParam("id") long id, @Multipart("plan") InputStream plan,
-                                                  @PictureType(message = "Picture type {type} isn't allowed.")
+    DTO<Long> putPlan(@PathParam("id") long id, @Multipart("plan") InputStream plan,
+                @PictureType(message = "Picture type {type} isn't allowed.")
                                                   @Multipart("type") String type);
+
+    @DELETE
+    @Path("{id}/plan")
+    void deletePlan(@PathParam("id") long id);
 
 
 }

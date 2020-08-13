@@ -20,8 +20,10 @@ public interface LocationRepo {
 
     Optional<? extends Location> delete(long id);
 
-    void getPlan(long id, OutputStream outputStream);
+    Optional<Object> getPlan(long id, OutputStream outputStream);
 
     long setPlan(long id, InputStream inputStream, String type);
+
+    Optional<? extends Location> deletePlan(long id);
 
 }

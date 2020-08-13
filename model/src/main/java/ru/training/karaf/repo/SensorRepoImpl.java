@@ -38,10 +38,10 @@ public class SensorRepoImpl implements SensorRepo {
     public Optional<? extends Sensor> create(Sensor sensor) {
         return template.txExpr(em -> {
             if (!(sensorRepo.getByName(sensor.getName(), em).isPresent())) {
-                SensorDO sensorToCreate = new SensorDO(sensor.getName());
+                SensorDO sensorToCreate = new SensorDO(sensor);
                 em.persist(sensorToCreate);
                 if (sensor.getLocation() != null) {
-                    sensorToCreate.setLocation(sensorRepo.getEntityById(sensor.getLocation().getId(), em, LocationDO.class));
+                   sensorToCreate.setLocation(sensorRepo.getEntityById(sensor.getLocation().getId(), em, LocationDO.class));
                 }
                 if (sensor.getType() != null) {
                     sensorToCreate.setType(sensorRepo.getEntityById(sensor.getType().getId(), em, SensorTypeDO.class));
@@ -64,6 +64,8 @@ public class SensorRepoImpl implements SensorRepo {
                 SensorDO sensorToUpdate = l.get(0);
                 if (sensorToUpdate.getId() == id) {
                     sensorToUpdate.setName(sensor.getName());
+                    sensorToUpdate.setX(sensor.getX());
+                    sensorToUpdate.setY(sensor.getY());
                     if (sensor.getLocation() != null) {
                         sensorToUpdate.setLocation(sensorRepo.getEntityById(sensor.getLocation().getId(), em, LocationDO.class));
                     }
@@ -88,7 +90,7 @@ public class SensorRepoImpl implements SensorRepo {
     public Optional<? extends Sensor> delete(long id) {
         return template.txExpr(em -> sensorRepo.getById(id, em).map(l -> {
             if (l.getLocation() != null) {
-                l.getLocation().getSensorSet().remove(l);
+                l.getLocation().getSensors().remove(l);
             }
             if (l.getLocation() != null) {
                 l.getType().getSensors().remove(l);

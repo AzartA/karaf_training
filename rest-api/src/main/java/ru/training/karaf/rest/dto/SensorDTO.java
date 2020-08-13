@@ -6,7 +6,9 @@ import java.util.stream.Collectors;
 import ru.training.karaf.model.Sensor;
 
 public class SensorDTO extends EntityDTO implements Sensor {
-    private LocationDTO location;
+    private long x;
+    private long y;
+    private EntityDTO location;
     private EntityDTO type;//SensorTypeDTO type;
     private Set<EntityDTO> users;
 
@@ -15,17 +17,37 @@ public class SensorDTO extends EntityDTO implements Sensor {
 
     public SensorDTO(Sensor sensor) {
         super(sensor);
-        this.location = sensor.getLocation() == null ? null : new LocationDTO(sensor.getLocation());
+        x = sensor.getX();
+        y = sensor.getY();
+        this.location = sensor.getLocation() == null ? null : new EntityDTO(sensor.getLocation());
         this.type = sensor.getType() == null ? null : new EntityDTO(sensor.getType());//new SensorTypeDTO(sensor.getType());
         this.users = sensor.getUsers().stream().map(EntityDTO::new).collect(Collectors.toSet());
     }
 
     @Override
-    public LocationDTO getLocation() {
+    public long getX() {
+        return x;
+    }
+
+    public void setX(long x) {
+        this.x = x;
+    }
+
+    @Override
+    public long getY() {
+        return y;
+    }
+
+    public void setY(long y) {
+        this.y = y;
+    }
+
+    @Override
+    public EntityDTO getLocation() {
         return location;
     }
 
-    public void setLocation(LocationDTO location) {
+    public void setLocation(EntityDTO location) {
         this.location = location;
     }
 

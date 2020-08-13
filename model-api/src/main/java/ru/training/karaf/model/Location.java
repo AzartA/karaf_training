@@ -1,8 +1,6 @@
 package ru.training.karaf.model;
 
-public interface Location {
-    long getId();
-    String getName();
+public interface Location extends Entity {
     long getPlanOid();
     String getPictureType();
     //ToDo

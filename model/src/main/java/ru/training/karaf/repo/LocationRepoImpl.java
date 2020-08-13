@@ -79,22 +79,25 @@ public class LocationRepoImpl implements LocationRepo {
     @Override
     public Optional<LocationDO> delete(long id) {
         return template.txExpr(em -> getById(id, em).map(l -> {
-            l.getSensorSet().forEach(s -> s.setLocation(null));
+            deletePlan(id);
+            l.getSensors().forEach(s -> s.setLocation(null));
             em.remove(l);
             return l;
         }));
     }
 
-    public void getPlan(long id, OutputStream outputStream) {
+    public Optional<Object> getPlan(long id, OutputStream outputStream) {
         try (Connection conn = dataSource.getConnection()) {
             try {
                 conn.setAutoCommit(false);
                 LargeObjectManager largeObjectManager = conn.unwrap(PGConnection.class).getLargeObjectAPI();
                 long oid = template.txExpr(em -> em.find(LocationDO.class, id)).getPlanOid();
                 LargeObject lob = largeObjectManager.open(oid, LargeObjectManager.READ);
+                //largeObjectManager.delete(oid);
                 IOUtils.copy(lob.getInputStream(), outputStream);
                 lob.close();
                 conn.commit();
+                return Optional.of(new Object());
             } catch (IOException e) {
                 //LOG.error("Exception: {}", e.getMessage());
                 conn.rollback();
@@ -104,6 +107,7 @@ public class LocationRepoImpl implements LocationRepo {
         } catch (SQLException ex) {
             //LOG.error("Exception: {}", ex.getMessage());
         }
+        return Optional.empty();
     }
 
     @Override
@@ -133,6 +137,28 @@ public class LocationRepoImpl implements LocationRepo {
             //LOG.error("Exception: {}", ex.getMessage());
         }
         return -1L;
+    }
+
+    @Override
+    public Optional<? extends Location> deletePlan(long id) {
+        try (Connection conn = dataSource.getConnection()) {
+                conn.setAutoCommit(false);
+                LargeObjectManager largeObjectManager = conn.unwrap(PGConnection.class).getLargeObjectAPI();
+                long oid = template.txExpr(em -> em.find(LocationDO.class, id)).getPlanOid();
+                largeObjectManager.delete(oid);
+                conn.commit();
+                conn.setAutoCommit(true);
+                return Optional.of(template.txExpr(em -> {
+                    LocationDO location = em.find(LocationDO.class, id);
+                    location.setPlanOid(0L);
+                    location.setPictureType(null);
+                    return location;
+                }));
+        } catch (SQLException ex) {
+            //LOG.error("Exception: {}", ex.getMessage());
+        }
+        return Optional.empty();
+
     }
 
     private Optional<LocationDO> getByName(String name, EntityManager em) {

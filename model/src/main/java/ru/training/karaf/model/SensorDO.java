@@ -21,12 +21,14 @@ public class SensorDO implements Sensor {
     private long id;
     @Column(name = "name", nullable = false, length = 48, unique = true)
     private String name;
-    @ManyToOne(optional = false, fetch= FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @ManyToOne(optional = false, fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinColumn(name = "location")
     private LocationDO location;
-    @ManyToOne(optional = false, fetch= FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
-    //private long x;
-   // private long y;
+    @Column(name = "x")
+    private long x;
+    @Column(name = "y")
+    private long y;
+    @ManyToOne(optional = false, fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinColumn(name = "type")
     private SensorTypeDO type;
     @ManyToMany(mappedBy = "sensors", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
@@ -42,7 +44,9 @@ public class SensorDO implements Sensor {
     }
 
     public SensorDO(Sensor sensor) {
-        this.name = sensor.getName();
+        name = sensor.getName();
+        x = sensor.getX();
+        y = sensor.getY();
     }
 
     public long getId() {
@@ -77,6 +81,22 @@ public class SensorDO implements Sensor {
         this.users = users;
     }
 
+    public long getX() {
+        return x;
+    }
+
+    public void setX(long x) {
+        this.x = x;
+    }
+
+    public long getY() {
+        return y;
+    }
+
+    public void setY(long y) {
+        this.y = y;
+    }
+
     public SensorTypeDO getType() {
         return type;
     }
@@ -103,8 +123,12 @@ public class SensorDO implements Sensor {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof SensorDO)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof SensorDO)) {
+            return false;
+        }
         SensorDO that = (SensorDO) o;
         return id == that.id;
     }
@@ -115,8 +139,8 @@ public class SensorDO implements Sensor {
         return "SensorDO{" +
                 "id=" + id +
                 ", name=" + name +
-                ", location=" + (location!= null? location.getName(): "null") +
-                ", type=" + (type!= null? type.getName():"null") +
+                ", location=" + (location != null ? location.getName() : "null") +
+                ", type=" + (type != null ? type.getName() : "null") +
                 ", users=" + userNames +
                 '}';
     }

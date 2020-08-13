@@ -6,53 +6,37 @@ import ru.training.karaf.model.Location;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
-public class LocationDTO implements Location {
-    private long id;
-    @NotNull(message = "Name should be present")
-    @Pattern(regexp = "^(\\S+)[A-Za-z0-9_ -]*$", message = "Name must start with 3 letters min; can contain letters, digits, space or _ only.")
-    @Length(min = 3, max = 48, message = "Name length must be from 3 to 48 symbols")
-    private String name;
-    private long pictureSize;
+public class LocationDTO extends EntityDTO implements Location {
+
+    private long planOid;
+    private String pictureType;
 
 
     public LocationDTO() {
     }
 
     public LocationDTO(Location location) {
-        id = location.getId();
-        this.name = location.getName();
-    }
-
-    @Override
-    public long getId() {
-        return id;
-    }
-
-    @Override
-    public String getName() {
-        return name;
+        super(location);
+        planOid = location.getPlanOid();
+        pictureType = location.getPictureType();
     }
 
     @Override
     public long getPlanOid() {
-        return 0;
+        return planOid;
+    }
+
+    public void setPlanOid(long planOid) {
+        this.planOid = planOid;
     }
 
     @Override
     public String getPictureType() {
-        return null;
+        return pictureType;
     }
 
-    public long getPictureSize() {
-        return pictureSize;
-    }
-
-    public void setPictureSize(long pictureSize) {
-        this.pictureSize = pictureSize;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+    public void setPictureType(String pictureType) {
+        this.pictureType = pictureType;
     }
 
     @Override
@@ -61,20 +45,21 @@ public class LocationDTO implements Location {
         if (!(o instanceof LocationDTO)) return false;
 
         LocationDTO that = (LocationDTO) o;
-        return id == that.getId();
+        return super.equals(that);
     }
 
     @Override
     public int hashCode() {
-        return Long.hashCode(id);
+        return super.hashCode();
     }
 
     @Override
     public String toString() {
         return "LocationDTO{" +
-                "id=" + id +
-                ", name=" + name +
-                ", pictureSize=" + pictureSize +
+                "id=" + super.getId() +
+                ", name='" + super.getName() + '\'' +
+                ", planOid=" + planOid +
+                ", pictureType='" + pictureType + '\'' +
                 '}';
     }
 }

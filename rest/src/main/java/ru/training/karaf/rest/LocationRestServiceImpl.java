@@ -12,6 +12,7 @@ import javax.ws.rs.core.StreamingOutput;
 
 import ru.training.karaf.model.Location;
 import ru.training.karaf.repo.LocationRepo;
+import ru.training.karaf.rest.dto.DTO;
 import ru.training.karaf.rest.dto.LocationDTO;
 import ru.training.karaf.rest.validation.ErrorsDTO;
 
@@ -47,6 +48,7 @@ public class LocationRestServiceImpl implements LocationRestService {
 
     @Override
     public void delete(long id) {
+
         repo.delete(id).orElseThrow(() -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
     }
 
@@ -54,12 +56,14 @@ public class LocationRestServiceImpl implements LocationRestService {
     public Response getPlan(long id) {
         String type = repo.get(id).map(Location::getPictureType)
                 .orElseThrow(() -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
-        StreamingOutput op = outputStream -> repo.getPlan(id, outputStream);
+        StreamingOutput op = outputStream -> repo.getPlan(id, outputStream)
+                .orElseThrow(() -> new InternalServerErrorException(Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                .entity(new ErrorsDTO("Can't get plan")).build()));
         return Response.ok(op).type(type).build();
     }
 
     @Override
-    public LocationDTO putPlan(long id, InputStream plan, String type) {
+    public DTO<Long> putPlan(long id, InputStream plan, String type) {
         LocationDTO location = repo.get(id).map(LocationDTO::new)
                 .orElseThrow(() -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
         long size = repo.setPlan(id, plan, type);
@@ -67,7 +71,13 @@ public class LocationRestServiceImpl implements LocationRestService {
             throw new InternalServerErrorException(Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity(new ErrorsDTO("Can't put plan")).build());
         }
-        location.setPictureSize(size);
-        return location;
+        return new DTO<>(size);
+    }
+
+    @Override
+    public void deletePlan(long id) {
+        repo.get(id).orElseThrow(() -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
+        repo.deletePlan(id).orElseThrow(() ->new InternalServerErrorException(Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                .entity(new ErrorsDTO("Can't delete plan")).build()));
     }
 }
