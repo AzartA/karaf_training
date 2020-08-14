@@ -5,6 +5,7 @@ import ru.training.karaf.model.Entity;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
+import javax.persistence.PersistenceException;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -72,18 +73,23 @@ public class RepoImpl<T extends Entity> {//implements Repo<T> {
             CriteriaBuilder cb = em.getCriteriaBuilder();
             CriteriaQuery<Long> cr = cb.createQuery(Long.class);
             Root<T> root = cr.from(t);
-            cr.select(cb.count(root));
+            cr.select(root.get("id"));
             List<String> fieldNames = Arrays.stream(t.getDeclaredFields()).map(Field::getName).collect(Collectors.toList());
             //filtering
-            filtering( field, cond, value, cb, root, cr);
+            filtering(field, cond, value, cb, root, cr);
             TypedQuery<Long> query = em.createQuery(cr);
             //pagination
-            long result = query.getSingleResult();
+
             if (pg > 0 && sz > 0) {
-                long threshold = result / sz + 1;
-                result = pg > threshold ? 0 : pg < threshold ? sz : result % sz;
+                int offset = (pg - 1) * sz;
+                query.setFirstResult(offset)
+                        .setMaxResults(sz);
             }
-            return result;
+            try {
+                return (long) query.getResultList().size();
+            } catch (PersistenceException e) {
+                throw new ValidationException("The condition contain incompatible with type of the field.");
+            }
         });
     }
 
@@ -99,7 +105,9 @@ public class RepoImpl<T extends Entity> {//implements Repo<T> {
             cr.select(root);
             List<String> fieldNames = Arrays.stream(t.getDeclaredFields()).map(Field::getName).collect(Collectors.toList());
             //filtering
-            filtering( field, cond, value, cb, root, cr);
+
+            filtering(field, cond, value, cb, root, cr);
+
             //sorting
             if (by != null && order != null &&
                     by.size() == order.size()) {
@@ -130,6 +138,7 @@ public class RepoImpl<T extends Entity> {//implements Repo<T> {
                 }
                 cr.orderBy(orders);
             }
+
             TypedQuery<T> query = em.createQuery(cr);
             //pagination
             if (pg > 0 && sz > 0) {
@@ -137,11 +146,15 @@ public class RepoImpl<T extends Entity> {//implements Repo<T> {
                 query.setFirstResult(offset)
                         .setMaxResults(sz);
             }
-            return query.getResultList();
+            try {
+                return query.getResultList();
+            } catch (PersistenceException e) {
+                throw new ValidationException("The condition contain incompatible with type of the field.");
+            }
         });
     }
 
-    private void filtering( List<String> field, List<String> cond, List<String> value, CriteriaBuilder cb, Root root, CriteriaQuery cr){
+    private void filtering(List<String> field, List<String> cond, List<String> value, CriteriaBuilder cb, Root root, CriteriaQuery cr) {
         if (field != null && cond != null && value != null &&
                 field.size() == cond.size() && field.size() == value.size()) {
             List<Predicate> predicates = new ArrayList<>();

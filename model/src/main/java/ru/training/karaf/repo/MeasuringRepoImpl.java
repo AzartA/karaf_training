@@ -1,8 +1,12 @@
 package ru.training.karaf.repo;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import org.apache.aries.jpa.template.JpaTemplate;
+import ru.training.karaf.model.ClimateParameterDO;
+import ru.training.karaf.model.Measuring;
+import ru.training.karaf.model.MeasuringDO;
+import ru.training.karaf.model.SensorDO;
+
+import javax.persistence.PersistenceException;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -10,12 +14,10 @@ import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-
-import org.apache.aries.jpa.template.JpaTemplate;
-import ru.training.karaf.model.ClimateParameterDO;
-import ru.training.karaf.model.Measuring;
-import ru.training.karaf.model.MeasuringDO;
-import ru.training.karaf.model.SensorDO;
+import javax.validation.ValidationException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 public class MeasuringRepoImpl implements MeasuringRepo {
     private final JpaTemplate template;
@@ -81,7 +83,11 @@ public class MeasuringRepoImpl implements MeasuringRepo {
             TypedQuery<MeasuringDO> query = em.createQuery(cr);
             //pagination
             pagination(pg, sz, query);
-            return query.getResultList();
+            try {
+                return query.getResultList();
+            } catch (PersistenceException e) {
+                throw new ValidationException("The condition contain incompatible with type of the field.");
+            }
         });
     }
 
@@ -107,14 +113,19 @@ public class MeasuringRepoImpl implements MeasuringRepo {
             TypedQuery<Long> query = em.createQuery(cr);
             //pagination
             pagination(pg, sz, query);
-            return (long) query.getResultList().size();
+            try {
+                return (long) query.getResultList().size();
+            } catch (PersistenceException e) {
+                throw new ValidationException("The condition contain incompatible with type of the field.");
+            }
 
-            // return query.getSingleResult();
         });
     }
 
-    private void filtering(List<String> field, List<String> cond, List<String> value, CriteriaBuilder cb, Root<MeasuringDO> root,
-                           CriteriaQuery<?> cr) {
+    private void filtering(
+            List<String> field, List<String> cond, List<String> value, CriteriaBuilder cb, Root<MeasuringDO> root,
+            CriteriaQuery<?> cr
+    ) {
         if (field != null && cond != null && value != null &&
                 field.size() == cond.size() && field.size() == value.size()) {
             List<Predicate> predicates = new ArrayList<>();
