@@ -1,23 +1,26 @@
 package ru.training.karaf.repo;
 
-import org.apache.aries.jpa.template.JpaTemplate;
-import ru.training.karaf.model.ClimateParameterDO;
-import ru.training.karaf.model.Measuring;
-import ru.training.karaf.model.MeasuringDO;
-import ru.training.karaf.model.SensorDO;
-
-import javax.persistence.PersistenceException;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Expression;
-import javax.persistence.criteria.Order;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-import javax.validation.ValidationException;
+import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.From;
+import javax.persistence.criteria.Order;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import javax.validation.ValidationException;
+
+import org.apache.aries.jpa.template.JpaTemplate;
+import ru.training.karaf.model.ClimateParameterDO;
+import ru.training.karaf.model.Entity;
+import ru.training.karaf.model.Measuring;
+import ru.training.karaf.model.MeasuringDO;
+import ru.training.karaf.model.SensorDO;
 
 public class MeasuringRepoImpl implements MeasuringRepo {
     private final JpaTemplate template;
@@ -38,135 +41,13 @@ public class MeasuringRepoImpl implements MeasuringRepo {
     public List<? extends Measuring> getAll(
             List<String> by, List<String> order, List<String> field, List<String> cond, List<String> value, int pg, int sz
     ) {
-        //return repo.getAll(by, order, field, cond, value, pg, sz);
-        return template.txExpr(em -> {
-            CriteriaBuilder cb = em.getCriteriaBuilder();
-            CriteriaQuery<MeasuringDO> cr = cb.createQuery(stdClass);
-            Root<MeasuringDO> root = cr.from(stdClass);
-            cr.select(root);
-            //List<String> fieldNames = Arrays.stream(stdClass.getDeclaredFields()).map(Field::getName).collect(Collectors.toList());
-            //filtering
-            filtering(field, cond, value, cb, root, cr);
-            //sorting
-            if (by != null && order != null &&
-                    by.size() == order.size()) {
-                List<Order> orders = new ArrayList<>();
-                for (int i = 0; i < by.size(); i++) {
-                    String[] fieldParts = (by.get(i)).split("\\.");
-                    Expression<String> path;
-                    switch (fieldParts.length) {
-                        case 2:
-                            path = root.get(fieldParts[0]).get(fieldParts[1]);
-                            break;
-                        case 3:
-                            if ("users".equals(fieldParts[1])) {
-                                path = root.join(fieldParts[0]).join(fieldParts[1]).get(fieldParts[2]);
-                            } else {
-                                path = root.get(fieldParts[0]).get(fieldParts[1]).get(fieldParts[2]);
-                            }
-                            break;
-                        case 1:
-                        default:
-                            path = root.get(fieldParts[0]);
-                            break;
-                    }
-                    if ("asc".equalsIgnoreCase(order.get(i))) {
-                        orders.add(cb.asc(path));
-                    }
-                    if ("desc".equalsIgnoreCase(order.get(i))) {
-                        orders.add(cb.desc(path));
-                    }
-                }
-                cr.orderBy(orders);
-            }
-
-            TypedQuery<MeasuringDO> query = em.createQuery(cr);
-            //pagination
-            pagination(pg, sz, query);
-            try {
-                return query.getResultList();
-            } catch (PersistenceException e) {
-                throw new ValidationException("The condition contain incompatible with type of the field.");
-            }
-        });
+        return repo.getAll(by, order, field, cond, value, pg, sz);
     }
 
-    private void pagination(int pg, int sz, TypedQuery<?> query) {
-        if (pg > 0 && sz > 0) {
-            int offset = (pg - 1) * sz;
-            query.setFirstResult(offset)
-                    .setMaxResults(sz);
-        }
-    }
 
     @Override
     public long getCount(List<String> field, List<String> cond, List<String> value, int pg, int sz) {
-        //return repo.getCount(field, cond, value, pg, sz);
-        return template.txExpr(em -> {
-            CriteriaBuilder cb = em.getCriteriaBuilder();
-            CriteriaQuery<Long> cr = cb.createQuery(Long.class);
-            Root<MeasuringDO> root = cr.from(stdClass);
-            //List<String> fieldNames = Arrays.stream(stdClass.getDeclaredFields()).map(Field::getName).collect(Collectors.toList());
-            //filtering
-            filtering(field, cond, value, cb, root, cr);
-            cr.select(root.get("id"));
-            TypedQuery<Long> query = em.createQuery(cr);
-            //pagination
-            pagination(pg, sz, query);
-            try {
-                return (long) query.getResultList().size();
-            } catch (PersistenceException e) {
-                throw new ValidationException("The condition contain incompatible with type of the field.");
-            }
-
-        });
-    }
-
-    private void filtering(
-            List<String> field, List<String> cond, List<String> value, CriteriaBuilder cb, Root<MeasuringDO> root,
-            CriteriaQuery<?> cr
-    ) {
-        if (field != null && cond != null && value != null &&
-                field.size() == cond.size() && field.size() == value.size()) {
-            List<Predicate> predicates = new ArrayList<>();
-            for (int i = 0; i < field.size(); i++) {
-                String[] fieldParts = (field.get(i)).split("\\.");
-                Expression<String> path;
-                switch (fieldParts.length) {
-                    case 2:
-                        path = root.get(fieldParts[0]).get(fieldParts[1]);
-                        break;
-                    case 3:
-                        if ("users".equals(fieldParts[1])) {
-                            path = root.join(fieldParts[0]).join(fieldParts[1]).get(fieldParts[2]);
-                        } else {
-                            path = root.get(fieldParts[0]).get(fieldParts[1]).get(fieldParts[2]);
-                        }
-                        break;
-                    case 1:
-                    default:
-                        path = root.get(fieldParts[0]);
-                        break;
-                }
-                switch (cond.get(i)) {
-                    case ">":
-                        predicates.add(cb.greaterThanOrEqualTo(path, value.get(i)));
-                        break;
-                    case "<":
-                        predicates.add(cb.lessThanOrEqualTo(path, value.get(i)));
-                        break;
-                    case "contain":
-                        predicates.add(cb.like(path, "%" + value.get(i) + "%"));
-                        break;
-                    case "equals":
-                    default:
-                        predicates.add(cb.equal(path, value.get(i)));
-                        break;
-                }
-            }
-            Predicate[] predicateArray = predicates.toArray(new Predicate[0]);
-            cr.where(cb.and(predicateArray));
-        }
+        return repo.getCount(field, cond, value, pg, sz);
     }
 
     @Override
