@@ -27,7 +27,8 @@ public interface RoleRestService {
                            @QueryParam("condition") List<String> cond,
                            @QueryParam("value") List<String> value,
                            @QueryParam("pg") int pg,
-                           @QueryParam("sz") int sz);
+                           @QueryParam("sz") int sz,
+                         @QueryParam("login") String login);
 
     @GET
     @Path("count")
@@ -36,29 +37,36 @@ public interface RoleRestService {
             @QueryParam("condition") List<String> cond,
             @QueryParam("value") List<String> value,
             @QueryParam("pg") int pg,
-            @QueryParam("sz") int sz
+            @QueryParam("sz") int sz,
+            @QueryParam("login") String login
     );
 
     @POST
-    RoleDTO create(@Valid RoleDTO type);
+    RoleDTO create(@Valid RoleDTO type,
+                   @QueryParam("login") String login);
 
     @PUT
     @Path("{id}")
-    RoleDTO update(@PathParam("id") long id, @Valid RoleDTO type);
+    RoleDTO update(@PathParam("id") long id, @Valid RoleDTO type,
+                   @QueryParam("login") String login);
 
     @PUT
     @Path("{id}/users")
-    RoleDTO addUsers(@PathParam("id") long id, @QueryParam("uId") List<Long> userIds);
+    RoleDTO addUsers(@PathParam("id") long id, @QueryParam("uId") List<Long> userIds,
+                     @QueryParam("login") String login);
 
     @DELETE
     @Path("{id}/users")
-    RoleDTO deleteUsers(@PathParam("id") long id, @QueryParam("uId") List<Long> userIds);
+    RoleDTO deleteUsers(@PathParam("id") long id, @QueryParam("uId") List<Long> userIds,
+                        @QueryParam("login") String login);
 
     @GET
     @Path("{id}")
-    RoleDTO get(@PathParam("id") long id);
+    RoleDTO get(@PathParam("id") long id,
+                @QueryParam("login") String login);
 
     @DELETE
     @Path("{id}")
-    void delete(@PathParam("id") long id);
+    void delete(@PathParam("id") long id,
+                @QueryParam("login") String login);
 }

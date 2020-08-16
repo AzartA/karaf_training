@@ -1,40 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
            xmlns:jaxrs="http://cxf.apache.org/blueprint/jaxrs">
-    <reference id="userRepo" interface="ru.training.karaf.repo.UserRepo"/>
-    <reference id="unitRepo" interface="ru.training.karaf.repo.UnitRepo"/>
-    <reference id="locationRepo" interface="ru.training.karaf.repo.LocationRepo"/>
-    <reference id="paramRepo" interface="ru.training.karaf.repo.ClimateParameterRepo"/>
-    <reference id="typeRepo" interface="ru.training.karaf.repo.SensorTypeRepo"/>
-    <reference id="sensorRepo" interface="ru.training.karaf.repo.SensorRepo"/>
-    <reference id="measuringRepo" interface="ru.training.karaf.repo.MeasuringRepo"/>
-    <reference id="roleRepo" interface="ru.training.karaf.repo.RoleRepo"/>
+    <reference id="userView" interface="ru.training.karaf.view.UserView"/>
+    <reference id="unitView" interface="ru.training.karaf.view.UnitView"/>
+    <reference id="locationView" interface="ru.training.karaf.view.LocationView"/>
+    <reference id="paramView" interface="ru.training.karaf.view.ClimateParameterView"/>
+    <reference id="typeView" interface="ru.training.karaf.view.SensorTypeView"/>
+    <reference id="sensorView" interface="ru.training.karaf.view.SensorView"/>
+    <reference id="measuringView" interface="ru.training.karaf.view.MeasuringView"/>
+    <reference id="roleView" interface="ru.training.karaf.view.RoleView"/>
+
+
 
     <reference id="uniqueValidationRepo" interface="ru.training.karaf.repo.UniqueValidationRepo"/>
 
     <bean id="userRestServiceBean" class="ru.training.karaf.rest.UserRestServiceImpl">
-        <property name="repo" ref="userRepo"/>
+        <property name="view" ref="userView"/>
     </bean>
     <bean id="locationRestServiceBean" class="ru.training.karaf.rest.LocationRestServiceImpl">
-        <property name="repo" ref="locationRepo"/>
+        <property name="view" ref="locationView"/>
     </bean>
     <bean id="unitRestServiceBean" class="ru.training.karaf.rest.UnitRestServiceImpl">
-        <property name="repo" ref="unitRepo"/>
+        <property name="view" ref="unitView"/>
     </bean>
     <bean id="paramRestServiceBeen" class="ru.training.karaf.rest.ClimateParameterRestServiceImpl">
-        <property name="repo" ref="paramRepo"/>
+        <property name="view" ref="paramView"/>
     </bean>
     <bean id="typeRestServiceBeen" class="ru.training.karaf.rest.SensorTypeRestServiceImpl">
-        <property name="repo" ref="typeRepo"/>
+        <property name="view" ref="typeView"/>
     </bean>
     <bean id="sensorRestServiceBeen" class="ru.training.karaf.rest.SensorRestServiceImpl">
-        <property name="repo" ref="sensorRepo"/>
+        <property name="view" ref="sensorView"/>
     </bean>
     <bean id="measuringRestServiceBeen" class="ru.training.karaf.rest.MeasuringRestServiceImpl">
-        <property name="repo" ref="measuringRepo"/>
+        <property name="view" ref="measuringView"/>
     </bean>
     <bean id="roleRestServiceBeen" class="ru.training.karaf.rest.RoleRestSeviceImpl">
-        <property name="repo" ref="roleRepo"/>
+        <property name="view" ref="roleView"/>
     </bean>
 
 

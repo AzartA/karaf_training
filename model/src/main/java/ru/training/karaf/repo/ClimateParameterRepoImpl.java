@@ -27,21 +27,19 @@ public class ClimateParameterRepoImpl implements ClimateParameterRepo {
         repoImpl = new RepoImpl<>(template, cpdClass);
     }
 
-    @Override
-    public List<? extends ClimateParameter> getAll(String sortBy, String sortOrder, int pg, int sz, String filterField, String filterValue) {
-        return repoImpl.getAll(sortBy, sortOrder, pg, sz, filterField, filterValue);
-    }
 
     @Override
     public List<? extends ClimateParameter> getAll(
-            List<String> by, List<String> order, List<String> field, List<String> cond, List<String> value, int pg, int sz
+            List<String> by, List<String> order, List<String> field, List<String> cond, List<String> value, int pg, int sz,
+            String[] auth
     ) {
-        return repoImpl.getAll(by, order, field, cond, value, pg, sz);
+        return repoImpl.getAll(by, order, field, cond, value, pg, sz, auth);
     }
 
     @Override
-    public long getCount(List<String> field, List<String> cond, List<String> value, int pg, int sz) {
-        return repoImpl.getCount(field, cond, value, pg, sz);
+    public long getCount(List<String> field, List<String> cond, List<String> value, int pg, int sz,
+                         String[] auth) {
+        return repoImpl.getCount(field, cond, value, pg, sz, auth);
     }
 
     @Override

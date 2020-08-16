@@ -1,5 +1,6 @@
 package ru.training.karaf.rest;
 
+import ru.training.karaf.rest.dto.DTO;
 import ru.training.karaf.rest.dto.SensorDTO;
 
 import javax.validation.Valid;
@@ -29,46 +30,57 @@ public interface SensorRestService {
                            @QueryParam("condition") List<String> cond,
                            @QueryParam("value") List<String> value,
                            @QueryParam("pg") int pg,
-                           @QueryParam("sz") int sz);
+                           @QueryParam("sz") int sz,
+                           @QueryParam("login") String login
+    );
 
     @GET
     @Path("count")
-    long getCount(
+    DTO<Long> getCount(
             @QueryParam("field") List<String> field,
             @QueryParam("condition") List<String> cond,
             @QueryParam("value") List<String> value,
             @QueryParam("pg") int pg,
-            @QueryParam("sz") int sz
+            @QueryParam("sz") int sz,
+            @QueryParam("login") String login
     );
 
     @POST
-    SensorDTO create(@Valid SensorDTO type);
+    SensorDTO create(@Valid SensorDTO type,
+                     @QueryParam("login") String login);
 
     @PUT
     @Path("{id}")
-    SensorDTO update(@PathParam("id") long id, @Valid SensorDTO type);
+    SensorDTO update(@PathParam("id") long id, @Valid SensorDTO type,
+                     @QueryParam("login") String login);
 
     @PUT
     @Path("{id}/location/{lId}")
-    SensorDTO setLocation (@PathParam("id") long id, @PathParam("lId") long locationId);
+    SensorDTO setLocation (@PathParam("id") long id, @PathParam("lId") long locationId,
+                           @QueryParam("login") String login);
 
     @PUT
     @Path("{id}/type/{tId}")
-    SensorDTO setSensorType (@PathParam("id") long id, @PathParam("tId") long typeId);
+    SensorDTO setSensorType (@PathParam("id") long id, @PathParam("tId") long typeId,
+                             @QueryParam("login") String login);
 
     @PUT
     @Path("{id}/users")
-    SensorDTO addUsers(@PathParam("id") long id, @QueryParam("uId") List<Long> userIds);
+    SensorDTO addUsers(@PathParam("id") long id, @QueryParam("uId") List<Long> userIds,
+                       @QueryParam("login") String login);
 
     @PUT
     @Path("{id}/{x}/{y}")
-    SensorDTO setXY(@PathParam("id") long id, @PathParam("x") long x, @PathParam("y") long y);
+    SensorDTO setXY(@PathParam("id") long id, @PathParam("x") long x, @PathParam("y") long y,
+                    @QueryParam("login") String login);
 
     @GET
     @Path("{id}")
-    SensorDTO get(@PathParam("id") long id);
+    SensorDTO get(@PathParam("id") long id,
+                  @QueryParam("login") String login);
 
     @DELETE
     @Path("{id}")
-    void delete(@PathParam("id") long id);
+    void delete(@PathParam("id") long id,
+                @QueryParam("login") String login);
 }

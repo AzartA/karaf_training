@@ -28,7 +28,8 @@ public interface MeasuringRestService {
             @QueryParam("condition") List<String> cond,
             @QueryParam("value") List<String> value,
             @QueryParam("pg") int pg,
-            @QueryParam("sz") int sz
+            @QueryParam("sz") int sz,
+            @QueryParam("login") String login
     );
     @GET
     @Path("count")
@@ -37,21 +38,26 @@ public interface MeasuringRestService {
             @QueryParam("condition") List<String> cond,
             @QueryParam("value") List<String> value,
             @QueryParam("pg") int pg,
-            @QueryParam("sz") int sz
+            @QueryParam("sz") int sz,
+            @QueryParam("login") String login
     );
 
     @POST
-    MeasuringDTO create(MeasuringDTO type);
+    MeasuringDTO create(MeasuringDTO typem,
+                        @QueryParam("login") String login);
 
     @PUT
     @Path("{id}")
-    MeasuringDTO update(@PathParam("id") long id, MeasuringDTO type);
+    MeasuringDTO update(@PathParam("id") long id, MeasuringDTO type,
+                        @QueryParam("login") String login);
 
     @GET
     @Path("{id}")
-    MeasuringDTO get(@PathParam("id") long id);
+    MeasuringDTO get(@PathParam("id") long id,
+                     @QueryParam("login") String login);
 
     @DELETE
     @Path("{id}")
-    void delete(@PathParam("id") long id);
+    void delete(@PathParam("id") long id,
+                @QueryParam("login") String login);
 }

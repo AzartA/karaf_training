@@ -33,21 +33,18 @@ public class MeasuringRepoImpl implements MeasuringRepo {
     }
 
     @Override
-    public List<? extends Measuring> getAll(String sortBy, String sortOrder, int pg, int sz, String filterField, String filterValue) {
-        return null;
-    }
-
-    @Override
     public List<? extends Measuring> getAll(
-            List<String> by, List<String> order, List<String> field, List<String> cond, List<String> value, int pg, int sz
+            List<String> by, List<String> order, List<String> field, List<String> cond, List<String> value, int pg, int sz,
+            String[] auth
     ) {
-        return repo.getAll(by, order, field, cond, value, pg, sz);
+        return repo.getAll(by, order, field, cond, value, pg, sz, auth);
     }
 
 
     @Override
-    public long getCount(List<String> field, List<String> cond, List<String> value, int pg, int sz) {
-        return repo.getCount(field, cond, value, pg, sz);
+    public long getCount(List<String> field, List<String> cond, List<String> value, int pg, int sz,
+                         String[] auth) {
+        return repo.getCount(field, cond, value, pg, sz, auth);
     }
 
     @Override

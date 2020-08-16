@@ -18,6 +18,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -33,44 +34,10 @@ public class RepoImpl<T extends Entity> {//implements Repo<T> {
         this.t = t;
     }
 
-    /*public List<? extends T> getAll(String sortBy, String sortOrder, int pg, int sz, String filterField, String filterValue) {
-        return template.txExpr(em -> {
-            CriteriaBuilder cb = em.getCriteriaBuilder();
-            CriteriaQuery<T> cr = cb.createQuery(t);
-            Root<T> root = cr.from(t);
-            cr.select(root);
-
-            List<String> fieldNames = Arrays.stream(t.getDeclaredFields()).map(Field::getName).collect(Collectors.toList());
-            if (filterField != null && filterValue != null) {
-                if (!fieldNames.contains(filterField)) {
-                    throw new ValidationException("There is no such field: " + filterField);
-                }
-                cr.where(cb.equal(root.get(filterField), filterValue));
-            }
-            if (sortBy != null && sortOrder != null) {
-                if (!fieldNames.contains(sortBy)) {
-                    throw new ValidationException("There is no such field: " + sortBy);
-                }
-                if ("asc".equalsIgnoreCase(sortOrder)) {
-                    cr.orderBy(cb.asc(root.get(sortBy)));
-                }
-                if ("desc".equalsIgnoreCase(sortOrder)) {
-                    cr.orderBy(cb.desc(root.get(sortBy)));
-                }
-            }
-
-            TypedQuery<T> query = em.createQuery(cr);
-
-            if (pg > 0 && sz > 0) {
-                int offset = (pg - 1) * sz;
-                query.setFirstResult(offset)
-                        .setMaxResults(sz);
-            }
-            return query.getResultList();
-        });
-    }*/
-
-    public long getCount(List<String> field, List<String> cond, List<String> value, int pg, int sz) {
+    public long getCount(
+            List<String> field, List<String> cond, List<String> value, int pg, int sz,
+            String[] auth
+    ) {
         return template.txExpr(em -> {
             CriteriaBuilder cb = em.getCriteriaBuilder();
             CriteriaQuery<Long> cr = cb.createQuery(Long.class);
@@ -80,6 +47,10 @@ public class RepoImpl<T extends Entity> {//implements Repo<T> {
             if (field != null && cond != null && value != null &&
                     field.size() == cond.size() && field.size() == value.size()) {
                 List<Predicate> predicates = filtering(field, cond, value, cb, root);
+                //auth filter
+                if (!auth[0].isEmpty()) {
+                    predicates.addAll(filtering(Collections.singletonList(auth[0]), Arrays.asList("="), Arrays.asList(auth[1]), cb, root));
+                }
                 cr.where(cb.and(predicates.toArray(new Predicate[0])));
             }
             TypedQuery<Long> query = em.createQuery(cr);
@@ -89,7 +60,10 @@ public class RepoImpl<T extends Entity> {//implements Repo<T> {
         });
     }
 
-    public List<? extends T> getAll(List<String> by, List<String> order, List<String> field, List<String> cond, List<String> value, int pg, int sz) {
+    public List<? extends T> getAll(
+            List<String> by, List<String> order, List<String> field, List<String> cond, List<String> value, int pg, int sz,
+            String[] auth
+    ) {
         return template.txExpr(em -> {
             CriteriaBuilder cb = em.getCriteriaBuilder();
             CriteriaQuery<T> cr = cb.createQuery(t);
@@ -99,7 +73,10 @@ public class RepoImpl<T extends Entity> {//implements Repo<T> {
             if (field != null && cond != null && value != null &&
                     field.size() == cond.size() && field.size() == value.size()) {
                 List<Predicate> predicates = filtering(field, cond, value, cb, root);
-                //ToDo add authentication predicate
+                //auth filter
+                if (!auth[0].isEmpty()) {
+                    predicates.addAll(filtering(Arrays.asList(auth[0]), Arrays.asList("="), Arrays.asList(auth[1]), cb, root));
+                }
                 cr.where(cb.and(predicates.toArray(new Predicate[0])));
             }
             //sorting

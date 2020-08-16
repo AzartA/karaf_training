@@ -8,76 +8,82 @@ import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
 
 import ru.training.karaf.model.User;
-import ru.training.karaf.repo.UserRepo;
 import ru.training.karaf.rest.dto.DTO;
+import ru.training.karaf.rest.dto.SensorDTO;
 import ru.training.karaf.rest.dto.UserDTO;
+import ru.training.karaf.view.UserView;
 
 public class UserRestServiceImpl implements UserRestService {
 
-    private UserRepo repo;
+    private UserView view;
 
-    public void setRepo(UserRepo repo) {
-        this.repo = repo;
+    public void setView(UserView view) {
+        this.view = view;
     }
 
     @Override
-    public List<UserDTO> getAll(List<String> by, List<String> order, List<String> field, List<String> cond, List<String> value, int pg, int sz) {
-        return repo.getAll(by, order, field, cond, value, pg, sz).stream().map(UserDTO::new).collect(Collectors.toList());
+    public List<UserDTO> getAll(List<String> by, List<String> order, List<String> field, List<String> cond, List<String> value, int pg, int sz,
+                                String login) {
+        return view.getAll(by, order, field, cond, value, pg, sz, login).map(l-> l.stream().map(UserDTO::new).collect(Collectors.toList()))
+                .orElseThrow(() -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
     }
 
     @Override
-    public DTO<Long> getCount(List<String> field, List<String> cond, List<String> value, int pg, int sz) {
-        return new DTO<>(repo.getCount(field, cond, value, pg, sz));
+    public DTO<Long> getCount(List<String> field, List<String> cond, List<String> value, int pg, int sz,
+                              String login) {
+        return (view.getCount(field, cond, value, pg, sz, login)).map(DTO::new)
+                .orElseThrow(() -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
     }
 
     @Override
-    public UserDTO create(UserDTO user) {
-        if (repo.loginIsPresent(user.getLogin())) {
+    public UserDTO create(UserDTO user,
+                          String login) {
+        if (view.loginIsPresent(user.getLogin())) {
             throw new ValidationException("login must be unique");
         }
-        return repo.create(user).map(UserDTO::new).orElseThrow(() -> new ValidationException("login must be unique"));
+        return view.create(user, login).map(UserDTO::new).orElseThrow(() -> new ValidationException("login must be unique"));
     }
 
     @Override
-    public UserDTO update(long id, UserDTO user) {
-        Optional<? extends User> u = repo.update(id, user);
+    public UserDTO update(long id, UserDTO user,
+                          String login) {
+        Optional<? extends User> u = view.update(id, user, login);
         return u.map(UserDTO::new)
                 .orElseThrow(() -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
     }
 
     @Override
-    public UserDTO get(long id) {
-        return repo.get(id).map(UserDTO::new)
+    public UserDTO get(long id,
+                       String login) {
+        return view.get(id, login).map(UserDTO::new)
                 .orElseThrow(() -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
     }
 
     @Override
-    public UserDTO getByLogin(String login) {
-        return repo.getByLogin(login).map(UserDTO::new)
+    public void delete(long id,
+                       String login) {
+        view.delete(id, login)
                 .orElseThrow(() -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
     }
 
     @Override
-    public void delete(long id) {
-        repo.delete(id)
-                .orElseThrow(() -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
-    }
-
-    @Override
-    public UserDTO addSensors(long id, List<Long> sensorIds) {
-        return repo.addSensors(id, sensorIds).map(UserDTO::new).orElseThrow(() ->
+    public UserDTO addSensors(long id, List<Long> sensorIds,
+                              String login) {
+        return view.addSensors(id, sensorIds, login).map(UserDTO::new).orElseThrow(() ->
                 new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
     }
 
     @Override
-    public UserDTO addRoles(long id, List<Long> roleIds) {
-        return repo.addRoles(id, roleIds).map(UserDTO::new).orElseThrow(() ->
+    public UserDTO addRoles(long id, List<Long> roleIds,
+                            String login) {
+        return view.addRoles(id, roleIds, login).map(UserDTO::new).orElseThrow(() ->
                 new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
     }
 
     @Override
-    public UserDTO deleteRoles(long id, List<Long> roleIds) {
-        return repo.removeRoles(id, roleIds).map(UserDTO::new).orElseThrow(() ->
+    public UserDTO deleteRoles(long id, List<Long> roleIds,
+                               String login) {
+        return view.removeRoles(id, roleIds, login).map(UserDTO::new).orElseThrow(() ->
                 new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
     }
 }

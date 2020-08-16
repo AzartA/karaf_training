@@ -2,6 +2,7 @@ package ru.training.karaf.repo;
 
 import java.util.List;
 import java.util.Optional;
+import javax.persistence.criteria.Predicate;
 import javax.validation.ValidationException;
 
 import org.apache.aries.jpa.template.JpaTemplate;
@@ -24,20 +25,18 @@ public class SensorRepoImpl implements SensorRepo {
 
     @Override
     public List<? extends Sensor> getAll(
-            List<String> by, List<String> order, List<String> field, List<String> cond, List<String> value, int pg, int sz
+            List<String> by, List<String> order, List<String> field, List<String> cond, List<String> value, int pg, int sz,
+            String[] auth
     ) {
-        return sensorRepo.getAll(by, order, field, cond, value, pg, sz);
+        return sensorRepo.getAll(by, order, field, cond, value, pg, sz, auth);
     }
 
     @Override
-    public long getCount(List<String> field, List<String> cond, List<String> value, int pg, int sz) {
-        return sensorRepo.getCount(field, cond, value, pg, sz);
+    public long getCount(List<String> field, List<String> cond, List<String> value, int pg, int sz,
+                         String[] auth) {
+        return sensorRepo.getCount(field, cond, value, pg, sz, auth);
     }
 
-    @Override
-    public List<? extends Sensor> getAll(String sortBy, String sortOrder, int pg, int sz, String filterField, String filterValue) {
-        return null;
-    }
 
     @Override
     public Optional<? extends Sensor> create(Sensor sensor) {

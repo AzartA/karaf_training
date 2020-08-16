@@ -29,7 +29,8 @@ public interface ClimateParameterRestService {
             @QueryParam("condition") List<String> cond,
             @QueryParam("value") List<String> value,
             @QueryParam("pg") int pg,
-            @QueryParam("sz") int sz
+            @QueryParam("sz") int sz,
+            @QueryParam("login") String login
     );
 
     @GET
@@ -39,29 +40,36 @@ public interface ClimateParameterRestService {
             @QueryParam("condition") List<String> cond,
             @QueryParam("value") List<String> value,
             @QueryParam("pg") int pg,
-            @QueryParam("sz") int sz
+            @QueryParam("sz") int sz,
+            @QueryParam("login") String login
     );
 
     @POST
-    ClimateParameterDTO create(@Valid ClimateParameterDTO parameter);
+    ClimateParameterDTO create(@Valid ClimateParameterDTO parameter,
+                               @QueryParam("login") String login);
 
     @PUT
     @Path("{id}")
-    ClimateParameterDTO update(@PathParam("id") long id, @Valid ClimateParameterDTO parameter);
+    ClimateParameterDTO update(@PathParam("id") long id, @Valid ClimateParameterDTO parameter,
+                               @QueryParam("login") String login);
 
     @PUT
     @Path("{id}/units")
-    ClimateParameterDTO addUnits(@PathParam("id") long id, @QueryParam("uId") List<Long> unitIds);
+    ClimateParameterDTO addUnits(@PathParam("id") long id, @QueryParam("uId") List<Long> unitIds,
+                                 @QueryParam("login") String login);
 
     @GET
     @Path("{id}")
-    ClimateParameterDTO get(@PathParam("id") long id);
+    ClimateParameterDTO get(@PathParam("id") long id,
+                            @QueryParam("login") String login);
 
     @GET
     @Path("/name/{name}")
-    ClimateParameterDTO getByName(@PathParam("name") String name);
+    ClimateParameterDTO getByName(@PathParam("name") String name,
+                                  @QueryParam("login") String login);
 
     @DELETE
     @Path("{id}")
-    void delete(@PathParam("id") long id);
+    void delete(@PathParam("id") long id,
+                @QueryParam("login") String login);
 }

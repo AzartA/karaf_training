@@ -1,60 +1,71 @@
 package ru.training.karaf.rest;
 
 import ru.training.karaf.model.SensorType;
-import ru.training.karaf.repo.SensorTypeRepo;
 import ru.training.karaf.rest.dto.DTO;
+import ru.training.karaf.rest.dto.SensorDTO;
 import ru.training.karaf.rest.dto.SensorTypeDTO;
+import ru.training.karaf.view.SensorTypeView;
 
 import javax.validation.ValidationException;
 import javax.ws.rs.NotFoundException;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class SensorTypeRestServiceImpl implements SensorTypeRestService {
-    private SensorTypeRepo repo;
+    private SensorTypeView view;
 
-    public void setRepo(SensorTypeRepo repo) {
-        this.repo = repo;
+    public void setView(SensorTypeView view) {
+        this.view = view;
     }
 
     @Override
-    public List<SensorTypeDTO> getAll(String sortBy, String sortOrder, int pg, int sz, String filterField, String filterValue) {
-        return repo.getAll(sortBy, sortOrder, pg, sz, filterField, filterValue)
-                .stream().map(SensorTypeDTO::new).collect(Collectors.toList());
+    public List<SensorTypeDTO> getAll(
+            List<String> by, List<String> order, List<String> field, List<String> cond, List<String> value, int pg, int sz, String login
+    ) {
+        return view.getAll(by, order, field, cond, value, pg, sz, login).map(l-> l.stream().map(SensorTypeDTO::new).collect(Collectors.toList()))
+                .orElseThrow(() -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
     }
 
     @Override
-    public DTO<Long> getCount(List<String> field, List<String> cond, List<String> value, int pg, int sz) {
-        return new DTO<>(repo.getCount(field, cond, value, pg, sz));
+    public DTO<Long> getCount(List<String> field, List<String> cond, List<String> value, int pg, int sz,
+                              String login) {
+        return (view.getCount(field, cond, value, pg, sz, login)).map(DTO::new)
+                .orElseThrow(() -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
     }
 
     @Override
-    public SensorTypeDTO create(SensorTypeDTO type) {
-        return repo.create(type).map(SensorTypeDTO::new).orElseThrow(() -> new ValidationException("Name is already exist"));
+    public SensorTypeDTO create(SensorTypeDTO type,
+                                String login) {
+        return view.create(type, login).map(SensorTypeDTO::new).orElseThrow(() -> new ValidationException("Name is already exist"));
     }
 
     @Override
-    public SensorTypeDTO update(long id, SensorTypeDTO type) {
-        Optional<? extends SensorType> l = repo.update(id, type);
+    public SensorTypeDTO update(long id, SensorTypeDTO type,
+                                String login) {
+        Optional<? extends SensorType> l = view.update(id, type, login);
         return l.map(SensorTypeDTO::new).orElseThrow(() -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
     }
 
     @Override
-    public SensorTypeDTO addParameters(long id, List<Long> paramIds) {
-        return repo.addParams(id, paramIds).map(SensorTypeDTO::new).orElseThrow(() ->
+    public SensorTypeDTO addParameters(long id, List<Long> paramIds,
+                                       String login) {
+        return view.addParams(id, paramIds, login).map(SensorTypeDTO::new).orElseThrow(() ->
                 new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
     }
 
     @Override
-    public SensorTypeDTO get(long id) {
-        return repo.get(id).map(SensorTypeDTO::new).orElseThrow(
+    public SensorTypeDTO get(long id,
+                             String login) {
+        return view.get(id, login).map(SensorTypeDTO::new).orElseThrow(
                 () -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
     }
 
     @Override
-    public void delete(long id) {
-        repo.delete(id).orElseThrow(() -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
+    public void delete(long id,
+                       String login) {
+        view.delete(id, login).orElseThrow(() -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
     }
 }

@@ -2,7 +2,9 @@ package ru.training.karaf.rest;
 
 import ru.training.karaf.model.Sensor;
 import ru.training.karaf.repo.SensorRepo;
+import ru.training.karaf.rest.dto.DTO;
 import ru.training.karaf.rest.dto.SensorDTO;
+import ru.training.karaf.view.SensorView;
 
 import javax.validation.ValidationException;
 import javax.ws.rs.NotFoundException;
@@ -12,66 +14,77 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class SensorRestServiceImpl implements SensorRestService {
-    private SensorRepo repo;
+    private SensorView view;
 
-    public void setRepo(SensorRepo repo) {
-        this.repo = repo;
+    public void setView(SensorView view) {
+        this.view = view;
     }
 
     @Override
-    public List<SensorDTO> getAll(List<String> by, List<String> order, List<String> field, List<String> cond, List<String> value, int pg, int sz) {
-        return repo.getAll(by, order, field, cond, value, pg, sz)
-                .stream().map(SensorDTO::new).collect(Collectors.toList());
+    public List<SensorDTO> getAll(List<String> by, List<String> order, List<String> field, List<String> cond, List<String> value, int pg, int sz,
+                                 String login) {
+        return view.getAll(by, order, field, cond, value, pg, sz, login).map(l-> l.stream().map(SensorDTO::new).collect(Collectors.toList()))
+                .orElseThrow(() -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
     }
 
     @Override
-    public long getCount(List<String> field, List<String> cond, List<String> value, int pg, int sz) {
-        return repo.getCount(field, cond, value, pg, sz);
+    public DTO<Long> getCount(List<String> field, List<String> cond, List<String> value, int pg, int sz,
+                         String login) {
+        return (view.getCount(field, cond, value, pg, sz, login)).map(DTO::new)
+                .orElseThrow(() -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
     }
 
     @Override
-    public SensorDTO create(SensorDTO type) {
-        return repo.create(type).map(SensorDTO::new).orElseThrow(() -> new ValidationException("Name is already exist"));
+    public SensorDTO create(SensorDTO type,
+                            String login) {
+        return view.create(type, login).map(SensorDTO::new).orElseThrow(() -> new ValidationException("Name is already exist"));
     }
 
     @Override
-    public SensorDTO update(long id, SensorDTO type) {
-        Optional<? extends Sensor> l = repo.update(id, type);
+    public SensorDTO update(long id, SensorDTO type,
+                            String login) {
+        Optional<? extends Sensor> l = view.update(id, type, login);
         return l.map(SensorDTO::new).orElseThrow(() -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
     }
 
     @Override
-    public SensorDTO setLocation(long id, long locationId) {
-        return repo.setLocation(id, locationId).map(SensorDTO::new).orElseThrow(() ->
+    public SensorDTO setLocation(long id, long locationId,
+                                 String login) {
+        return view.setLocation(id, locationId, login).map(SensorDTO::new).orElseThrow(() ->
                 new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
     }
 
     @Override
-    public SensorDTO setSensorType(long id, long typeId) {
-        return repo.setSensorType(id, typeId).map(SensorDTO::new).orElseThrow(() ->
+    public SensorDTO setSensorType(long id, long typeId,
+                                   String login) {
+        return view.setSensorType(id, typeId, login).map(SensorDTO::new).orElseThrow(() ->
                 new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
     }
 
     @Override
-    public SensorDTO addUsers(long id, List<Long> userIds) {
-        return repo.addUsers(id, userIds).map(SensorDTO::new).orElseThrow(() ->
+    public SensorDTO addUsers(long id, List<Long> userIds,
+                              String login) {
+        return view.addUsers(id, userIds, login).map(SensorDTO::new).orElseThrow(() ->
                 new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
     }
 
     @Override
-    public SensorDTO setXY(long id, long x, long y) {
-        return repo.setXY(id, x, y).map(SensorDTO::new).orElseThrow(() ->
+    public SensorDTO setXY(long id, long x, long y,
+                           String login) {
+        return view.setXY(id, x, y, login).map(SensorDTO::new).orElseThrow(() ->
                 new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
     }
 
     @Override
-    public SensorDTO get(long id) {
-        return repo.get(id).map(SensorDTO::new).orElseThrow(
+    public SensorDTO get(long id,
+                         String login) {
+        return view.get(id, login).map(SensorDTO::new).orElseThrow(
                 () -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
     }
 
     @Override
-    public void delete(long id) {
-        repo.delete(id).orElseThrow(() -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
+    public void delete(long id,
+                       String login) {
+        view.delete(id, login).orElseThrow(() -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
     }
 }

@@ -22,15 +22,16 @@ import java.util.List;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public interface SensorTypeRestService {
-        @GET
-        List<SensorTypeDTO> getAll(
-                @QueryParam("sortBy") String sortBy,
-                @QueryParam("sortOrder") String sortOrder,
-                @QueryParam("pg") int pg,
-                @QueryParam("sz") int sz,
-                @QueryParam("filterField") String filterField,
-                @QueryParam("filterValue") String filterValue
-        );
+    @GET
+    List<SensorTypeDTO> getAll(@QueryParam("by") List<String> by,
+                               @QueryParam("order") List<String> order,
+                               @QueryParam("field") List<String> field,
+                               @QueryParam("condition") List<String> cond,
+                               @QueryParam("value") List<String> value,
+                               @QueryParam("pg") int pg,
+                               @QueryParam("sz") int sz,
+                               @QueryParam("login") String login
+    );
 
     @GET
     @Path("count")
@@ -39,25 +40,31 @@ public interface SensorTypeRestService {
             @QueryParam("condition") List<String> cond,
             @QueryParam("value") List<String> value,
             @QueryParam("pg") int pg,
-            @QueryParam("sz") int sz
+            @QueryParam("sz") int sz,
+            @QueryParam("login") String login
     );
 
         @POST
-        SensorTypeDTO create(@Valid SensorTypeDTO type);
+        SensorTypeDTO create(@Valid SensorTypeDTO type,
+                             @QueryParam("login") String login);
 
         @PUT
         @Path("{id}")
-        SensorTypeDTO update(@PathParam("id") long id, @Valid SensorTypeDTO type);
+        SensorTypeDTO update(@PathParam("id") long id, @Valid SensorTypeDTO type,
+                             @QueryParam("login") String login);
 
         @PUT
         @Path("{id}/params")
-        SensorTypeDTO addParameters(@PathParam("id") long id, @QueryParam("pId") List<Long> paramIds);
+        SensorTypeDTO addParameters(@PathParam("id") long id, @QueryParam("pId") List<Long> paramIds,
+                                    @QueryParam("login") String login);
 
         @GET
         @Path("{id}")
-        SensorTypeDTO get(@PathParam("id") long id);
+        SensorTypeDTO get(@PathParam("id") long id,
+                          @QueryParam("login") String login);
 
         @DELETE
         @Path("{id}")
-        void delete(@PathParam("id") long id);
+        void delete(@PathParam("id") long id,
+                    @QueryParam("login") String login);
 }

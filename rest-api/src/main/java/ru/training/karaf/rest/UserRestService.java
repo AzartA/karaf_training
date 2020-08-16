@@ -34,7 +34,8 @@ public interface UserRestService {
                          @QueryParam("condition") List<String> cond,
                          @QueryParam("value") List<String> value,
                          @QueryParam("pg") int pg,
-                         @QueryParam("sz") int sz);
+                         @QueryParam("sz") int sz,
+                         @QueryParam("login") String login);
 
     @GET
     @Path("count")
@@ -43,40 +44,44 @@ public interface UserRestService {
             @QueryParam("condition") List<String> cond,
             @QueryParam("value") List<String> value,
             @QueryParam("pg") int pg,
-            @QueryParam("sz") int sz
+            @QueryParam("sz") int sz,
+            @QueryParam("login") String login
     );
 
     @POST
-    UserDTO create(@Valid UserDTO user);
+    UserDTO create(@Valid UserDTO user,
+                   @QueryParam("login") String login);
 
     @PUT
     @Path("{id}")
     //@NotNull(message = "This login is already exist")
-    UserDTO update(@PathParam("id") long id, @Valid  UserDTO user);
+    UserDTO update(@PathParam("id") long id, @Valid  UserDTO user,
+                   @QueryParam("login") String login);
 
-
-    @GET
-    @Path("login/{login}")
-    UserDTO getByLogin(@PathParam("login") String login);
 
     @GET
     @Path("{id}")
-    UserDTO get(@PathParam("id") long id);
+    UserDTO get(@PathParam("id") long id,
+                @QueryParam("login") String login);
 
     @DELETE
     @Path("{id}")
-    void delete(@PathParam("id") long id);
+    void delete(@PathParam("id") long id,
+                @QueryParam("login") String login);
 
     @PUT
     @Path("{id}/sensors")
-    UserDTO addSensors(@PathParam("id") long id, @QueryParam("sId") List<Long> sensorIds);
+    UserDTO addSensors(@PathParam("id") long id, @QueryParam("sId") List<Long> sensorIds,
+                       @QueryParam("login") String login);
 
     @PUT
     @Path("{id}/roles")
-    UserDTO addRoles(@PathParam("id") long id, @QueryParam("rId") List<Long> roleIds);
+    UserDTO addRoles(@PathParam("id") long id, @QueryParam("rId") List<Long> roleIds,
+                     @QueryParam("login") String login);
 
     @DELETE
     @Path("{id}/roles")
-    UserDTO deleteRoles(@PathParam("id") long id, @QueryParam("rId") List<Long> roleIds);
+    UserDTO deleteRoles(@PathParam("id") long id, @QueryParam("rId") List<Long> roleIds,
+                        @QueryParam("login") String login);
 
 }

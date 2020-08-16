@@ -35,19 +35,16 @@ public class LocationRepoImpl implements LocationRepo {
     }
 
     @Override
-    public List<? extends Location> getAll(String sortBy, String sortOrder, int pg, int sz, String filterField, String filterValue) {
-        return repo.getAll(sortBy, sortOrder, pg, sz, filterField, filterValue);
-    }
-
-    @Override
     public List<? extends Location> getAll(
-            List<String> by, List<String> order, List<String> field, List<String> cond, List<String> value, int pg, int sz) {
-        return repo.getAll(by, order, field, cond, value, pg, sz);
+            List<String> by, List<String> order, List<String> field, List<String> cond, List<String> value, int pg, int sz,
+            String[] auth) {
+        return repo.getAll(by, order, field, cond, value, pg, sz, auth);
     }
 
     @Override
-    public long getCount(List<String> field, List<String> cond, List<String> value, int pg, int sz) {
-        return repo.getCount(field, cond, value, pg, sz);
+    public long getCount(List<String> field, List<String> cond, List<String> value, int pg, int sz,
+                         String[] auth) {
+        return repo.getCount(field, cond, value, pg, sz, auth);
     }
 
     @Override

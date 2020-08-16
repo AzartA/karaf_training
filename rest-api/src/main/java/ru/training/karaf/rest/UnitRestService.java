@@ -14,6 +14,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import ru.training.karaf.rest.dto.ClimateParameterDTO;
+import ru.training.karaf.rest.dto.DTO;
 import ru.training.karaf.rest.dto.UnitDTO;
 
 @Path("units")
@@ -29,32 +30,38 @@ public interface UnitRestService {
             @QueryParam("condition") List<String> cond,
             @QueryParam("value") List<String> value,
             @QueryParam("pg") int pg,
-            @QueryParam("sz") int sz
+            @QueryParam("sz") int sz,
+            @QueryParam("login") String login
     );
 
     @GET
     @Path("count")
-    long getCount(
+    DTO<Long> getCount(
             @QueryParam("field") List<String> field,
             @QueryParam("condition") List<String> cond,
             @QueryParam("value") List<String> value,
             @QueryParam("pg") int pg,
-            @QueryParam("sz") int sz
+            @QueryParam("sz") int sz,
+            @QueryParam("login") String login
     );
 
     @POST
-    UnitDTO create(@Valid UnitDTO entity);
+    UnitDTO create(@Valid UnitDTO entity,
+                   @QueryParam("login") String login);
 
     @PUT
     @Path("{id}")
-    UnitDTO update(@PathParam("id") long id, @Valid UnitDTO entity);
+    UnitDTO update(@PathParam("id") long id, @Valid UnitDTO entity,
+                   @QueryParam("login") String login);
 
     @GET
 
     @Path("{id}")
-    UnitDTO get(@PathParam("id") long id);
+    UnitDTO get(@PathParam("id") long id,
+                @QueryParam("login") String login);
 
     @DELETE
     @Path("{id}")
-    void delete(@PathParam("id") long id);
+    void delete(@PathParam("id") long id,
+                @QueryParam("login") String login);
 }

@@ -32,7 +32,8 @@ public interface LocationRestService {
             @QueryParam("condition") List<String> cond,
             @QueryParam("value") List<String> value,
             @QueryParam("pg") int pg,
-            @QueryParam("sz") int sz
+            @QueryParam("sz") int sz,
+            @QueryParam("login") String login
     );
 
     @GET
@@ -42,27 +43,33 @@ public interface LocationRestService {
             @QueryParam("condition") List<String> cond,
             @QueryParam("value") List<String> value,
             @QueryParam("pg") int pg,
-            @QueryParam("sz") int sz
+            @QueryParam("sz") int sz,
+            @QueryParam("login") String login
     );
 
     @POST
-    LocationDTO create(@Valid LocationDTO location);
+    LocationDTO create(@Valid LocationDTO location,
+                       @QueryParam("login") String login);
 
     @PUT
     @Path("{id}")
-    LocationDTO update(@PathParam("id") long id, @Valid LocationDTO location);
+    LocationDTO update(@PathParam("id") long id, @Valid LocationDTO location,
+                       @QueryParam("login") String login);
 
     @GET
     @Path("{id}")
-    LocationDTO get(@PathParam("id") long id);
+    LocationDTO get(@PathParam("id") long id,
+                    @QueryParam("login") String login);
 
     @DELETE
     @Path("{id}")
-    void delete(@PathParam("id") long id);
+    void delete(@PathParam("id") long id,
+                @QueryParam("login") String login);
 
     @GET
     @Path("{id}/plan")
-    Response getPlan(@PathParam("id") long id);
+    Response getPlan(@PathParam("id") long id,
+                     @QueryParam("login") String login);
 
 
     @POST
@@ -70,11 +77,13 @@ public interface LocationRestService {
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     DTO<Long> putPlan(@PathParam("id") long id, @Multipart("plan") InputStream plan,
                 @PictureType(message = "Picture type {type} isn't allowed.")
-                                                  @Multipart("type") String type);
+                                                  @Multipart("type") String type,
+                      @QueryParam("login") String login);
 
     @DELETE
     @Path("{id}/plan")
-    void deletePlan(@PathParam("id") long id);
+    void deletePlan(@PathParam("id") long id,
+                    @QueryParam("login") String login);
 
 
 }
