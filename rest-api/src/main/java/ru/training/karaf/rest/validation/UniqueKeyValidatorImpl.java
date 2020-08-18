@@ -1,9 +1,6 @@
 package ru.training.karaf.rest.validation;
 
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceReference;
 import ru.training.karaf.model.UniqueFieldEntity;
-import ru.training.karaf.repo.UniqueValidationRepo;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
@@ -13,17 +10,17 @@ import java.util.Optional;
 
 public class UniqueKeyValidatorImpl implements ConstraintValidator<UniqueKey, UniqueFieldEntity> {
     private UniqueKey uniqueKey;
-    private UniqueValidationRepo repo;
+    //private UniqueValidationRepo repo;
     //private BundleContext bundleContext;
 
     public UniqueKeyValidatorImpl(){
     }
 
 
-    public void setRepo(UniqueValidationRepo repo) {
+  /*  public void setRepo(UniqueValidationRepo repo) {
         this.repo = repo;
     }
-
+*/
     @Override
     public void initialize(UniqueKey uniqueKey) {
         this.uniqueKey = uniqueKey;
@@ -45,7 +42,7 @@ public class UniqueKeyValidatorImpl implements ConstraintValidator<UniqueKey, Un
             //ToDo what about Int, Double?
             Object fieldValue = field.get(target);
 
-            result = repo.presentObject(entityClass, fieldName, fieldValue);
+        /*   result = repo.presentObject(entityClass, fieldName, fieldValue);
             if(result.isPresent()){
                 Field id = entityClass.getField("id");
                 id.setAccessible(true);
@@ -64,7 +61,7 @@ public class UniqueKeyValidatorImpl implements ConstraintValidator<UniqueKey, Un
                         .addConstraintViolation()
                         .disableDefaultConstraintViolation();
                 return false;
-            }
+            }*/
             return true;
         } catch (Exception e) {
             throw new RuntimeException(

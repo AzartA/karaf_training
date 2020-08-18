@@ -4,52 +4,74 @@
     <reference id="datasource" interface="javax.sql.DataSource"
                filter="(osgi.jndi.service.name=jdbc/ru.training.model.model-datasource)"/>
 
-    <bean id="userRepo" class="ru.training.karaf.repo.UserRepoImpl">
+    <bean id="repo" class="ru.training.karaf.repo.Repo">
         <argument ref="jpaTemplate"/>
     </bean>
-    <bean id="locationRepo" class="ru.training.karaf.repo.LocationRepoImpl">
+    <bean id="userRepo" class="ru.training.karaf.repo.UserRepo">
+        <argument ref="jpaTemplate"/>
+    </bean>
+    <bean id="locationRepo" class="ru.training.karaf.repo.LocationRepo">
         <argument ref="jpaTemplate"/>
         <argument ref="datasource"/>
     </bean>
-    <bean id="unitRepo" class="ru.training.karaf.repo.UnitRepoIml">
+    <bean id="unitRepo" class="ru.training.karaf.repo.UnitRepo">
         <argument ref="jpaTemplate"/>
     </bean>
-    <bean id="paramRepo" class="ru.training.karaf.repo.ClimateParameterRepoImpl">
+    <bean id="paramRepo" class="ru.training.karaf.repo.ClimateParameterRepo">
             <argument ref="jpaTemplate"/>
     </bean>
-    <bean id="typeRepo" class="ru.training.karaf.repo.SensorTypeRepoImpl">
+    <bean id="typeRepo" class="ru.training.karaf.repo.SensorTypeRepo">
         <argument ref="jpaTemplate"/>
     </bean>
-    <bean id="sensorRepo" class="ru.training.karaf.repo.SensorRepoImpl">
+    <bean id="sensorRepo" class="ru.training.karaf.repo.SensorRepo">
         <argument ref="jpaTemplate"/>
     </bean>
-    <bean id="measuringRepo" class="ru.training.karaf.repo.MeasuringRepoImpl">
+    <bean id="measuringRepo" class="ru.training.karaf.repo.MeasuringRepo">
             <argument ref="jpaTemplate"/>
     </bean>
-    <bean id="roleRepo" class="ru.training.karaf.repo.RoleRepoImpl">
+    <bean id="roleRepo" class="ru.training.karaf.repo.RoleRepo" init-method="init">
             <argument ref="jpaTemplate"/>
     </bean>
-    <bean id="authRepo" class="ru.training.karaf.repo.UserAuthRepoImpl">
+    <bean id="authRepo" class="ru.training.karaf.repo.UserAuthRepo">
                 <argument ref="jpaTemplate"/>
     </bean>
 
+    <bean id="view" class="ru.training.karaf.view.ViewImpl">
+        <argument ref="repo"/>
+        <argument ref="authRepo"/>
+    </bean>
     <bean id="sensorView" class="ru.training.karaf.view.SensorViewImpl">
         <argument ref="sensorRepo"/>
         <argument ref="authRepo"/>
     </bean>
-
-    <bean id="uniqueValidationRepo" class="ru.training.karaf.repo.UniqueValidationRepoImpl">
-        <argument ref="jpaTemplate"/>
+    <bean id="userView" class="ru.training.karaf.view.UserViewImpl">
+        <argument ref="userRepo"/>
+        <argument ref="authRepo"/>
     </bean>
-    <service ref="userRepo" interface="ru.training.karaf.repo.UserRepo"/>
-    <service ref="locationRepo" interface="ru.training.karaf.repo.LocationRepo"/>
-    <service ref="unitRepo" interface="ru.training.karaf.repo.UnitRepo"/>
-    <service ref="paramRepo" interface="ru.training.karaf.repo.ClimateParameterRepo"/>
-    <service ref="typeRepo" interface="ru.training.karaf.repo.SensorTypeRepo"/>
-    <service ref="sensorRepo" interface="ru.training.karaf.repo.SensorRepo"/>
-    <service ref="measuringRepo" interface="ru.training.karaf.repo.MeasuringRepo"/>
-    <service ref="roleRepo" interface="ru.training.karaf.repo.RoleRepo"/>
-    <service ref="authRepo" interface="ru.training.karaf.repo.UserAuthRepo"/>
+    <bean id="locationView" class="ru.training.karaf.view.LocationViewImpl">
+        <argument ref="locationRepo"/>
+        <argument ref="authRepo"/>
+    </bean>
+    <bean id="unitView" class="ru.training.karaf.view.UnitViewImpl">
+        <argument ref="unitRepo"/>
+        <argument ref="authRepo"/>
+    </bean>
+    <bean id="paramView" class="ru.training.karaf.view.ClimateParameterViewImpl">
+        <argument ref="paramRepo"/>
+        <argument ref="authRepo"/>
+    </bean>
+    <bean id="typeView" class="ru.training.karaf.view.SensorTypeViewImpl">
+        <argument ref="typeRepo"/>
+        <argument ref="authRepo"/>
+    </bean>
+    <bean id="measuringView" class="ru.training.karaf.view.MeasuringViewImpl">
+        <argument ref="measuringRepo"/>
+        <argument ref="authRepo"/>
+    </bean>
+    <bean id="roleView" class="ru.training.karaf.view.RoleViewImpl">
+        <argument ref="roleRepo"/>
+        <argument ref="authRepo"/>
+    </bean>
 
     <service ref="userView" interface="ru.training.karaf.view.UserView"/>
     <service ref="locationView" interface="ru.training.karaf.view.LocationView"/>
@@ -60,6 +82,5 @@
     <service ref="measuringView" interface="ru.training.karaf.view.MeasuringView"/>
     <service ref="roleView" interface="ru.training.karaf.view.RoleView"/>
 
-    <service ref="uniqueValidationRepo" interface="ru.training.karaf.repo.UniqueValidationRepo"/>
 
 </blueprint>

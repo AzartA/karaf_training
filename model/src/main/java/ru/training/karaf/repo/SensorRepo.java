@@ -2,7 +2,6 @@ package ru.training.karaf.repo;
 
 import java.util.List;
 import java.util.Optional;
-import javax.persistence.criteria.Predicate;
 import javax.validation.ValidationException;
 
 import org.apache.aries.jpa.template.JpaTemplate;
@@ -13,39 +12,37 @@ import ru.training.karaf.model.SensorDO;
 import ru.training.karaf.model.SensorTypeDO;
 import ru.training.karaf.model.UserDO;
 
-public class SensorRepoImpl implements SensorRepo {
+public class SensorRepo {
     private final JpaTemplate template;
-    private final RepoImpl<SensorDO> sensorRepo;
+    private final Repo sensorRepo;
     private final Class<SensorDO> stdClass = SensorDO.class;
 
-    public SensorRepoImpl(JpaTemplate template) {
+    public SensorRepo(JpaTemplate template) {
         this.template = template;
-        sensorRepo = new RepoImpl<>(template, stdClass);
+        sensorRepo = new Repo(template);
     }
 
-    @Override
     public List<? extends Sensor> getAll(
             List<String> by, List<String> order, List<String> field, List<String> cond, List<String> value, int pg, int sz,
             String[] auth
     ) {
-        return sensorRepo.getAll(by, order, field, cond, value, pg, sz, auth);
+        return sensorRepo.getAll(by, order, field, cond, value, pg, sz, auth, stdClass);
     }
 
-    @Override
-    public long getCount(List<String> field, List<String> cond, List<String> value, int pg, int sz,
-                         String[] auth) {
-        return sensorRepo.getCount(field, cond, value, pg, sz, auth);
+    public long getCount(
+            List<String> field, List<String> cond, List<String> value, int pg, int sz,
+            String[] auth
+    ) {
+        return sensorRepo.getCount(field, cond, value, pg, sz, auth, stdClass);
     }
 
-
-    @Override
     public Optional<? extends Sensor> create(Sensor sensor) {
         return template.txExpr(em -> {
-            if (!(sensorRepo.getByName(sensor.getName(), em).isPresent())) {
+            if (!(sensorRepo.getByName(sensor.getName(), em, stdClass).isPresent())) {
                 SensorDO sensorToCreate = new SensorDO(sensor);
                 em.persist(sensorToCreate);
                 if (sensor.getLocation() != null) {
-                   sensorToCreate.setLocation(sensorRepo.getEntityById(sensor.getLocation().getId(), em, LocationDO.class));
+                    sensorToCreate.setLocation(sensorRepo.getEntityById(sensor.getLocation().getId(), em, LocationDO.class));
                 }
                 if (sensor.getType() != null) {
                     sensorToCreate.setType(sensorRepo.getEntityById(sensor.getType().getId(), em, SensorTypeDO.class));
@@ -53,14 +50,13 @@ public class SensorRepoImpl implements SensorRepo {
                 sensorToCreate.setUsers(sensorRepo.getEntitySet(sensor.getUsers(), em, UserDO.class));
                 return Optional.of(sensorToCreate);
             }
-            return Optional.empty();
+            throw new ValidationException("Name is already exist");
         });
     }
 
-    @Override
     public Optional<? extends Sensor> update(long id, Sensor sensor) {
         return template.txExpr(em -> {
-            List<SensorDO> l = sensorRepo.getByIdOrName(id, sensor.getName(), em);
+            List<SensorDO> l = sensorRepo.getByIdOrName(id, sensor.getName(), em, stdClass);
             if (l.size() > 1) {
                 throw new ValidationException("This name is already exist");
             }
@@ -85,14 +81,12 @@ public class SensorRepoImpl implements SensorRepo {
         });
     }
 
-    @Override
     public Optional<? extends Sensor> get(long id) {
-        return template.txExpr(TransactionType.Required, em -> sensorRepo.getById(id, em));
+        return template.txExpr(TransactionType.Required, em -> sensorRepo.getById(id, em, stdClass));
     }
 
-    @Override
     public Optional<? extends Sensor> delete(long id) {
-        return template.txExpr(em -> sensorRepo.getById(id, em).map(l -> {
+        return template.txExpr(em -> sensorRepo.getById(id, em, stdClass).map(l -> {
             if (l.getLocation() != null) {
                 l.getLocation().getSensors().remove(l);
             }
@@ -106,10 +100,9 @@ public class SensorRepoImpl implements SensorRepo {
         }));
     }
 
-    @Override
     public Optional<? extends Sensor> setSensorType(long id, long typeId) {
         return template.txExpr(TransactionType.Required, em -> {
-            Optional<SensorDO> sensorToUpdate = sensorRepo.getById(id, em);
+            Optional<SensorDO> sensorToUpdate = sensorRepo.getById(id, em, stdClass);
             sensorToUpdate.ifPresent(p -> {
                 p.setType(sensorRepo.getEntityById(typeId, em, SensorTypeDO.class));
                 em.merge(p);
@@ -118,10 +111,9 @@ public class SensorRepoImpl implements SensorRepo {
         });
     }
 
-    @Override
     public Optional<? extends Sensor> setLocation(long id, long locationId) {
         return template.txExpr(TransactionType.Required, em -> {
-            Optional<SensorDO> sensorToUpdate = sensorRepo.getById(id, em);
+            Optional<SensorDO> sensorToUpdate = sensorRepo.getById(id, em, stdClass);
             sensorToUpdate.ifPresent(p -> {
                 p.setLocation(sensorRepo.getEntityById(locationId, em, LocationDO.class));
                 em.merge(p);
@@ -130,22 +122,20 @@ public class SensorRepoImpl implements SensorRepo {
         });
     }
 
-    @Override
     public Optional<? extends Sensor> addUsers(long id, List<Long> userIds) {
         return template.txExpr(TransactionType.Required, em -> {
-            Optional<SensorDO> sensorToUpdate = sensorRepo.getById(id, em);
+            Optional<SensorDO> sensorToUpdate = sensorRepo.getById(id, em, stdClass);
             sensorToUpdate.ifPresent(p -> {
-                p.addUsers(sensorRepo.getEntitySet(userIds, em, UserDO.class));
+                p.addUsers(sensorRepo.getEntitySetByIds(userIds, em, UserDO.class));
                 em.merge(p);
             });
             return sensorToUpdate;
         });
     }
 
-    @Override
     public Optional<? extends Sensor> setXY(long id, long x, long y) {
         return template.txExpr(TransactionType.Required, em -> {
-            Optional<SensorDO> sensorToUpdate = sensorRepo.getById(id, em);
+            Optional<SensorDO> sensorToUpdate = sensorRepo.getById(id, em, stdClass);
             sensorToUpdate.ifPresent(p -> {
                 p.setX(x);
                 p.setY(y);

@@ -6,115 +6,115 @@ title __MODEL's Class Diagram__\n
     class ru.training.karaf.converter.CapabilityConverter {
     }
   }
-  
+
 
   namespace ru.training.karaf.converter {
     class ru.training.karaf.converter.JsonbCapabilityConverter {
     }
   }
-  
+
 
   namespace ru.training.karaf.model {
     class ru.training.karaf.model.CapabilityImpl {
     }
   }
-  
+
 
   namespace ru.training.karaf.model {
     class ru.training.karaf.model.ClimateParameterDO {
     }
   }
-  
+
 
   namespace ru.training.karaf.model {
     class ru.training.karaf.model.LocationDO {
     }
   }
-  
+
 
   namespace ru.training.karaf.model {
     class ru.training.karaf.model.MeasuringDO {
     }
   }
-  
+
 
   namespace ru.training.karaf.model {
     class ru.training.karaf.model.SensorDO {
     }
   }
-  
+
 
   namespace ru.training.karaf.model {
     class ru.training.karaf.model.SensorTypeDO {
     }
   }
-  
+
 
   namespace ru.training.karaf.model {
     class ru.training.karaf.model.UnitDO {
     }
   }
-  
+
 
   namespace ru.training.karaf.model {
     class ru.training.karaf.model.UserDO {
     }
   }
-  
+
 
   namespace ru.training.karaf.repo {
-    class ru.training.karaf.repo.ClimateParameterRepoImpl {
+    class ru.training.karaf.repo.ClimateParameterRepo {
     }
   }
-  
+
 
   namespace ru.training.karaf.repo {
-    class ru.training.karaf.repo.LocationRepoImpl {
+    class ru.training.karaf.repo.LocationRepo {
     }
   }
-  
+
 
   namespace ru.training.karaf.repo {
-    class ru.training.karaf.repo.RepoImpl {
+    class ru.training.karaf.repo.Repo {
     }
   }
-  
+
 
   namespace ru.training.karaf.repo {
-    class ru.training.karaf.repo.SensorRepoImpl {
+    class ru.training.karaf.repo.SensorRepo {
     }
   }
-  
+
 
   namespace ru.training.karaf.repo {
-    class ru.training.karaf.repo.SensorTypeRepoImpl {
+    class ru.training.karaf.repo.SensorTypeRepo {
     }
   }
-  
+
 
   namespace ru.training.karaf.repo {
     class ru.training.karaf.repo.UniqueValidationRepoImpl {
     }
   }
-  
+
 
   namespace ru.training.karaf.repo {
-    class ru.training.karaf.repo.UnitRepoIml {
+    class ru.training.karaf.repo.UnitRepo {
     }
   }
-  
+
 
   namespace ru.training.karaf.repo {
-    class ru.training.karaf.repo.UserRepoImpl {
+    class ru.training.karaf.repo.UserRepo {
     }
   }
-  
+
 
   namespace ru.training.karaf.serializer {
     class ru.training.karaf.serializer.SetOfEntitiesSerializer {
     }
   }
-  
+
 
   ru.training.karaf.converter.CapabilityConverter .up.|> javax.persistence.AttributeConverter
   ru.training.karaf.converter.JsonbCapabilityConverter .up.|> javax.persistence.AttributeConverter
@@ -132,13 +132,12 @@ title __MODEL's Class Diagram__\n
   ru.training.karaf.model.SensorTypeDO o-- ru.training.karaf.model.CapabilityImpl : capability
   ru.training.karaf.model.UnitDO .up.|> ru.training.karaf.model.Unit
   ru.training.karaf.model.UserDO .up.|> ru.training.karaf.model.User
-  ru.training.karaf.repo.ClimateParameterRepoImpl .up.|> ru.training.karaf.repo.ClimateParameterRepo
-  ru.training.karaf.repo.LocationRepoImpl .up.|> ru.training.karaf.repo.LocationRepo
-  ru.training.karaf.repo.SensorRepoImpl .up.|> ru.training.karaf.repo.SensorRepo
-  ru.training.karaf.repo.SensorTypeRepoImpl .up.|> ru.training.karaf.repo.SensorTypeRepo
+  ru.training.karaf.repo.ClimateParameterRepo .up.|> ru.training.karaf.repo.ClimateParameterRepo
+  ru.training.karaf.repo.LocationRepo .up.|> ru.training.karaf.repo.LocationRepo
+  ru.training.karaf.repo.SensorTypeRepo .up.|> ru.training.karaf.repo.SensorTypeRepo
   ru.training.karaf.repo.UniqueValidationRepoImpl .up.|> ru.training.karaf.repo.UniqueValidationRepo
-  ru.training.karaf.repo.UnitRepoIml .up.|> ru.training.karaf.repo.UnitRepo
-  ru.training.karaf.repo.UserRepoImpl .up.|> ru.training.karaf.repo.UserRepo
+  ru.training.karaf.repo.UnitRepo .up.|> ru.training.karaf.repo.UnitRepo
+  ru.training.karaf.repo.UserRepo .up.|> ru.training.karaf.repo.UserRepo
   ru.training.karaf.serializer.SetOfEntitiesSerializer -up-|> com.fasterxml.jackson.databind.ser.std.StdSerializer
 
 

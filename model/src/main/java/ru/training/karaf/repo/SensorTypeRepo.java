@@ -15,45 +15,45 @@ import ru.training.karaf.model.Entity;
 import ru.training.karaf.model.SensorType;
 import ru.training.karaf.model.SensorTypeDO;
 
-public class SensorTypeRepoImpl implements SensorTypeRepo {
+public class SensorTypeRepo {
     private final JpaTemplate template;
-    private final RepoImpl<SensorTypeDO> typeRepo;
+    private final Repo typeRepo;
     private final Class<SensorTypeDO> stdClass = SensorTypeDO.class;
 
-    public SensorTypeRepoImpl(JpaTemplate template) {
+    public SensorTypeRepo(JpaTemplate template) {
         this.template = template;
-        typeRepo = new RepoImpl<>(template, stdClass);
+        typeRepo = new Repo(template);
     }
 
-    @Override
+
     public Optional<? extends SensorType> addParams(long id, List<Long> paramIds) {
         return template.txExpr(TransactionType.Required, em -> {
-            Optional<SensorTypeDO> typeToUpdate = typeRepo.getById(id, em);
+            Optional<SensorTypeDO> typeToUpdate = typeRepo.getById(id, em, stdClass);
             typeToUpdate.ifPresent(p -> {
-                p.addParameters(typeRepo.getEntitySet(paramIds, em, ClimateParameterDO.class));
+                p.addParameters(typeRepo.getEntitySetByIds(paramIds, em, ClimateParameterDO.class));
                 em.merge(p);
             });
             return typeToUpdate;
         });
     }
 
-    @Override
+
     public List<? extends SensorType> getAll(
             List<String> by, List<String> order, List<String> field, List<String> cond, List<String> value, int pg, int sz,
             String[] auth) {
-        return typeRepo.getAll(by, order, field, cond, value, pg, sz, auth);
+        return typeRepo.getAll(by, order, field, cond, value, pg, sz, auth, stdClass);
     }
 
-    @Override
+
     public long getCount(List<String> field, List<String> cond, List<String> value, int pg, int sz,
                          String[] auth) {
-        return typeRepo.getCount(field, cond, value, pg, sz, auth);
+        return typeRepo.getCount(field, cond, value, pg, sz, auth, stdClass);
     }
 
-    @Override
+
     public Optional<? extends SensorType> create(SensorType type) {
         return template.txExpr(em -> {
-            if (!(typeRepo.getByName(type.getName(), em).isPresent())) {
+            if (!(typeRepo.getByName(type.getName(), em, stdClass).isPresent())) {
                 SensorTypeDO typeToCreate = new SensorTypeDO(type);
                 em.persist(typeToCreate);
                 typeToCreate.setParameters(getParamsById(type, em));
@@ -63,10 +63,10 @@ public class SensorTypeRepoImpl implements SensorTypeRepo {
         });
     }
 
-    @Override
+
     public Optional<? extends SensorType> update(long id, SensorType type) {
         return template.txExpr(em -> {
-            List<SensorTypeDO> l = typeRepo.getByIdOrName(id, type.getName(), em);
+            List<SensorTypeDO> l = typeRepo.getByIdOrName(id, type.getName(), em, stdClass);
             if (l.size() > 1) {
                 throw new ValidationException("This name is already exist");
             }
@@ -83,14 +83,14 @@ public class SensorTypeRepoImpl implements SensorTypeRepo {
         });
     }
 
-    @Override
+
     public Optional<? extends SensorType> get(long id) {
-        return template.txExpr(TransactionType.Required, em -> typeRepo.getById(id, em));
+        return template.txExpr(TransactionType.Required, em -> typeRepo.getById(id, em, stdClass));
     }
 
-    @Override
+
     public Optional<? extends SensorType> delete(long id) {
-        return template.txExpr(em -> typeRepo.getById(id, em).map(l -> {
+        return template.txExpr(em -> typeRepo.getById(id, em, stdClass).map(l -> {
                 l.getParameters().forEach(u -> u.getSensorTypes().remove(l));
                 //l.getSensors().forEach(s -> s.setType(null)); //  delete cascade.ALL in SensorTypeDO for this case
                 em.remove(l);
@@ -104,7 +104,7 @@ public class SensorTypeRepoImpl implements SensorTypeRepo {
         Set<ClimateParameterDO> params = new HashSet<>(4);
         if (type.getParameters() != null) {
             List<Long> paramsIds = type.getParameters().stream().map(Entity::getId).collect(Collectors.toList());
-            params = typeRepo.getEntitySet(paramsIds, em, ClimateParameterDO.class);
+            params = typeRepo.getEntitySetByIds(paramsIds, em, ClimateParameterDO.class);
         }
         return params;
     }

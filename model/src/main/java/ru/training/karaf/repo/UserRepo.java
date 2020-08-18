@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Optional;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
-import javax.sql.DataSource;
 import javax.validation.ValidationException;
 
 import org.apache.aries.jpa.template.JpaTemplate;
@@ -14,33 +13,33 @@ import ru.training.karaf.model.SensorDO;
 import ru.training.karaf.model.User;
 import ru.training.karaf.model.UserDO;
 
-public class UserRepoImpl implements UserRepo {
+public class UserRepo {
     private final JpaTemplate template;
 
 
-    private final RepoImpl<UserDO> repo;
+    private final Repo repo;
     private final Class<UserDO> stdClass = UserDO.class;
 
-    public UserRepoImpl(JpaTemplate template) {
+    public UserRepo(JpaTemplate template) {
         this.template = template;
-        repo = new RepoImpl<>(template, stdClass);
+        repo = new Repo(template);
 
     }
 
-    @Override
+
     public List<? extends User> getAll(
             List<String> by, List<String> order, List<String> field, List<String> cond, List<String> value, int pg, int sz,
             String[] auth) {
-        return repo.getAll(by, order, field, cond, value, pg, sz, auth);
+        return repo.getAll(by, order, field, cond, value, pg, sz, auth, stdClass);
     }
 
-    @Override
+
     public long getCount(List<String> field, List<String> cond, List<String> value, int pg, int sz,
                          String[] auth) {
-        return repo.getCount(field, cond, value, pg, sz, auth);
+        return repo.getCount(field, cond, value, pg, sz, auth, stdClass);
     }
 
-    @Override
+
     public Optional<? extends User> create(User user) {
         return template.txExpr(em -> {
             UserDO userToCreate = new UserDO(user);
@@ -51,10 +50,10 @@ public class UserRepoImpl implements UserRepo {
         });
     }
 
-    @Override
+
     public Optional<? extends User> update(long id, User user) {
         return template.txExpr(em -> {
-            List<UserDO> u = repo.getByIdOrName(id, user.getLogin(), em);
+            List<UserDO> u = repo.getByIdOrName(id, user.getLogin(), em, stdClass);
             if (u.size() > 1) {
                 throw new ValidationException("This login is already exist");
             }
@@ -80,27 +79,27 @@ public class UserRepoImpl implements UserRepo {
         });
     }
 
-    @Override
+
     public Optional<? extends User> get(long id) {
         return Optional.ofNullable(template.txExpr(em -> em.find(UserDO.class, id)));
 
     }
 
-    @Override
+
     public Optional<? extends User> delete(long id) {
-        return template.txExpr(em -> repo.getById(id,em).map(user -> {
+        return template.txExpr(em -> repo.getById(id,em, stdClass).map(user -> {
             user.getSensors().forEach(s -> s.getUsers().remove(user));
             em.remove(user);
             return user;
         }));
     }
 
-    @Override
+
     public Optional<? extends User> addSensors(long id, List<Long> sensorIds) {
         return template.txExpr(TransactionType.Required, em -> {
-            Optional<UserDO> userToUpdate = repo.getById(id, em);
+            Optional<UserDO> userToUpdate = repo.getById(id, em, stdClass);
             userToUpdate.ifPresent(u -> {
-                u.addSensors(repo.getEntitySet(sensorIds, em, SensorDO.class));
+                u.addSensors(repo.getEntitySetByIds(sensorIds, em, SensorDO.class));
                 em.merge(u);
             });
             return userToUpdate;
@@ -109,34 +108,34 @@ public class UserRepoImpl implements UserRepo {
 
 
 
-    @Override
+
     public boolean loginIsPresent(String login) {
         return template.txExpr(em -> getByLogin(login, em).isPresent());
     }
 
-    @Override
+
     public Optional<? extends User> getByLogin(String login) {
         return template.txExpr(em -> getByLogin(login, em));
     }
 
-    @Override
+
     public Optional<? extends User> addRoles(long id, List<Long> rolesIds) {
         return template.txExpr(TransactionType.Required, em -> {
-            Optional<UserDO> userToUpdate = repo.getById(id, em);
+            Optional<UserDO> userToUpdate = repo.getById(id, em, stdClass);
             userToUpdate.ifPresent(p -> {
-                p.addRoles(repo.getEntitySet(rolesIds, em, RoleDO.class));
+                p.addRoles(repo.getEntitySetByIds(rolesIds, em, RoleDO.class));
                 em.merge(p);
             });
             return userToUpdate;
         });
     }
 
-    @Override
+
     public Optional<? extends User> removeRoles(long id, List<Long> rolesIds) {
         return template.txExpr(TransactionType.Required, em -> {
-            Optional<UserDO> userToUpdate = repo.getById(id, em);
+            Optional<UserDO> userToUpdate = repo.getById(id, em, stdClass);
             userToUpdate.ifPresent(p -> {
-                p.removeRoles(repo.getEntitySet(rolesIds, em, RoleDO.class));
+                p.removeRoles(repo.getEntitySetByIds(rolesIds, em, RoleDO.class));
                 em.merge(p);
             });
             return userToUpdate;

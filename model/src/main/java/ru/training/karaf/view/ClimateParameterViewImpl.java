@@ -1,11 +1,20 @@
 package ru.training.karaf.view;
 
-import ru.training.karaf.model.ClimateParameter;
-
 import java.util.List;
 import java.util.Optional;
 
+import ru.training.karaf.model.ClimateParameter;
+import ru.training.karaf.repo.ClimateParameterRepo;
+import ru.training.karaf.repo.UserAuthRepo;
+
 public class ClimateParameterViewImpl implements ClimateParameterView {
+    private ClimateParameterRepo repo;
+    private UserAuthRepo auth;
+
+    public ClimateParameterViewImpl(ClimateParameterRepo repo, UserAuthRepo auth) {
+        this.repo = repo;
+        this.auth = auth;
+    }
 
     @Override
     public Optional<? extends ClimateParameter> addUnits(long id, List<Long> unitIds, String login) {

@@ -1,5 +1,18 @@
 package ru.training.karaf.repo;
 
+import org.apache.aries.jpa.template.JpaTemplate;
+import org.apache.aries.jpa.template.TransactionType;
+import org.apache.commons.io.IOUtils;
+import org.postgresql.PGConnection;
+import org.postgresql.largeobject.LargeObject;
+import org.postgresql.largeobject.LargeObjectManager;
+import ru.training.karaf.model.Location;
+import ru.training.karaf.model.LocationDO;
+
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.sql.DataSource;
+import javax.validation.ValidationException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -7,47 +20,36 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.sql.DataSource;
-import javax.validation.ValidationException;
 
-import org.apache.aries.jpa.template.JpaTemplate;
-import org.apache.aries.jpa.template.TransactionType;
-import org.apache.commons.io.IOUtils;
-import org.postgresql.PGConnection;
-import org.postgresql.largeobject.LargeObject;
-import org.postgresql.largeobject.LargeObjectManager;
-import ru.training.karaf.model.ClimateParameterDO;
-import ru.training.karaf.model.Location;
-import ru.training.karaf.model.LocationDO;
-
-public class LocationRepoImpl implements LocationRepo {
+public class LocationRepo {
     private final JpaTemplate template;
-    private final RepoImpl<LocationDO> repo;
-    private final Class<LocationDO> cpdClass = LocationDO.class;
+    private final Repo repo;
+    private final Class<LocationDO> stdClass = LocationDO.class;
     private final DataSource dataSource;
 
-    public LocationRepoImpl(JpaTemplate template, DataSource dataSource) {
+    public LocationRepo(JpaTemplate template, DataSource dataSource) {
         this.template = template;
         this.dataSource = dataSource;
-        repo = new RepoImpl<>(template,cpdClass);
+        repo = new Repo(template);
     }
 
-    @Override
+
     public List<? extends Location> getAll(
             List<String> by, List<String> order, List<String> field, List<String> cond, List<String> value, int pg, int sz,
-            String[] auth) {
-        return repo.getAll(by, order, field, cond, value, pg, sz, auth);
+            String[] auth
+    ) {
+        return repo.getAll(by, order, field, cond, value, pg, sz, auth, stdClass);
     }
 
-    @Override
-    public long getCount(List<String> field, List<String> cond, List<String> value, int pg, int sz,
-                         String[] auth) {
-        return repo.getCount(field, cond, value, pg, sz, auth);
+
+    public long getCount(
+            List<String> field, List<String> cond, List<String> value, int pg, int sz,
+            String[] auth
+    ) {
+        return repo.getCount(field, cond, value, pg, sz, auth, stdClass);
     }
 
-    @Override
+
     public Optional<? extends Location> create(Location location) {
         LocationDO locationToCreate = new LocationDO(location.getName());
         return template.txExpr(em -> {
@@ -59,7 +61,7 @@ public class LocationRepoImpl implements LocationRepo {
         });
     }
 
-    @Override
+
     public Optional<? extends Location> update(long id, Location location) {
         return template.txExpr(em -> {
             List<LocationDO> l = getByIdOrName(id, location.getName(), em);
@@ -78,17 +80,17 @@ public class LocationRepoImpl implements LocationRepo {
         });
     }
 
-    @Override
+
     public Optional<? extends Location> get(long id) {
         return template.txExpr(TransactionType.Required, em -> getById(id, em));
     }
 
-    @Override
+
     public Optional<? extends Location> getByName(String name) {
         return template.txExpr(em -> getByName(name, em));
     }
 
-    @Override
+
     public Optional<LocationDO> delete(long id) {
         return template.txExpr(em -> getById(id, em).map(l -> {
             deletePlan(id);
@@ -122,7 +124,7 @@ public class LocationRepoImpl implements LocationRepo {
         return Optional.empty();
     }
 
-    @Override
+
     public long setPlan(long id, InputStream inputStream, String type) {
         try (Connection conn = dataSource.getConnection()) {
             try {
@@ -151,26 +153,25 @@ public class LocationRepoImpl implements LocationRepo {
         return -1L;
     }
 
-    @Override
+
     public Optional<? extends Location> deletePlan(long id) {
         try (Connection conn = dataSource.getConnection()) {
-                conn.setAutoCommit(false);
-                LargeObjectManager largeObjectManager = conn.unwrap(PGConnection.class).getLargeObjectAPI();
-                long oid = template.txExpr(em -> em.find(LocationDO.class, id)).getPlanOid();
-                largeObjectManager.delete(oid);
-                conn.commit();
-                conn.setAutoCommit(true);
-                return Optional.of(template.txExpr(em -> {
-                    LocationDO location = em.find(LocationDO.class, id);
-                    location.setPlanOid(0L);
-                    location.setPictureType(null);
-                    return location;
-                }));
+            conn.setAutoCommit(false);
+            LargeObjectManager largeObjectManager = conn.unwrap(PGConnection.class).getLargeObjectAPI();
+            long oid = template.txExpr(em -> em.find(LocationDO.class, id)).getPlanOid();
+            largeObjectManager.delete(oid);
+            conn.commit();
+            conn.setAutoCommit(true);
+            return Optional.of(template.txExpr(em -> {
+                LocationDO location = em.find(LocationDO.class, id);
+                location.setPlanOid(0L);
+                location.setPictureType(null);
+                return location;
+            }));
         } catch (SQLException ex) {
             //LOG.error("Exception: {}", ex.getMessage());
         }
         return Optional.empty();
-
     }
 
     private Optional<LocationDO> getByName(String name, EntityManager em) {

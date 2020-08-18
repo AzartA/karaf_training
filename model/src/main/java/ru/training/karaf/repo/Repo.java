@@ -25,23 +25,23 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class RepoImpl<T extends Entity> {//implements Repo<T> {
+public class Repo {
     private final JpaTemplate template;
-    private final Class<T> t;
 
-    public RepoImpl(JpaTemplate template, Class<T> t) {
+    public Repo(JpaTemplate template) {
         this.template = template;
-        this.t = t;
     }
 
-    public long getCount(
+    public <T> long getCount(
             List<String> field, List<String> cond, List<String> value, int pg, int sz,
-            String[] auth
+            String[] auth, Class<T> t
     ) {
+
         return template.txExpr(em -> {
             CriteriaBuilder cb = em.getCriteriaBuilder();
             CriteriaQuery<Long> cr = cb.createQuery(Long.class);
             Root<T> root = cr.from(t);
+
             cr.select(root.get("id"));
             //filtering
             if (field != null && cond != null && value != null &&
@@ -60,9 +60,8 @@ public class RepoImpl<T extends Entity> {//implements Repo<T> {
         });
     }
 
-    public List<? extends T> getAll(
-            List<String> by, List<String> order, List<String> field, List<String> cond, List<String> value, int pg, int sz,
-            String[] auth
+    public <T> List<? extends T> getAll(
+            List<String> by, List<String> order, List<String> field, List<String> cond, List<String> value, int pg, int sz, String[] auth, Class<T> t
     ) {
         return template.txExpr(em -> {
             CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -74,8 +73,8 @@ public class RepoImpl<T extends Entity> {//implements Repo<T> {
                     field.size() == cond.size() && field.size() == value.size()) {
                 List<Predicate> predicates = filtering(field, cond, value, cb, root);
                 //auth filter
-                if (!auth[0].isEmpty()) {
-                    predicates.addAll(filtering(Arrays.asList(auth[0]), Arrays.asList("="), Arrays.asList(auth[1]), cb, root));
+                if (auth[0]!=null) {
+                    predicates.addAll(filtering(Collections.singletonList(auth[0]), Arrays.asList("="), Arrays.asList(auth[1]), cb, root));
                 }
                 cr.where(cb.and(predicates.toArray(new Predicate[0])));
             }
@@ -92,10 +91,11 @@ public class RepoImpl<T extends Entity> {//implements Repo<T> {
         });
     }
 
-    private List<Order> getOrders(List<String> by, List<String> order, CriteriaBuilder cb, Root<? extends Entity> root) {
+    private <T> List<Order> getOrders(List<String> by, List<String> order, CriteriaBuilder cb, Root<T> root) {
         List<Order> orders = new ArrayList<>();
         for (int i = 0; i < by.size(); i++) {
-            Path<String> path = getPath(by.get(i), root);
+            Class<?> type = root.getJavaType();
+            Path<String> path = getPath(by.get(i), root, type);
             Order ord = "desc".equalsIgnoreCase(order.get(i)) ? cb.desc(path) : cb.asc(path);
             orders.add(ord);
         }
@@ -110,14 +110,15 @@ public class RepoImpl<T extends Entity> {//implements Repo<T> {
         }
     }
 
-    private List<Predicate> filtering(
+    private <T> List<Predicate> filtering(
             List<String> field, List<String> cond, List<String> value,
-            CriteriaBuilder cb, Root<? extends Entity> root
+            CriteriaBuilder cb, Root<T> root
     ) {
         List<Predicate> predicates = new ArrayList<>();
         for (int i = 0; i < field.size(); i++) {
-            Path<String> path = getPath(field.get(i), root);
-            Predicate predicate = getPredicate(cond.get(i), value.get(i), path, t, cb);
+            Class<?> type = root.getJavaType();
+            Path<String> path = getPath(field.get(i), root, type);
+            Predicate predicate = getPredicate(cond.get(i), value.get(i), path, type, cb);
             predicates.add(predicate);
         }
         return predicates;
@@ -133,14 +134,14 @@ public class RepoImpl<T extends Entity> {//implements Repo<T> {
                 return cb.greaterThanOrEqualTo(path, value);
             case "<=":
                 return cb.lessThanOrEqualTo(path, value);
-            case "contain":
+            case "contains":
                 if (!type.equals(String.class)) {
-                    throw new ValidationException("The condition 'contain' incompatible with type of the field.");
+                    throw new ValidationException("The condition 'contains' incompatible with type of the field.");
                 }
                 return cb.like(path, "%" + value + "%");
-            case "!contain":
+            case "!contains":
                 if (!type.equals(String.class)) {
-                    throw new ValidationException("The condition 'contain' incompatible with type of the field.");
+                    throw new ValidationException("The condition 'contains' incompatible with type of the field.");
                 }
                 return cb.not(cb.like(path, "%" + value + "%"));
             case "!=":
@@ -151,7 +152,7 @@ public class RepoImpl<T extends Entity> {//implements Repo<T> {
         }
     }
 
-    private Path<String> getPath(String field, Root<? extends Entity> root) {
+    private <T> Path<String> getPath(String field, Root<T> root, Class<?> type) {
         String[] fieldParts = (field).split("\\.");
         From<String, String> joinPath = null;
         Path<String> path = null;
@@ -159,7 +160,7 @@ public class RepoImpl<T extends Entity> {//implements Repo<T> {
         for (int j = fieldParts.length - 2; j >= 0; j--) {
             pattern[j] = fieldParts[j].endsWith("s") || pattern[j + 1];
         }
-        Class<?> type = t;
+
         for (int j = 0; j < fieldParts.length; j++) {
             //verification
             try {
@@ -195,7 +196,7 @@ public class RepoImpl<T extends Entity> {//implements Repo<T> {
         return path;
     }
 
-    public Optional<T> getById(long id, EntityManager em) {
+    public <T> Optional<T> getById(long id, EntityManager em, Class<T> t) {
         return Optional.ofNullable(em.find(t, id));
     }
 
@@ -203,7 +204,7 @@ public class RepoImpl<T extends Entity> {//implements Repo<T> {
         return em.find(t, id);
     }
 
-    public <U> Set<U> getEntitySet(List<Long> ids, EntityManager em, Class<U> u) {
+    public <U> Set<U> getEntitySetByIds(List<Long> ids, EntityManager em, Class<U> u) {
         Set<U> ts = new HashSet<>(4);
         ids.forEach(id -> Optional.ofNullable(getEntityById(id, em, u)).ifPresent(ts::add));
         return ts;
@@ -213,12 +214,12 @@ public class RepoImpl<T extends Entity> {//implements Repo<T> {
         Set<U> entities = new HashSet<>(4);
         if (entitySet != null) {
             List<Long> entityIds = entitySet.stream().map(Entity::getId).collect(Collectors.toList());
-            entities = getEntitySet(entityIds, em, u);
+            entities = getEntitySetByIds(entityIds, em, u);
         }
         return entities;
     }
 
-    public Optional<T> getByName(String name, EntityManager em) {
+    public <T> Optional<T> getByName(String name, EntityManager em, Class<T> t) {
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
             CriteriaQuery<T> cr = cb.createQuery(t);
@@ -231,7 +232,7 @@ public class RepoImpl<T extends Entity> {//implements Repo<T> {
         }
     }
 
-    public List<T> getByIdOrName(long id, String name, EntityManager em) {
+    public <T> List<T> getByIdOrName(long id, String name, EntityManager em, Class<T> t) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<T> cr = cb.createQuery(t);
         Root<T> root = cr.from(t);

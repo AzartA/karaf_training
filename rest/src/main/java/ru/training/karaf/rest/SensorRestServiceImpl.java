@@ -1,12 +1,11 @@
 package ru.training.karaf.rest;
 
 import ru.training.karaf.model.Sensor;
-import ru.training.karaf.repo.SensorRepo;
 import ru.training.karaf.rest.dto.DTO;
 import ru.training.karaf.rest.dto.SensorDTO;
 import ru.training.karaf.view.SensorView;
 
-import javax.validation.ValidationException;
+import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
 import java.util.List;
@@ -37,7 +36,7 @@ public class SensorRestServiceImpl implements SensorRestService {
     @Override
     public SensorDTO create(SensorDTO type,
                             String login) {
-        return view.create(type, login).map(SensorDTO::new).orElseThrow(() -> new ValidationException("Name is already exist"));
+        return view.create(type, login).map(SensorDTO::new).orElseThrow(() -> new ForbiddenException(Response.status(Response.Status.FORBIDDEN).build()));
     }
 
     @Override

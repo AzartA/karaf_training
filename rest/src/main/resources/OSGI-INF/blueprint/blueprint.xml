@@ -10,10 +10,6 @@
     <reference id="measuringView" interface="ru.training.karaf.view.MeasuringView"/>
     <reference id="roleView" interface="ru.training.karaf.view.RoleView"/>
 
-
-
-    <reference id="uniqueValidationRepo" interface="ru.training.karaf.repo.UniqueValidationRepo"/>
-
     <bean id="userRestServiceBean" class="ru.training.karaf.rest.UserRestServiceImpl">
         <property name="view" ref="userView"/>
     </bean>
@@ -39,12 +35,6 @@
         <property name="view" ref="roleView"/>
     </bean>
 
-
-
-
-    <bean id="uniqueKeyValidatorBean" activation="lazy" class="ru.training.karaf.rest.validation.UniqueKeyValidatorImpl">
-        <property name="repo" ref="uniqueValidationRepo"/>
-    </bean>
 
     <bean id="validationProviderResolver"
           class="ru.training.karaf.rest.validation.HibernateValidationProviderResolver"/>
@@ -72,7 +62,6 @@
             <ref component-id="sensorRestServiceBeen"/>
             <ref component-id="measuringRestServiceBeen"/>
             <ref component-id="roleRestServiceBeen"/>
-            <!--<ref component-id="uniqueKeyValidatorBean"/>-->
         </jaxrs:serviceBeans>
         <jaxrs:providers>
             <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider"/>

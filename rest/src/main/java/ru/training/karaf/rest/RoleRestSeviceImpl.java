@@ -2,15 +2,12 @@ package ru.training.karaf.rest;
 
 
 import ru.training.karaf.model.Role;
-import ru.training.karaf.repo.RoleRepo;
 import ru.training.karaf.rest.dto.DTO;
 import ru.training.karaf.rest.dto.RoleDTO;
-import ru.training.karaf.rest.dto.SensorDTO;
 import ru.training.karaf.view.RoleView;
 
 import javax.validation.ValidationException;
 import javax.ws.rs.NotFoundException;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.Optional;

@@ -1,10 +1,8 @@
 package ru.training.karaf.rest;
 
 import ru.training.karaf.model.Measuring;
-import ru.training.karaf.repo.MeasuringRepo;
 import ru.training.karaf.rest.dto.DTO;
 import ru.training.karaf.rest.dto.MeasuringDTO;
-import ru.training.karaf.rest.dto.SensorDTO;
 import ru.training.karaf.view.MeasuringView;
 
 import javax.ws.rs.NotFoundException;
