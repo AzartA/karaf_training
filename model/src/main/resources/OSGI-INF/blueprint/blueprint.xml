@@ -32,46 +32,53 @@
     <bean id="roleRepo" class="ru.training.karaf.repo.RoleRepo" init-method="init">
             <argument ref="jpaTemplate"/>
     </bean>
-    <bean id="authRepo" class="ru.training.karaf.repo.UserAuthRepo">
-                <argument ref="jpaTemplate"/>
-    </bean>
 
-    <bean id="view" class="ru.training.karaf.view.ViewImpl">
-        <argument ref="repo"/>
-        <argument ref="authRepo"/>
-    </bean>
+
     <bean id="sensorView" class="ru.training.karaf.view.SensorViewImpl">
         <argument ref="sensorRepo"/>
-        <argument ref="authRepo"/>
+        <argument ref="userRepo"/>
     </bean>
     <bean id="userView" class="ru.training.karaf.view.UserViewImpl">
         <argument ref="userRepo"/>
-        <argument ref="authRepo"/>
     </bean>
     <bean id="locationView" class="ru.training.karaf.view.LocationViewImpl">
         <argument ref="locationRepo"/>
-        <argument ref="authRepo"/>
+        <argument ref="userRepo"/>
     </bean>
     <bean id="unitView" class="ru.training.karaf.view.UnitViewImpl">
         <argument ref="unitRepo"/>
-        <argument ref="authRepo"/>
+        <argument ref="userRepo"/>
     </bean>
     <bean id="paramView" class="ru.training.karaf.view.ClimateParameterViewImpl">
         <argument ref="paramRepo"/>
-        <argument ref="authRepo"/>
+        <argument ref="userRepo"/>
     </bean>
     <bean id="typeView" class="ru.training.karaf.view.SensorTypeViewImpl">
         <argument ref="typeRepo"/>
-        <argument ref="authRepo"/>
+        <argument ref="userRepo"/>
     </bean>
     <bean id="measuringView" class="ru.training.karaf.view.MeasuringViewImpl">
         <argument ref="measuringRepo"/>
-        <argument ref="authRepo"/>
+        <argument ref="userRepo"/>
     </bean>
     <bean id="roleView" class="ru.training.karaf.view.RoleViewImpl">
         <argument ref="roleRepo"/>
-        <argument ref="authRepo"/>
+        <argument ref="userRepo"/>
     </bean>
+
+    <bean id="validationProviderResolver"
+          class="ru.training.karaf.rest.validation.HibernateValidationProviderResolver"/>
+
+    <bean id="beanValidationProvider" class="org.apache.cxf.validation.BeanValidationProvider">
+        <argument ref="validationProviderResolver"/>
+    </bean>
+
+    <bean id="jaxrsValidationFeature" class="org.apache.cxf.validation.BeanValidationFeature">
+        <property name="provider" ref="beanValidationProvider"/>
+    </bean>
+
+    <!--<bean id="exceptionMapper" class="org.apache.cxf.jaxrs.validation.ValidationExceptionMapper"/>-->
+    <bean id="exceptionMapper" class="ru.training.karaf.rest.validation.ValidationExceptionMapperWithMassages"/>
 
     <service ref="userView" interface="ru.training.karaf.view.UserView"/>
     <service ref="locationView" interface="ru.training.karaf.view.LocationView"/>

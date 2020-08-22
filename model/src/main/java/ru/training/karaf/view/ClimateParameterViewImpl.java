@@ -1,17 +1,17 @@
 package ru.training.karaf.view;
 
+import ru.training.karaf.model.ClimateParameter;
+import ru.training.karaf.repo.ClimateParameterRepo;
+import ru.training.karaf.repo.UserRepo;
+
 import java.util.List;
 import java.util.Optional;
 
-import ru.training.karaf.model.ClimateParameter;
-import ru.training.karaf.repo.ClimateParameterRepo;
-import ru.training.karaf.repo.UserAuthRepo;
-
 public class ClimateParameterViewImpl implements ClimateParameterView {
     private ClimateParameterRepo repo;
-    private UserAuthRepo auth;
+    private UserRepo auth;
 
-    public ClimateParameterViewImpl(ClimateParameterRepo repo, UserAuthRepo auth) {
+    public ClimateParameterViewImpl(ClimateParameterRepo repo, UserRepo auth) {
         this.repo = repo;
         this.auth = auth;
     }
@@ -27,15 +27,15 @@ public class ClimateParameterViewImpl implements ClimateParameterView {
     }
 
     @Override
-    public Optional<List<? extends ClimateParameter>> getAll(
+    public List<? extends ClimateParameter> getAll(
             List<String> by, List<String> order, List<String> field, List<String> cond, List<String> value, int pg, int sz, String login
     ) {
-        return Optional.empty();
+        return null;
     }
 
     @Override
-    public Optional<Long> getCount(List<String> field, List<String> cond, List<String> value, int pg, int sz, String login) {
-        return Optional.empty();
+    public long getCount(List<String> field, List<String> cond, List<String> value, int pg, int sz, String login) {
+        return 0;
     }
 
     @Override

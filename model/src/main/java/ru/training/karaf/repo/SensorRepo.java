@@ -11,43 +11,38 @@ import ru.training.karaf.model.Sensor;
 import ru.training.karaf.model.SensorDO;
 import ru.training.karaf.model.SensorTypeDO;
 import ru.training.karaf.model.UserDO;
+import ru.training.karaf.wrapper.QueryParams;
 
 public class SensorRepo {
     private final JpaTemplate template;
-    private final Repo sensorRepo;
-    private final Class<SensorDO> stdClass = SensorDO.class;
+    private final Repo repo;
+    private final static  Class<SensorDO> CLASS = SensorDO.class;
 
     public SensorRepo(JpaTemplate template) {
         this.template = template;
-        sensorRepo = new Repo(template);
+        repo = new Repo(template);
     }
 
-    public List<? extends Sensor> getAll(
-            List<String> by, List<String> order, List<String> field, List<String> cond, List<String> value, int pg, int sz,
-            String[] auth
-    ) {
-        return sensorRepo.getAll(by, order, field, cond, value, pg, sz, auth, stdClass);
+    public List<? extends Sensor> getAll(QueryParams query ) {
+        return repo.getAll(query, CLASS);
     }
 
-    public long getCount(
-            List<String> field, List<String> cond, List<String> value, int pg, int sz,
-            String[] auth
-    ) {
-        return sensorRepo.getCount(field, cond, value, pg, sz, auth, stdClass);
+    public long getCount(QueryParams query) {
+        return repo.getCount(query, CLASS);
     }
 
     public Optional<? extends Sensor> create(Sensor sensor) {
         return template.txExpr(em -> {
-            if (!(sensorRepo.getByName(sensor.getName(), em, stdClass).isPresent())) {
+            if (!(repo.getByName(sensor.getName(), em, CLASS).isPresent())) {
                 SensorDO sensorToCreate = new SensorDO(sensor);
                 em.persist(sensorToCreate);
                 if (sensor.getLocation() != null) {
-                    sensorToCreate.setLocation(sensorRepo.getEntityById(sensor.getLocation().getId(), em, LocationDO.class));
+                    sensorToCreate.setLocation(repo.getEntityById(sensor.getLocation().getId(), em, LocationDO.class));
                 }
                 if (sensor.getType() != null) {
-                    sensorToCreate.setType(sensorRepo.getEntityById(sensor.getType().getId(), em, SensorTypeDO.class));
+                    sensorToCreate.setType(repo.getEntityById(sensor.getType().getId(), em, SensorTypeDO.class));
                 }
-                sensorToCreate.setUsers(sensorRepo.getEntitySet(sensor.getUsers(), em, UserDO.class));
+                sensorToCreate.setUsers(repo.getEntitySet(sensor.getUsers(), em, UserDO.class));
                 return Optional.of(sensorToCreate);
             }
             throw new ValidationException("Name is already exist");
@@ -56,7 +51,7 @@ public class SensorRepo {
 
     public Optional<? extends Sensor> update(long id, Sensor sensor) {
         return template.txExpr(em -> {
-            List<SensorDO> l = sensorRepo.getByIdOrName(id, sensor.getName(), em, stdClass);
+            List<SensorDO> l = repo.getByIdOrName(id, sensor.getName(), em, CLASS);
             if (l.size() > 1) {
                 throw new ValidationException("This name is already exist");
             }
@@ -67,12 +62,12 @@ public class SensorRepo {
                     sensorToUpdate.setX(sensor.getX());
                     sensorToUpdate.setY(sensor.getY());
                     if (sensor.getLocation() != null) {
-                        sensorToUpdate.setLocation(sensorRepo.getEntityById(sensor.getLocation().getId(), em, LocationDO.class));
+                        sensorToUpdate.setLocation(repo.getEntityById(sensor.getLocation().getId(), em, LocationDO.class));
                     }
                     if (sensor.getType() != null) {
-                        sensorToUpdate.setType(sensorRepo.getEntityById(sensor.getType().getId(), em, SensorTypeDO.class));
+                        sensorToUpdate.setType(repo.getEntityById(sensor.getType().getId(), em, SensorTypeDO.class));
                     }
-                    sensorToUpdate.setUsers(sensorRepo.getEntitySet(sensor.getUsers(), em, UserDO.class));
+                    sensorToUpdate.setUsers(repo.getEntitySet(sensor.getUsers(), em, UserDO.class));
                     em.merge(sensorToUpdate);
                     return Optional.of(sensorToUpdate);
                 }
@@ -82,11 +77,11 @@ public class SensorRepo {
     }
 
     public Optional<? extends Sensor> get(long id) {
-        return template.txExpr(TransactionType.Required, em -> sensorRepo.getById(id, em, stdClass));
+        return template.txExpr(TransactionType.Required, em -> repo.getById(id, em, CLASS));
     }
 
     public Optional<? extends Sensor> delete(long id) {
-        return template.txExpr(em -> sensorRepo.getById(id, em, stdClass).map(l -> {
+        return template.txExpr(em -> repo.getById(id, em, CLASS).map(l -> {
             if (l.getLocation() != null) {
                 l.getLocation().getSensors().remove(l);
             }
@@ -102,9 +97,9 @@ public class SensorRepo {
 
     public Optional<? extends Sensor> setSensorType(long id, long typeId) {
         return template.txExpr(TransactionType.Required, em -> {
-            Optional<SensorDO> sensorToUpdate = sensorRepo.getById(id, em, stdClass);
+            Optional<SensorDO> sensorToUpdate = repo.getById(id, em, CLASS);
             sensorToUpdate.ifPresent(p -> {
-                p.setType(sensorRepo.getEntityById(typeId, em, SensorTypeDO.class));
+                p.setType(repo.getEntityById(typeId, em, SensorTypeDO.class));
                 em.merge(p);
             });
             return sensorToUpdate;
@@ -113,9 +108,9 @@ public class SensorRepo {
 
     public Optional<? extends Sensor> setLocation(long id, long locationId) {
         return template.txExpr(TransactionType.Required, em -> {
-            Optional<SensorDO> sensorToUpdate = sensorRepo.getById(id, em, stdClass);
+            Optional<SensorDO> sensorToUpdate = repo.getById(id, em, CLASS);
             sensorToUpdate.ifPresent(p -> {
-                p.setLocation(sensorRepo.getEntityById(locationId, em, LocationDO.class));
+                p.setLocation(repo.getEntityById(locationId, em, LocationDO.class));
                 em.merge(p);
             });
             return sensorToUpdate;
@@ -124,9 +119,9 @@ public class SensorRepo {
 
     public Optional<? extends Sensor> addUsers(long id, List<Long> userIds) {
         return template.txExpr(TransactionType.Required, em -> {
-            Optional<SensorDO> sensorToUpdate = sensorRepo.getById(id, em, stdClass);
+            Optional<SensorDO> sensorToUpdate = repo.getById(id, em, CLASS);
             sensorToUpdate.ifPresent(p -> {
-                p.addUsers(sensorRepo.getEntitySetByIds(userIds, em, UserDO.class));
+                p.addUsers(repo.getEntitySetByIds(userIds, em, UserDO.class));
                 em.merge(p);
             });
             return sensorToUpdate;
@@ -135,7 +130,7 @@ public class SensorRepo {
 
     public Optional<? extends Sensor> setXY(long id, long x, long y) {
         return template.txExpr(TransactionType.Required, em -> {
-            Optional<SensorDO> sensorToUpdate = sensorRepo.getById(id, em, stdClass);
+            Optional<SensorDO> sensorToUpdate = repo.getById(id, em, CLASS);
             sensorToUpdate.ifPresent(p -> {
                 p.setX(x);
                 p.setY(y);

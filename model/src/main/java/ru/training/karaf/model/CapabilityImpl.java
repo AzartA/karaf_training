@@ -6,7 +6,7 @@ import java.io.Serializable;
 import java.util.Objects;
 
 public class CapabilityImpl implements Serializable, Capability {
-    private static final long serialVersionUID = 9874563217891L;
+    private static final long serialVersionUID = 5474563217890L;
     @JsonProperty
     private String range;
     @JsonProperty

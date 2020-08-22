@@ -7,6 +7,7 @@ import javax.validation.ValidationException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
 
+import org.apache.shiro.authc.credential.DefaultPasswordService;
 import ru.training.karaf.model.User;
 import ru.training.karaf.rest.dto.DTO;
 import ru.training.karaf.rest.dto.SensorDTO;
@@ -14,39 +15,44 @@ import ru.training.karaf.rest.dto.UserDTO;
 import ru.training.karaf.view.UserView;
 
 public class UserRestServiceImpl implements UserRestService {
-
+    private DefaultPasswordService passwordService;
     private UserView view;
 
     public void setView(UserView view) {
         this.view = view;
     }
 
+    public void setPasswordService(DefaultPasswordService passwordService) {
+        this.passwordService = passwordService;
+    }
+
     @Override
     public List<UserDTO> getAll(List<String> by, List<String> order, List<String> field, List<String> cond, List<String> value, int pg, int sz,
                                 String login) {
-        return view.getAll(by, order, field, cond, value, pg, sz, login).map(l-> l.stream().map(UserDTO::new).collect(Collectors.toList()))
-                .orElseThrow(() -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
+        return view.getAll(by, order, field, cond, value, pg, sz, login).stream().map(UserDTO::new).collect(Collectors.toList());
     }
 
     @Override
     public DTO<Long> getCount(List<String> field, List<String> cond, List<String> value, int pg, int sz,
                               String login) {
-        return (view.getCount(field, cond, value, pg, sz, login)).map(DTO::new)
-                .orElseThrow(() -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
+        return new DTO<>(view.getCount(field, cond, value, pg, sz, login));
     }
 
     @Override
     public UserDTO create(UserDTO user,
                           String login) {
+
         if (view.loginIsPresent(user.getLogin())) {
             throw new ValidationException("login must be unique");
         }
+        user.setPassword(passwordService.encryptPassword(user.getPassword()));
         return view.create(user, login).map(UserDTO::new).orElseThrow(() -> new ValidationException("login must be unique"));
     }
 
     @Override
     public UserDTO update(long id, UserDTO user,
                           String login) {
+        user.setPassword(passwordService.encryptPassword(user.getPassword()));
         Optional<? extends User> u = view.update(id, user, login);
         return u.map(UserDTO::new)
                 .orElseThrow(() -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));

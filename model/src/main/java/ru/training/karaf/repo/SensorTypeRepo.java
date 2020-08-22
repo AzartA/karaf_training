@@ -41,13 +41,13 @@ public class SensorTypeRepo {
     public List<? extends SensorType> getAll(
             List<String> by, List<String> order, List<String> field, List<String> cond, List<String> value, int pg, int sz,
             String[] auth) {
-        return typeRepo.getAll(by, order, field, cond, value, pg, sz, auth, stdClass);
+        return null;//typeRepo.getAll(by, order, field, cond, value, pg, sz, auth, stdClass);
     }
 
 
     public long getCount(List<String> field, List<String> cond, List<String> value, int pg, int sz,
                          String[] auth) {
-        return typeRepo.getCount(field, cond, value, pg, sz, auth, stdClass);
+        return 0;//typeRepo.getCount(field, cond, value, pg, sz, auth, stdClass);
     }
 
 

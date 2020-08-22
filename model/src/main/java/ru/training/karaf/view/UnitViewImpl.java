@@ -5,13 +5,13 @@ import java.util.Optional;
 
 import ru.training.karaf.model.Unit;
 import ru.training.karaf.repo.UnitRepo;
-import ru.training.karaf.repo.UserAuthRepo;
+import ru.training.karaf.repo.UserRepo;
 
 public class UnitViewImpl implements UnitView {
     private UnitRepo repo;
-    private UserAuthRepo auth;
+    private UserRepo auth;
 
-    public UnitViewImpl(UnitRepo repo, UserAuthRepo auth) {
+    public UnitViewImpl(UnitRepo repo, UserRepo auth) {
         this.repo = repo;
         this.auth = auth;
     }
@@ -22,15 +22,15 @@ public class UnitViewImpl implements UnitView {
     }
 
     @Override
-    public Optional<List<? extends Unit>> getAll(
+    public List<? extends Unit> getAll(
             List<String> by, List<String> order, List<String> field, List<String> cond, List<String> value, int pg, int sz, String login
     ) {
-        return Optional.empty();
+        return null;
     }
 
     @Override
-    public Optional<Long> getCount(List<String> field, List<String> cond, List<String> value, int pg, int sz, String login) {
-        return Optional.empty();
+    public long getCount(List<String> field, List<String> cond, List<String> value, int pg, int sz, String login) {
+        return 0;
     }
 
     @Override

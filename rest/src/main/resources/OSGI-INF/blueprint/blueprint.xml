@@ -9,9 +9,11 @@
     <reference id="sensorView" interface="ru.training.karaf.view.SensorView"/>
     <reference id="measuringView" interface="ru.training.karaf.view.MeasuringView"/>
     <reference id="roleView" interface="ru.training.karaf.view.RoleView"/>
+    <!--<reference id="passwordService" interface="ru.training.karaf.rest.auth.AuthPassService"/>-->
 
     <bean id="userRestServiceBean" class="ru.training.karaf.rest.UserRestServiceImpl">
         <property name="view" ref="userView"/>
+        <property name="passwordService" ref="passwordService"/>
     </bean>
     <bean id="locationRestServiceBean" class="ru.training.karaf.rest.LocationRestServiceImpl">
         <property name="view" ref="locationView"/>
@@ -35,6 +37,12 @@
         <property name="view" ref="roleView"/>
     </bean>
 
+    <!--auth-->
+    <bean id = "passwordService" class = "ru.training.karaf.rest.auth.AuthPassService"/>
+    <bean id="authRestServiceBeen" class="ru.training.karaf.rest.AuthRestServiceImpl">
+        <property name="view" ref="userView"/>
+    </bean>
+    <!-- -->
 
     <bean id="validationProviderResolver"
           class="ru.training.karaf.rest.validation.HibernateValidationProviderResolver"/>
@@ -51,6 +59,7 @@
     <bean id="exceptionMapper" class="ru.training.karaf.rest.validation.ValidationExceptionMapperWithMassages"/>
 
 
+
     <!-- CXF -->
     <jaxrs:server id="restServer" address="/rest">
         <jaxrs:serviceBeans>
@@ -62,10 +71,12 @@
             <ref component-id="sensorRestServiceBeen"/>
             <ref component-id="measuringRestServiceBeen"/>
             <ref component-id="roleRestServiceBeen"/>
+            <ref component-id="authRestServiceBeen"/>
         </jaxrs:serviceBeans>
         <jaxrs:providers>
             <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider"/>
             <bean class="org.apache.cxf.jaxrs.impl.WebApplicationExceptionMapper"/>
+            <bean class="ru.training.karaf.rest.validation.UnknownAccountExceptionMapper"/>
             <ref component-id="exceptionMapper"/>
         </jaxrs:providers>
         <jaxrs:features>

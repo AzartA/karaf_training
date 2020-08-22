@@ -38,7 +38,7 @@ public class LocationRepo {
             List<String> by, List<String> order, List<String> field, List<String> cond, List<String> value, int pg, int sz,
             String[] auth
     ) {
-        return repo.getAll(by, order, field, cond, value, pg, sz, auth, stdClass);
+        return null;//repo.getAll(by, order, field, cond, value, pg, sz, auth, stdClass);
     }
 
 
@@ -46,7 +46,7 @@ public class LocationRepo {
             List<String> field, List<String> cond, List<String> value, int pg, int sz,
             String[] auth
     ) {
-        return repo.getCount(field, cond, value, pg, sz, auth, stdClass);
+        return 0;//repo.getCount(field, cond, value, pg, sz, auth, stdClass);
     }
 
 

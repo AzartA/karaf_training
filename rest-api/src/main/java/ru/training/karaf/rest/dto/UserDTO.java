@@ -7,6 +7,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import ru.training.karaf.model.Entity;
 import ru.training.karaf.model.Sensor;
 import ru.training.karaf.model.UniqueFieldEntity;
@@ -19,8 +20,10 @@ public class UserDTO implements User, UniqueFieldEntity {
     @NotNull(message = "Login should be present")
     @Pattern(regexp = "^[0-9a-zA-Z-_]{3,48}$", message = "Login must contain from 3 to 48 letters or digits only")
     private String login;
-    @Size(min = 5, max = 48, message = "Name must contain from 5 to 48 symbols")
+    @Size(min = 3, max = 48, message = "Name must contain from 3 to 48 symbols")
     private String name;
+    @JsonIgnore
+    private String password;
     private Set<String> properties;
     private Set<EntityDTO> sensors;
     private Set<EntityDTO> roles;
@@ -37,7 +40,16 @@ public class UserDTO implements User, UniqueFieldEntity {
         roles = user.getRoles().stream().map(EntityDTO::new).collect(Collectors.toSet());
     }
 
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     @Override
+
     public long getId() {
         return id;
     }

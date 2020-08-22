@@ -1,31 +1,31 @@
 package ru.training.karaf.view;
 
+import ru.training.karaf.model.Measuring;
+import ru.training.karaf.repo.MeasuringRepo;
+import ru.training.karaf.repo.UserRepo;
+
 import java.util.List;
 import java.util.Optional;
 
-import ru.training.karaf.model.Measuring;
-import ru.training.karaf.repo.MeasuringRepo;
-import ru.training.karaf.repo.UserAuthRepo;
-
 public class MeasuringViewImpl implements MeasuringView {
     private MeasuringRepo repo;
-    private UserAuthRepo auth;
+    private UserRepo auth;
 
-    public MeasuringViewImpl(MeasuringRepo repo, UserAuthRepo auth) {
+    public MeasuringViewImpl(MeasuringRepo repo, UserRepo auth) {
         this.repo = repo;
         this.auth = auth;
     }
 
     @Override
-    public Optional<List<? extends Measuring>> getAll(
+    public List<? extends Measuring> getAll(
             List<String> by, List<String> order, List<String> field, List<String> cond, List<String> value, int pg, int sz, String login
     ) {
-        return Optional.empty();
+        return null;
     }
 
     @Override
-    public Optional<Long> getCount(List<String> field, List<String> cond, List<String> value, int pg, int sz, String login) {
-        return Optional.empty();
+    public long getCount(List<String> field, List<String> cond, List<String> value, int pg, int sz, String login) {
+        return 0;
     }
 
     @Override

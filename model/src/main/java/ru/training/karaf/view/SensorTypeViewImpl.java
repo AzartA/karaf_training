@@ -2,16 +2,16 @@ package ru.training.karaf.view;
 
 import ru.training.karaf.model.SensorType;
 import ru.training.karaf.repo.SensorTypeRepo;
-import ru.training.karaf.repo.UserAuthRepo;
+import ru.training.karaf.repo.UserRepo;
 
 import java.util.List;
 import java.util.Optional;
 
 public class SensorTypeViewImpl implements SensorTypeView {
     private SensorTypeRepo repo;
-    private UserAuthRepo auth;
+    private UserRepo auth;
 
-    public SensorTypeViewImpl(SensorTypeRepo repo, UserAuthRepo auth) {
+    public SensorTypeViewImpl(SensorTypeRepo repo, UserRepo auth) {
         this.repo = repo;
         this.auth = auth;
     }
@@ -22,15 +22,15 @@ public class SensorTypeViewImpl implements SensorTypeView {
     }
 
     @Override
-    public Optional<List<? extends SensorType>> getAll(
+    public List<? extends SensorType> getAll(
             List<String> by, List<String> order, List<String> field, List<String> cond, List<String> value, int pg, int sz, String login
     ) {
-        return Optional.empty();
+        return null;
     }
 
     @Override
-    public Optional<Long> getCount(List<String> field, List<String> cond, List<String> value, int pg, int sz, String login) {
-        return Optional.empty();
+    public long getCount(List<String> field, List<String> cond, List<String> value, int pg, int sz, String login) {
+        return 0;
     }
 
     @Override

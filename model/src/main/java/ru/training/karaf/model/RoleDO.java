@@ -7,13 +7,14 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Entity
-public class RoleDO implements Role {
-
+public class RoleDO implements Role, Serializable {
+    private static final long serialVersionUID = 5474563217892L;
     @Id
     @GeneratedValue
     private long id;

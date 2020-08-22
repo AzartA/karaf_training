@@ -12,6 +12,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -24,7 +25,8 @@ import java.util.stream.Collectors;
         @NamedQuery(name = UserDO.GET_BY_ID_OR_LOGIN, query = "SELECT u FROM UserDO AS u WHERE u.id = :id OR u.login = :login")
 
 })
-public class UserDO implements User {
+public class UserDO implements User, Serializable {
+    private static final long serialVersionUID = 5474563217891L;
     public static final String GET_ALL = "Users.getAll";
     public static final String GET_BY_LOGIN = "Users.getByLogin";
     public static final String GET_BY_ID = "Users.getById";
@@ -32,14 +34,16 @@ public class UserDO implements User {
     @Id
     @GeneratedValue
     private long id;
-    @Column(name = "name")
+    @Column(name = "name", length = 64, nullable = false)
     private String name;
     @Column(name = "login", length = 48, nullable = false, unique = true)
     private String login;
+    @Column(name = "password")
+    private  String password;
     @ElementCollection
     @CollectionTable(name = "user_properties",
             joinColumns = @JoinColumn(name = "user_id"))
-    private Set<String> properties;
+    private Set<String> properties = new HashSet<>(4);
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "USER_SENSOR_SET")
     private Set<SensorDO> sensors;
@@ -54,9 +58,19 @@ public class UserDO implements User {
     public UserDO(User user) {
         name = user.getName();
         login = user.getLogin();
+        password = user.getPassword();
         properties = user.getProperties();
         sensors = new HashSet<>();
         roles = new HashSet<>();
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public long getId() {

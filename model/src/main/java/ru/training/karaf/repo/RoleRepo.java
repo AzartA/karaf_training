@@ -24,7 +24,7 @@ public class RoleRepo {
     public  void init(){
         template.tx(em -> {
             Query q = em.createNativeQuery("SELECT roledo.id FROM roledo LIMIT 1");
-            List<Object[]> list = q.getResultList();
+            List<?> list = q.getResultList();
             if(list.isEmpty()) {
                 RoleDO admin = new RoleDO("Admin");
                 RoleDO user = new RoleDO("User");
@@ -65,13 +65,13 @@ public class RoleRepo {
             List<String> by, List<String> order, List<String> field, List<String> cond, List<String> value, int pg, int sz,
             String[] auth
     ) {
-        return repo.getAll(by, order, field, cond, value, pg, sz, auth, stdClass);
+        return null;//repo.getAll(by, order, field, cond, value, pg, sz, auth, stdClass);
     }
 
 
     public long getCount(List<String> field, List<String> cond, List<String> value, int pg, int sz,
                          String[] auth) {
-        return repo.getCount(field, cond, value, pg, sz, auth, stdClass);
+        return 0;//repo.getCount(field, cond, value, pg, sz, auth, stdClass);
     }
 
 

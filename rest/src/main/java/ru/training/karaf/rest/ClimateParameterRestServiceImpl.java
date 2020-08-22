@@ -1,5 +1,6 @@
 package ru.training.karaf.rest;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -25,9 +26,7 @@ public class ClimateParameterRestServiceImpl implements ClimateParameterRestServ
             List<String> field, List<String> cond, List<String> value, int pg, int sz,
             String login
     ) {
-        return view.getAll(by, order, field, cond, value, pg, sz, login).map(
-                l -> l.stream().map(ClimateParameterDTO::new).collect(Collectors.toList()))
-                .orElseThrow(() -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
+        return view.getAll(by, order, field, cond, value, pg, sz, login).stream().map(ClimateParameterDTO::new).collect(Collectors.toList());
     }
 
     @Override
@@ -35,8 +34,8 @@ public class ClimateParameterRestServiceImpl implements ClimateParameterRestServ
             List<String> field, List<String> cond, List<String> value, int pg, int sz,
             String login
     ) {
-        return (view.getCount(field, cond, value, pg, sz, login)).map(DTO::new)
-                .orElseThrow(() -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
+        return new DTO<>(view.getCount(field, cond, value, pg, sz, login));
+
     }
 
     @Override

@@ -1,5 +1,6 @@
 package ru.training.karaf.rest.validation;
 
+import org.osgi.framework.FrameworkUtil;
 import ru.training.karaf.model.UniqueFieldEntity;
 
 import javax.validation.ConstraintValidator;

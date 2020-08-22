@@ -12,13 +12,14 @@ import ru.training.karaf.model.RoleDO;
 import ru.training.karaf.model.SensorDO;
 import ru.training.karaf.model.User;
 import ru.training.karaf.model.UserDO;
+import ru.training.karaf.wrapper.QueryParams;
 
 public class UserRepo {
     private final JpaTemplate template;
 
 
     private final Repo repo;
-    private final Class<UserDO> stdClass = UserDO.class;
+    private final Class<UserDO> CLASS = UserDO.class;
 
     public UserRepo(JpaTemplate template) {
         this.template = template;
@@ -27,33 +28,30 @@ public class UserRepo {
     }
 
 
-    public List<? extends User> getAll(
-            List<String> by, List<String> order, List<String> field, List<String> cond, List<String> value, int pg, int sz,
-            String[] auth) {
-        return repo.getAll(by, order, field, cond, value, pg, sz, auth, stdClass);
+    public List<? extends User> getAll(QueryParams query) {
+        return repo.getAll(query, CLASS);
     }
 
 
-    public long getCount(List<String> field, List<String> cond, List<String> value, int pg, int sz,
-                         String[] auth) {
-        return repo.getCount(field, cond, value, pg, sz, auth, stdClass);
+    public long getCount(QueryParams query) {
+        return repo.getCount(query, CLASS);
     }
 
 
-    public Optional<? extends User> create(User user) {
+    public User create(User user) {
         return template.txExpr(em -> {
             UserDO userToCreate = new UserDO(user);
             em.persist(userToCreate);
             userToCreate.setSensors(repo.getEntitySet(user.getSensors(),em,SensorDO.class));
             userToCreate.setRoles(repo.getEntitySet(user.getRoles(),em,RoleDO.class));
-            return Optional.of(userToCreate);
+            return userToCreate;
         });
     }
 
 
     public Optional<? extends User> update(long id, User user) {
         return template.txExpr(em -> {
-            List<UserDO> u = repo.getByIdOrName(id, user.getLogin(), em, stdClass);
+            List<UserDO> u = getByIdOrLogin(id, user.getLogin(), em);
             if (u.size() > 1) {
                 throw new ValidationException("This login is already exist");
             }
@@ -66,6 +64,7 @@ public class UserRepo {
                     if(user.getName()!= null) {
                         userToUpdate.setName(user.getName());
                     }
+                    userToUpdate.setPassword(user.getPassword());
                     if(user.getProperties()!= null) {
                         userToUpdate.setProperties(user.getProperties());
                     }
@@ -79,6 +78,11 @@ public class UserRepo {
         });
     }
 
+    private List<UserDO> getByIdOrLogin(long id, String login, EntityManager em) {
+        return em.createNamedQuery(UserDO.GET_BY_ID_OR_LOGIN,UserDO.class)
+                .setParameter("id", id).setParameter("login", login)
+                .getResultList();
+     }
 
     public Optional<? extends User> get(long id) {
         return Optional.ofNullable(template.txExpr(em -> em.find(UserDO.class, id)));
@@ -87,7 +91,7 @@ public class UserRepo {
 
 
     public Optional<? extends User> delete(long id) {
-        return template.txExpr(em -> repo.getById(id,em, stdClass).map(user -> {
+        return template.txExpr(em -> repo.getById(id,em, CLASS).map(user -> {
             user.getSensors().forEach(s -> s.getUsers().remove(user));
             em.remove(user);
             return user;
@@ -97,7 +101,7 @@ public class UserRepo {
 
     public Optional<? extends User> addSensors(long id, List<Long> sensorIds) {
         return template.txExpr(TransactionType.Required, em -> {
-            Optional<UserDO> userToUpdate = repo.getById(id, em, stdClass);
+            Optional<UserDO> userToUpdate = repo.getById(id, em, CLASS);
             userToUpdate.ifPresent(u -> {
                 u.addSensors(repo.getEntitySetByIds(sensorIds, em, SensorDO.class));
                 em.merge(u);
@@ -121,7 +125,7 @@ public class UserRepo {
 
     public Optional<? extends User> addRoles(long id, List<Long> rolesIds) {
         return template.txExpr(TransactionType.Required, em -> {
-            Optional<UserDO> userToUpdate = repo.getById(id, em, stdClass);
+            Optional<UserDO> userToUpdate = repo.getById(id, em, CLASS);
             userToUpdate.ifPresent(p -> {
                 p.addRoles(repo.getEntitySetByIds(rolesIds, em, RoleDO.class));
                 em.merge(p);
@@ -133,7 +137,7 @@ public class UserRepo {
 
     public Optional<? extends User> removeRoles(long id, List<Long> rolesIds) {
         return template.txExpr(TransactionType.Required, em -> {
-            Optional<UserDO> userToUpdate = repo.getById(id, em, stdClass);
+            Optional<UserDO> userToUpdate = repo.getById(id, em, CLASS);
             userToUpdate.ifPresent(p -> {
                 p.removeRoles(repo.getEntitySetByIds(rolesIds, em, RoleDO.class));
                 em.merge(p);
