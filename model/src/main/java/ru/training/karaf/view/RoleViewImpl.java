@@ -28,7 +28,7 @@ public class RoleViewImpl implements RoleView {
 
     @Override
     public List<? extends Role> getAll(
-            List<String> by, List<String> order, List<String> field, List<String> cond, List<String> value, int pg, int sz, String login
+            List<String> by, List<String> order, List<String> field, List<String> cond, List<String> value, int pg, int sz
     ) {
         return null;
     }

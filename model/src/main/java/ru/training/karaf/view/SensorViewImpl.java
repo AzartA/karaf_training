@@ -14,6 +14,8 @@ import ru.training.karaf.repo.UserRepo;
 import ru.training.karaf.wrapper.FilterParam;
 import ru.training.karaf.wrapper.QueryParams;
 
+import javax.security.auth.Subject;
+
 public class SensorViewImpl implements SensorView {
     private SensorRepo repo;
     private UserRepo auth;
@@ -61,7 +63,7 @@ public class SensorViewImpl implements SensorView {
 
     @Override
     public List<? extends Sensor> getAll(
-            List<String> by, List<String> order, List<String> field, List<String> cond, List<String> value, int pg, int sz, String login
+            List<String> by, List<String> order, List<String> field, List<String> cond, List<String> value, int pg, int sz
     ) {
         FilterParam authInfo = getAuthFilter(login);
         QueryParams query =  view.createQueryParams(by, order, field, cond, value, pg, sz, authInfo, type);
@@ -114,8 +116,9 @@ public class SensorViewImpl implements SensorView {
                 user.getSensors().stream().mapToLong(Entity::getId).anyMatch(sId -> sId == id));
     }
 
-    private FilterParam getAuthFilter(String login){
-        User user = auth.getByLogin(login).get();
+    private FilterParam getAuthFilter(){
+
+        User user = ;
         Set<String> roles = user.getRoles().stream().map(Entity::getName).collect(Collectors.toSet());
         if (!roles.contains("Admin")) {
             return new FilterParam("users.id","=", Long.toString(user.getId()),type);

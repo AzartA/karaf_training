@@ -9,6 +9,11 @@ import ru.training.karaf.view.UserView;
 
 public class AuthRestServiceImpl implements AuthRestService {
     private UserView view;
+    private Subject currentUser;
+
+    public Subject getCurrentUser() {
+        return currentUser;
+    }
 
     public void setView(UserView view) {
         this.view = view;

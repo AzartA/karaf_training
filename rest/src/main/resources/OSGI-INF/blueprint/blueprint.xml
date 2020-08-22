@@ -42,6 +42,7 @@
     <bean id="authRestServiceBeen" class="ru.training.karaf.rest.AuthRestServiceImpl">
         <property name="view" ref="userView"/>
     </bean>
+
     <!-- -->
 
     <bean id="validationProviderResolver"

@@ -50,7 +50,7 @@ public class UserViewImpl implements UserView {
 
     @Override
     public List<? extends User> getAll(
-            List<String> by, List<String> order, List<String> field, List<String> cond, List<String> value, int pg, int sz, String login
+            List<String> by, List<String> order, List<String> field, List<String> cond, List<String> value, int pg, int sz
     ) {
         if(allIsAllowed(login) || gettingIsAllowed(login)) {
             QueryParams query = view.createQueryParams(by, order, field, cond, value, pg, sz, null, type);

@@ -9,7 +9,6 @@ import ru.training.karaf.view.RoleView;
 import javax.validation.ValidationException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -24,7 +23,7 @@ public class RoleRestSeviceImpl implements  RoleRestService {
     @Override
     public List<RoleDTO> getAll(List<String> by, List<String> order, List<String> field, List<String> cond, List<String> value, int pg, int sz,
                                 String login) {
-        return view.getAll(by, order, field, cond, value, pg, sz, login).stream().map(RoleDTO::new).collect(Collectors.toList());
+        return view.getAll(by, order, field, cond, value, pg, sz).stream().map(RoleDTO::new).collect(Collectors.toList());
     }
 
     @Override

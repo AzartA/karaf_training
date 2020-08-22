@@ -1,20 +1,11 @@
 package ru.training.karaf.wrapper;
 
-import ru.training.karaf.validation.ConformingFilterParams;
-
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-
 public class SortParam {
-    @NotNull
     private String by;
-    @NotNull
-    @Pattern(regexp = "^asc|desc$", message = "order must be asc or desc only")
     private String order;
 
     public SortParam() {
     }
-    @ConformingFilterParams(message = "There is no such field")
     public <T> SortParam(String by, String order, Class<T> type) {
         this.by = by;
         this.order = order;

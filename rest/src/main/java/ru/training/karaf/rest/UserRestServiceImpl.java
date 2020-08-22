@@ -10,7 +10,6 @@ import javax.ws.rs.core.Response;
 import org.apache.shiro.authc.credential.DefaultPasswordService;
 import ru.training.karaf.model.User;
 import ru.training.karaf.rest.dto.DTO;
-import ru.training.karaf.rest.dto.SensorDTO;
 import ru.training.karaf.rest.dto.UserDTO;
 import ru.training.karaf.view.UserView;
 
@@ -29,7 +28,7 @@ public class UserRestServiceImpl implements UserRestService {
     @Override
     public List<UserDTO> getAll(List<String> by, List<String> order, List<String> field, List<String> cond, List<String> value, int pg, int sz,
                                 String login) {
-        return view.getAll(by, order, field, cond, value, pg, sz, login).stream().map(UserDTO::new).collect(Collectors.toList());
+        return view.getAll(by, order, field, cond, value, pg, sz).stream().map(UserDTO::new).collect(Collectors.toList());
     }
 
     @Override

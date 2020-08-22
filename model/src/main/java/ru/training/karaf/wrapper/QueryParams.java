@@ -1,6 +1,5 @@
 package ru.training.karaf.wrapper;
 
-import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,11 +43,11 @@ public class QueryParams {
         pagination[1] = sz;
     }
 
-    public void addFilterParam(@Valid FilterParam p) {
+    public void addFilterParam(FilterParam p) {
         filters.add(p);
     }
 
-    public void addSortParam(@Valid SortParam p) {
+    public void addSortParam(SortParam p) {
         sorts.add(p);
     }
 }

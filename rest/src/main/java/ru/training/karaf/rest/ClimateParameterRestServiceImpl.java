@@ -1,6 +1,5 @@
 package ru.training.karaf.rest;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -26,7 +25,7 @@ public class ClimateParameterRestServiceImpl implements ClimateParameterRestServ
             List<String> field, List<String> cond, List<String> value, int pg, int sz,
             String login
     ) {
-        return view.getAll(by, order, field, cond, value, pg, sz, login).stream().map(ClimateParameterDTO::new).collect(Collectors.toList());
+        return view.getAll(by, order, field, cond, value, pg, sz).stream().map(ClimateParameterDTO::new).collect(Collectors.toList());
     }
 
     @Override

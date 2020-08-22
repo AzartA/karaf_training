@@ -1,17 +1,16 @@
-package ru.training.karaf.validation;
+package ru.training.karaf.rest.validation;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-import javax.validation.ValidationException;
 import javax.validation.constraintvalidation.SupportedValidationTarget;
 import javax.validation.constraintvalidation.ValidationTarget;
 
 @SupportedValidationTarget(ValidationTarget.PARAMETERS)
-public class FilterParamsValidatorImpl implements ConstraintValidator<ConformingFilterParams, Object[]> {
+public class FilterParamsValidatorImpl implements ConstraintValidator<ConformingParams, Object[]> {
     @Override
-    public void initialize(ConformingFilterParams conformingFilterParams) {
+    public void initialize(ConformingParams conformingParams) {
 
     }
 
@@ -58,34 +57,4 @@ public class FilterParamsValidatorImpl implements ConstraintValidator<Conforming
         return true;
     }
 
-    public <T> void validate(String field, String cond, String value, Class<T> t) {
-        Class<?> type = t;
-        if (field == null || cond == null ||  value == null) {
-            throw new ValidationException("Filter parameters mustn't be null");
-        }
-
-        String[] fieldParts = field.split("\\.");
-        for (String fieldPart : fieldParts) {
-            //verification
-            try {
-                if (fieldPart.endsWith("s")) {
-                    Field fld = type.getDeclaredField(fieldPart);
-                    ParameterizedType pType = (ParameterizedType) fld.getGenericType();
-                    type = (Class<?>) pType.getActualTypeArguments()[0];
-                } else {
-                    type = type.getDeclaredField(fieldPart).getType();
-                }
-            } catch (NoSuchFieldException e) {
-                throw new ValidationException("There is no such field: "+ fieldPart);
-            }
-        }
-          //ToDo exp notation
-       if(!type.equals(String.class) && cond.matches("!?contains") ){
-           throw new ValidationException("Condition is not applicable to the field type");
-       }
-
-        if ((type.equals(Long.class) || type.equals(Double.class)) && !value.matches("-?\\d+(?:\\.\\d+)?")){
-            throw new ValidationException("Value type don't correspond with the field type");
-        }
-    }
 }

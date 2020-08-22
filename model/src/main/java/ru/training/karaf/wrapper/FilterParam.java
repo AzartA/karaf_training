@@ -1,29 +1,15 @@
 package ru.training.karaf.wrapper;
 
-import ru.training.karaf.validation.ConformingFilterParams;
-import ru.training.karaf.validation.FilterParamsValidatorImpl;
-
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
-
 public class FilterParam {
     private final String COND = "Condition must be one of: '=', '>', '<', '>=', '<=', '!=', 'contains', '!contains'";
-    @NotNull
     private String field;
-    @Pattern(regexp = "^[><=]$|^[!<>]=$|^!?contains$",
-            message = "{filter.condition.field}")
-    @Size(min = 1, max = 9, message = "{filter.condition.field}")
     private String cond;
-    @NotNull
     private String value;
 
     public FilterParam() {
     }
-    @ConformingFilterParams(message = "There is no such field, or condition is not applicable to the field's type")
+
     public <T> FilterParam(String field, String cond, String value, Class<T> type) {
-        FilterParamsValidatorImpl validator = new FilterParamsValidatorImpl();
-        validator.validate(field, cond, value, type);
         this.field = field;
         this.cond = cond;
         this.value = value;

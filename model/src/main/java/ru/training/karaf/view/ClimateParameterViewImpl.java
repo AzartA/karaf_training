@@ -28,7 +28,7 @@ public class ClimateParameterViewImpl implements ClimateParameterView {
 
     @Override
     public List<? extends ClimateParameter> getAll(
-            List<String> by, List<String> order, List<String> field, List<String> cond, List<String> value, int pg, int sz, String login
+            List<String> by, List<String> order, List<String> field, List<String> cond, List<String> value, int pg, int sz
     ) {
         return null;
     }

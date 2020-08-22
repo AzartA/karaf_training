@@ -1,4 +1,4 @@
-package ru.training.karaf.validation;
+package ru.training.karaf.rest.validation;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
 @Constraint(validatedBy = FilterParamsValidatorImpl.class)
 @Target({ ElementType.METHOD, ElementType.CONSTRUCTOR, ElementType.ANNOTATION_TYPE })
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ConformingFilterParams {
+public @interface ConformingParams {
     String message() default "The condition is inapplicable for the field and the value";
 
     Class<?>[] groups() default { };

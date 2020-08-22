@@ -3,7 +3,7 @@
     <reference id="jpaTemplate" interface="org.apache.aries.jpa.template.JpaTemplate" filter="(osgi.unit.name=PU)"/>
     <reference id="datasource" interface="javax.sql.DataSource"
                filter="(osgi.jndi.service.name=jdbc/ru.training.model.model-datasource)"/>
-
+    <!--<reference id = "shiroUtils" interface="org.apache.shiro.SecurityUtils"/>-->
     <bean id="repo" class="ru.training.karaf.repo.Repo">
         <argument ref="jpaTemplate"/>
     </bean>
@@ -37,6 +37,7 @@
     <bean id="sensorView" class="ru.training.karaf.view.SensorViewImpl">
         <argument ref="sensorRepo"/>
         <argument ref="userRepo"/>
+
     </bean>
     <bean id="userView" class="ru.training.karaf.view.UserViewImpl">
         <argument ref="userRepo"/>

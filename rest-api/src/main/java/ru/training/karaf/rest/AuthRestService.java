@@ -3,6 +3,7 @@ package ru.training.karaf.rest;
 import ru.training.karaf.rest.dto.AuthDTO;
 import ru.training.karaf.rest.dto.UserDTO;
 
+import org.apache.shiro.subject.Subject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -16,4 +17,6 @@ public interface AuthRestService {
 
     @POST
     UserDTO setAuth(AuthDTO auth);
+
+    Subject
 }
