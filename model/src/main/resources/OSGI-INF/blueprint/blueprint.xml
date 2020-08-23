@@ -67,20 +67,6 @@
         <argument ref="userRepo"/>
     </bean>
 
-    <bean id="validationProviderResolver"
-          class="ru.training.karaf.rest.validation.HibernateValidationProviderResolver"/>
-
-    <bean id="beanValidationProvider" class="org.apache.cxf.validation.BeanValidationProvider">
-        <argument ref="validationProviderResolver"/>
-    </bean>
-
-    <bean id="jaxrsValidationFeature" class="org.apache.cxf.validation.BeanValidationFeature">
-        <property name="provider" ref="beanValidationProvider"/>
-    </bean>
-
-    <!--<bean id="exceptionMapper" class="org.apache.cxf.jaxrs.validation.ValidationExceptionMapper"/>-->
-    <bean id="exceptionMapper" class="ru.training.karaf.rest.validation.ValidationExceptionMapperWithMassages"/>
-
     <service ref="userView" interface="ru.training.karaf.view.UserView"/>
     <service ref="locationView" interface="ru.training.karaf.view.LocationView"/>
     <service ref="unitView" interface="ru.training.karaf.view.UnitView"/>

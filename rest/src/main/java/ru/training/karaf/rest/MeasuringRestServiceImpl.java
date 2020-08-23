@@ -27,32 +27,32 @@ public class MeasuringRestServiceImpl implements MeasuringRestService {
     @Override
     public DTO<Long> getCount(List<String> field, List<String> cond, List<String> value, int pg, int sz,
                               String login) {
-        return new DTO<>(view.getCount(field, cond, value, pg, sz, login));
+        return new DTO<>(view.getCount(field, cond, value, pg, sz));
     }
 
     @Override
     public MeasuringDTO create(MeasuringDTO type,
                                String login) {
-        return view.create(type, login).map(MeasuringDTO::new).orElse(null);
+        return view.create(type).map(MeasuringDTO::new).orElse(null);
     }
 
     @Override
     public MeasuringDTO update(long id, MeasuringDTO type,
                                String login) {
-        Optional<? extends Measuring> l = view.update(id, type, login);
+        Optional<? extends Measuring> l = view.update(id, type);
         return l.map(MeasuringDTO::new).orElseThrow(() -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
     }
 
     @Override
     public MeasuringDTO get(long id,
                             String login) {
-        return view.get(id, login).map(MeasuringDTO::new).orElseThrow(
+        return view.get(id).map(MeasuringDTO::new).orElseThrow(
                 () -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
     }
 
     @Override
     public void delete(long id,
                        String login) {
-        view.delete(id, login).orElseThrow(() -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
+        view.delete(id).orElseThrow(() -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
     }
 }

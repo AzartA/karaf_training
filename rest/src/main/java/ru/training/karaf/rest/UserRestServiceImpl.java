@@ -34,25 +34,25 @@ public class UserRestServiceImpl implements UserRestService {
     @Override
     public DTO<Long> getCount(List<String> field, List<String> cond, List<String> value, int pg, int sz,
                               String login) {
-        return new DTO<>(view.getCount(field, cond, value, pg, sz, login));
+        return new DTO<>(view.getCount(field, cond, value, pg, sz));
     }
 
     @Override
     public UserDTO create(UserDTO user,
                           String login) {
 
-        if (view.loginIsPresent(user.getLogin())) {
+        /*if (view.loginIsPresent(user.getLogin())) {
             throw new ValidationException("login must be unique");
-        }
+        }*/
         user.setPassword(passwordService.encryptPassword(user.getPassword()));
-        return view.create(user, login).map(UserDTO::new).orElseThrow(() -> new ValidationException("login must be unique"));
+        return view.create(user).map(UserDTO::new).orElseThrow(() -> new ValidationException("login must be unique"));
     }
 
     @Override
     public UserDTO update(long id, UserDTO user,
                           String login) {
         user.setPassword(passwordService.encryptPassword(user.getPassword()));
-        Optional<? extends User> u = view.update(id, user, login);
+        Optional<? extends User> u = view.update(id, user);
         return u.map(UserDTO::new)
                 .orElseThrow(() -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
     }
@@ -60,14 +60,14 @@ public class UserRestServiceImpl implements UserRestService {
     @Override
     public UserDTO get(long id,
                        String login) {
-        return view.get(id, login).map(UserDTO::new)
+        return view.get(id).map(UserDTO::new)
                 .orElseThrow(() -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
     }
 
     @Override
     public void delete(long id,
                        String login) {
-        view.delete(id, login)
+        view.delete(id)
                 .orElseThrow(() -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
     }
 

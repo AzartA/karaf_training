@@ -29,27 +29,27 @@ public class UnitViewImpl implements UnitView {
     }
 
     @Override
-    public long getCount(List<String> field, List<String> cond, List<String> value, int pg, int sz, String login) {
+    public long getCount(List<String> field, List<String> cond, List<String> value, int pg, int sz) {
         return 0;
     }
 
     @Override
-    public Optional<? extends Unit> create(Unit entity, String login) {
+    public Optional<? extends Unit> create(Unit entity) {
         return Optional.empty();
     }
 
     @Override
-    public Optional<? extends Unit> update(long id, Unit entity, String login) {
+    public Optional<? extends Unit> update(long id, Unit entity) {
         return Optional.empty();
     }
 
     @Override
-    public Optional<? extends Unit> get(long id, String login) {
+    public Optional<? extends Unit> get(long id) {
         return Optional.empty();
     }
 
     @Override
-    public Optional<? extends Unit> delete(long id, String login) {
+    public Optional<? extends Unit> delete(long id) {
         return Optional.empty();
     }
 }

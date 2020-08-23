@@ -25,15 +25,15 @@ import java.util.List;
 @Consumes(MediaType.APPLICATION_JSON)
 public interface SensorRestService {
     @GET
-    @ConformingParams(message = "There is no such field, or condition is not applicable to the field's type")
+    //@ConformingParams(message = "There is no such field, or condition is not applicable to the field's type")
     List<SensorDTO> getAll(
             @QueryParam("by") List<String> by,
-            @Pattern(regexp = "^asc|desc$", message = "order must be asc or desc only")
-            @QueryParam("order") List<String> order,
+            //@Pattern(regexp = "^asc|desc$", message = "order must be asc or desc only")
+                @QueryParam("order") List<String> order,
             @QueryParam("field") List<String> field,
-            @Pattern(regexp = "^[><=]$|^[!<>]=$|^!?contains$", message = "{filter.condition.field}")
-            @Size(min = 1, max = 9, message = "{filter.condition.field}")
-            @QueryParam("condition") List<String> cond,
+            //@Pattern(regexp = "^[><=]$|^[!<>]=$|^!?contains$", message = "")
+                //@Size(min = 1, max = 9, message = "")
+                @QueryParam("condition") List<String> cond,
             @QueryParam("value") List<String> value,
             @Min(0) @QueryParam("pg") int pg,
             @Min(0) @QueryParam("sz") int sz
@@ -46,62 +46,37 @@ public interface SensorRestService {
             @QueryParam("condition") List<String> cond,
             @QueryParam("value") List<String> value,
             @QueryParam("pg") int pg,
-            @QueryParam("sz") int sz,
-            @QueryParam("login") String login
+            @QueryParam("sz") int sz
     );
 
     @POST
-    SensorDTO create(
-            @Valid SensorDTO type,
-            @QueryParam("login") String login
-    );
+    SensorDTO create(@Valid SensorDTO type);
 
     @PUT
     @Path("{id}")
-    SensorDTO update(
-            @PathParam("id") long id, @Valid SensorDTO type,
-            @QueryParam("login") String login
-    );
+    SensorDTO update(@PathParam("id") long id, @Valid SensorDTO type);
 
     @PUT
     @Path("{id}/location/{lId}")
-    SensorDTO setLocation(
-            @PathParam("id") long id, @PathParam("lId") long locationId,
-            @QueryParam("login") String login
-    );
+    SensorDTO setLocation(@PathParam("id") long id, @PathParam("lId") long locationId);
 
     @PUT
     @Path("{id}/type/{tId}")
-    SensorDTO setSensorType(
-            @PathParam("id") long id, @PathParam("tId") long typeId,
-            @QueryParam("login") String login
-    );
+    SensorDTO setSensorType(@PathParam("id") long id, @PathParam("tId") long typeId);
 
     @PUT
     @Path("{id}/users")
-    SensorDTO addUsers(
-            @PathParam("id") long id, @QueryParam("uId") List<Long> userIds,
-            @QueryParam("login") String login
-    );
+    SensorDTO addUsers(@PathParam("id") long id, @QueryParam("uId") List<Long> userIds);
 
     @PUT
     @Path("{id}/{x}/{y}")
-    SensorDTO setXY(
-            @PathParam("id") long id, @PathParam("x") long x, @PathParam("y") long y,
-            @QueryParam("login") String login
-    );
+    SensorDTO setXY(@PathParam("id") long id, @PathParam("x") long x, @PathParam("y") long y);
 
     @GET
     @Path("{id}")
-    SensorDTO get(
-            @PathParam("id") long id,
-            @QueryParam("login") String login
-    );
+    SensorDTO get(@PathParam("id") long id);
 
     @DELETE
     @Path("{id}")
-    void delete(
-            @PathParam("id") long id,
-            @QueryParam("login") String login
-    );
+    void delete(@PathParam("id") long id);
 }

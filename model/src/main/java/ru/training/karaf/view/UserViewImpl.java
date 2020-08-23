@@ -1,5 +1,6 @@
 package ru.training.karaf.view;
 
+import org.apache.shiro.SecurityUtils;
 import ru.training.karaf.model.Entity;
 import ru.training.karaf.model.User;
 import ru.training.karaf.model.UserDO;
@@ -25,7 +26,7 @@ public class UserViewImpl implements UserView {
 
     @Override
     public Optional<? extends User> addSensors(long id, List<Long> sensorIds, String login) {
-        return allIsAllowed(login)? repo.addSensors(id, sensorIds):Optional.empty();
+        return allIsAllowed()? repo.addSensors(id, sensorIds):Optional.empty();
     }
 
     @Override
@@ -35,12 +36,12 @@ public class UserViewImpl implements UserView {
 
     @Override
     public Optional<? extends User> addRoles(long id, List<Long> rolesIds, String login) {
-        return allIsAllowed(login)? repo.addSensors(id, rolesIds):Optional.empty();
+        return allIsAllowed()? repo.addSensors(id, rolesIds):Optional.empty();
     }
 
     @Override
     public Optional<? extends User> removeRoles(long id, List<Long> rolesIds, String login) {
-        return allIsAllowed(login)? repo.addSensors(id, rolesIds):Optional.empty();
+        return allIsAllowed()? repo.addSensors(id, rolesIds):Optional.empty();
     }
 
     @Override
@@ -52,7 +53,7 @@ public class UserViewImpl implements UserView {
     public List<? extends User> getAll(
             List<String> by, List<String> order, List<String> field, List<String> cond, List<String> value, int pg, int sz
     ) {
-        if(allIsAllowed(login) || gettingIsAllowed(login)) {
+        if(allIsAllowed() || gettingIsAllowed()) {
             QueryParams query = view.createQueryParams(by, order, field, cond, value, pg, sz, null, type);
             return repo.getAll(query);
         }
@@ -60,8 +61,8 @@ public class UserViewImpl implements UserView {
     }
 
     @Override
-    public long getCount(List<String> field, List<String> cond, List<String> value, int pg, int sz, String login) {
-        if(allIsAllowed(login) || gettingIsAllowed(login)) {
+    public long getCount(List<String> field, List<String> cond, List<String> value, int pg, int sz) {
+        if(allIsAllowed() || gettingIsAllowed()) {
             QueryParams query = view.createQueryParams(field, cond, value, pg, sz, null, type);
             return repo.getCount(query);
         }
@@ -69,47 +70,47 @@ public class UserViewImpl implements UserView {
     }
 
     @Override
-    public Optional<? extends User> create(User entity, String login) {
-        return allIsAllowed(login)? Optional.ofNullable(repo.create(entity)) :Optional.empty();
+    public Optional<? extends User> create(User entity) {
+        return allIsAllowed()? Optional.ofNullable(repo.create(entity)) :Optional.empty();
     }
 
     @Override
-    public Optional<? extends User> update(long id, User entity, String login) {
-        return allIsAllowed(login)? repo.update(id,entity) :Optional.empty();
+    public Optional<? extends User> update(long id, User entity) {
+        return allIsAllowed()? repo.update(id,entity) :Optional.empty();
     }
 
     @Override
-    public Optional<? extends User> get(long id, String login) {
-        if(allIsAllowed(login) || gettingIsAllowed(login)) {
+    public Optional<? extends User> get(long id) {
+        if(allIsAllowed() || gettingIsAllowed()) {
             return repo.get(id);
         }
         return Optional.empty();// exception
     }
 
     @Override
-    public Optional<? extends User> delete(long id, String login) {
-        if(allIsAllowed(login)) {
+    public Optional<? extends User> delete(long id) {
+        if(allIsAllowed()) {
             return repo.delete(id);
         }
         return Optional.empty();
     }
 
-    private boolean ChangingIsAllowed(long id, String login) {
-        User user = repo.getByLogin(login).get();
+    private boolean changingIsAllowed(long id) {
+        User user = SecurityUtils.getSubject().getPrincipals().oneByType(UserDO.class);
         Set<String> roles = user.getRoles().stream().map(Entity::getName).collect(Collectors.toSet());
         return roles.contains("Admin") || (roles.contains("Operator") &&
                 user.getSensors().stream().mapToLong(Entity::getId).anyMatch(sId -> sId == id));
     }
 
 
-    private boolean allIsAllowed(String login) {
-        User user = repo.getByLogin(login).get();
+    private boolean allIsAllowed() {
+        User user = SecurityUtils.getSubject().getPrincipals().oneByType(UserDO.class);
         Set<String> roles = user.getRoles().stream().map(Entity::getName).collect(Collectors.toSet());
         return roles.contains("Admin");
     }
 
-    private boolean gettingIsAllowed(String login) {
-        User user = repo.getByLogin(login).get();
+    private boolean gettingIsAllowed() {
+        User user = SecurityUtils.getSubject().getPrincipals().oneByType(UserDO.class);
         Set<String> roles = user.getRoles().stream().map(Entity::getName).collect(Collectors.toSet());
         return roles.contains("Admin") || roles.contains("Operator");
     }

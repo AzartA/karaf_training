@@ -31,31 +31,31 @@ public class UnitRestServiceImpl implements UnitRestService {
     @Override
     public DTO<Long> getCount(List<String> field, List<String> cond, List<String> value, int pg, int sz,
                          String login) {
-        return new DTO<>(view.getCount(field, cond, value, pg, sz, login));
+        return new DTO<>(view.getCount(field, cond, value, pg, sz));
     }
 
     @Override
     public UnitDTO create(UnitDTO unit,
                           String login) {
-        return view.create(unit, login).map(UnitDTO::new).orElseThrow(() -> new ValidationException("Name is already exist"));
+        return view.create(unit).map(UnitDTO::new).orElseThrow(() -> new ValidationException("Name is already exist"));
     }
 
     @Override
     public UnitDTO update(long id, UnitDTO unit,
                           String login) {
-        Optional<? extends Unit> ent = view.update(id, unit, login);
+        Optional<? extends Unit> ent = view.update(id, unit);
         return ent.map(UnitDTO::new).orElseThrow(() -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
     }
 
     @Override
     public UnitDTO get(long id,
                        String login) {
-        return view.get(id, login).map(UnitDTO::new).orElseThrow(() -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
+        return view.get(id).map(UnitDTO::new).orElseThrow(() -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
     }
 
     @Override
     public void delete(long id,
                        String login) {
-        view.delete(id, login).orElseThrow(() -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
+        view.delete(id).orElseThrow(() -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
     }
 }

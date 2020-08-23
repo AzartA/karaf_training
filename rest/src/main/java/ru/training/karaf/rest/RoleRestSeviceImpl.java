@@ -29,19 +29,19 @@ public class RoleRestSeviceImpl implements  RoleRestService {
     @Override
     public DTO<Long> getCount(List<String> field, List<String> cond, List<String> value, int pg, int sz,
                               String login) {
-        return new DTO<>(view.getCount(field, cond, value, pg, sz, login));
+        return new DTO<>(view.getCount(field, cond, value, pg, sz));
     }
 
     @Override
     public RoleDTO create(RoleDTO role,
                           String login) {
-        return view.create(role, login).map(RoleDTO::new).orElseThrow(() -> new ValidationException("Name is already exist"));
+        return view.create(role).map(RoleDTO::new).orElseThrow(() -> new ValidationException("Name is already exist"));
     }
 
     @Override
     public RoleDTO update(long id, RoleDTO type,
                           String login) {
-        Optional<? extends Role> l = view.update(id, type, login);
+        Optional<? extends Role> l = view.update(id, type);
         return l.map(RoleDTO::new).orElseThrow(() -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
     }
 
@@ -62,13 +62,13 @@ public class RoleRestSeviceImpl implements  RoleRestService {
     @Override
     public RoleDTO get(long id,
                        String login) {
-        return view.get(id, login).map(RoleDTO::new).orElseThrow(
+        return view.get(id).map(RoleDTO::new).orElseThrow(
                 () -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
     }
 
     @Override
     public void delete(long id,
                        String login) {
-        view.delete(id, login).orElseThrow(() -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
+        view.delete(id).orElseThrow(() -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
     }
 }

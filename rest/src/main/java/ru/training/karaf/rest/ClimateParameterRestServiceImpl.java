@@ -33,7 +33,7 @@ public class ClimateParameterRestServiceImpl implements ClimateParameterRestServ
             List<String> field, List<String> cond, List<String> value, int pg, int sz,
             String login
     ) {
-        return new DTO<>(view.getCount(field, cond, value, pg, sz, login));
+        return new DTO<>(view.getCount(field, cond, value, pg, sz));
 
     }
 
@@ -42,7 +42,7 @@ public class ClimateParameterRestServiceImpl implements ClimateParameterRestServ
             ClimateParameterDTO parameter,
             String login
     ) {
-        return view.create(parameter, login).map(ClimateParameterDTO::new).orElseThrow(() -> new ValidationException("Name is already exist"));
+        return view.create(parameter).map(ClimateParameterDTO::new).orElseThrow(() -> new ValidationException("Name is already exist"));
     }
 
     @Override
@@ -50,7 +50,7 @@ public class ClimateParameterRestServiceImpl implements ClimateParameterRestServ
             long id, ClimateParameterDTO parameter,
             String login
     ) {
-        Optional<? extends ClimateParameter> l = view.update(id, parameter, login);
+        Optional<? extends ClimateParameter> l = view.update(id, parameter);
         return l.map(ClimateParameterDTO::new).orElseThrow(() -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
     }
 
@@ -68,7 +68,7 @@ public class ClimateParameterRestServiceImpl implements ClimateParameterRestServ
             long id,
             String login
     ) {
-        return view.get(id, login).map(ClimateParameterDTO::new).orElseThrow(
+        return view.get(id).map(ClimateParameterDTO::new).orElseThrow(
                 () -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
     }
 
@@ -86,6 +86,6 @@ public class ClimateParameterRestServiceImpl implements ClimateParameterRestServ
             long id,
             String login
     ) {
-        view.delete(id, login).orElseThrow(() -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
+        view.delete(id).orElseThrow(() -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
     }
 }

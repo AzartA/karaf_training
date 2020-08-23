@@ -34,27 +34,27 @@ public class ClimateParameterViewImpl implements ClimateParameterView {
     }
 
     @Override
-    public long getCount(List<String> field, List<String> cond, List<String> value, int pg, int sz, String login) {
+    public long getCount(List<String> field, List<String> cond, List<String> value, int pg, int sz) {
         return 0;
     }
 
     @Override
-    public Optional<? extends ClimateParameter> create(ClimateParameter entity, String login) {
+    public Optional<? extends ClimateParameter> create(ClimateParameter entity) {
         return Optional.empty();
     }
 
     @Override
-    public Optional<? extends ClimateParameter> update(long id, ClimateParameter entity, String login) {
+    public Optional<? extends ClimateParameter> update(long id, ClimateParameter entity) {
         return Optional.empty();
     }
 
     @Override
-    public Optional<? extends ClimateParameter> get(long id, String login) {
+    public Optional<? extends ClimateParameter> get(long id) {
         return Optional.empty();
     }
 
     @Override
-    public Optional<? extends ClimateParameter> delete(long id, String login) {
+    public Optional<? extends ClimateParameter> delete(long id) {
         return Optional.empty();
     }
 }

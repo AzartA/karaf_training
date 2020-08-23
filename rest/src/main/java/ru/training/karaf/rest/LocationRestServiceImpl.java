@@ -39,7 +39,7 @@ public class LocationRestServiceImpl implements LocationRestService {
             List<String> field, List<String> cond, List<String> value, int pg, int sz,
             String login
     ) {
-        return new DTO<>(view.getCount(field, cond, value, pg, sz, login));
+        return new DTO<>(view.getCount(field, cond, value, pg, sz));
     }
 
     @Override
@@ -47,7 +47,7 @@ public class LocationRestServiceImpl implements LocationRestService {
             LocationDTO location,
             String login
     ) {
-        return view.create(location, login).map(LocationDTO::new).orElseThrow(() -> new ValidationException("Name is already exist"));
+        return view.create(location).map(LocationDTO::new).orElseThrow(() -> new ValidationException("Name is already exist"));
     }
 
     @Override
@@ -56,7 +56,7 @@ public class LocationRestServiceImpl implements LocationRestService {
             String login
     ) {
 
-        Optional<? extends Location> l = view.update(id, location, login);
+        Optional<? extends Location> l = view.update(id, location);
         return l.map(LocationDTO::new).orElseThrow(() -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
     }
 
@@ -65,7 +65,7 @@ public class LocationRestServiceImpl implements LocationRestService {
             long id,
             String login
     ) {
-        return view.get(id, login).map(LocationDTO::new).orElseThrow(() -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
+        return view.get(id).map(LocationDTO::new).orElseThrow(() -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
     }
 
     @Override
@@ -74,7 +74,7 @@ public class LocationRestServiceImpl implements LocationRestService {
             String login
     ) {
 
-        view.delete(id, login).orElseThrow(() -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
+        view.delete(id).orElseThrow(() -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
     }
 
     @Override
@@ -82,7 +82,7 @@ public class LocationRestServiceImpl implements LocationRestService {
             long id,
             String login
     ) {
-        String type = view.get(id, login).map(Location::getPictureType)
+        String type = view.get(id).map(Location::getPictureType)
                 .orElseThrow(() -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
         StreamingOutput op = outputStream -> view.getPlan(id, outputStream, login)
                 .orElseThrow(() -> new InternalServerErrorException(Response.status(Response.Status.INTERNAL_SERVER_ERROR)
@@ -95,7 +95,7 @@ public class LocationRestServiceImpl implements LocationRestService {
             long id, InputStream plan, String type,
             String login
     ) {
-        LocationDTO location = view.get(id, login).map(LocationDTO::new)
+        LocationDTO location = view.get(id).map(LocationDTO::new)
                 .orElseThrow(() -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
         long size = view.setPlan(id, plan, type, login);
         if (size < 0) {
@@ -110,7 +110,7 @@ public class LocationRestServiceImpl implements LocationRestService {
             long id,
             String login
     ) {
-        view.get(id, login).orElseThrow(() -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
+        view.get(id).orElseThrow(() -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
         view.deletePlan(id, login).orElseThrow(() -> new InternalServerErrorException(Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                 .entity(new ErrorsDTO("Can't delete plan")).build()));
     }

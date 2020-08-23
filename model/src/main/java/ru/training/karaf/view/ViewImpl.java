@@ -1,19 +1,10 @@
 package ru.training.karaf.view;
 
-import ru.training.karaf.validation.OSGIServiceDiscover;
 import ru.training.karaf.wrapper.FilterParam;
 import ru.training.karaf.wrapper.QueryParams;
 import ru.training.karaf.wrapper.SortParam;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
-import javax.validation.Valid;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
-import javax.validation.constraints.Min;
 import java.util.List;
-import java.util.Set;
 
 public class ViewImpl {
 

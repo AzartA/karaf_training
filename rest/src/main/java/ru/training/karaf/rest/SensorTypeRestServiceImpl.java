@@ -29,19 +29,19 @@ public class SensorTypeRestServiceImpl implements SensorTypeRestService {
     @Override
     public DTO<Long> getCount(List<String> field, List<String> cond, List<String> value, int pg, int sz,
                               String login) {
-        return new DTO<>(view.getCount(field, cond, value, pg, sz, login));
+        return new DTO<>(view.getCount(field, cond, value, pg, sz));
     }
 
     @Override
     public SensorTypeDTO create(SensorTypeDTO type,
                                 String login) {
-        return view.create(type, login).map(SensorTypeDTO::new).orElseThrow(() -> new ValidationException("Name is already exist"));
+        return view.create(type).map(SensorTypeDTO::new).orElseThrow(() -> new ValidationException("Name is already exist"));
     }
 
     @Override
     public SensorTypeDTO update(long id, SensorTypeDTO type,
                                 String login) {
-        Optional<? extends SensorType> l = view.update(id, type, login);
+        Optional<? extends SensorType> l = view.update(id, type);
         return l.map(SensorTypeDTO::new).orElseThrow(() -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
     }
 
@@ -55,13 +55,13 @@ public class SensorTypeRestServiceImpl implements SensorTypeRestService {
     @Override
     public SensorTypeDTO get(long id,
                              String login) {
-        return view.get(id, login).map(SensorTypeDTO::new).orElseThrow(
+        return view.get(id).map(SensorTypeDTO::new).orElseThrow(
                 () -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
     }
 
     @Override
     public void delete(long id,
                        String login) {
-        view.delete(id, login).orElseThrow(() -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
+        view.delete(id).orElseThrow(() -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
     }
 }
