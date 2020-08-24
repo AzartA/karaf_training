@@ -1,19 +1,30 @@
 package ru.training.karaf.rest;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import javax.validation.Valid;
+
 import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
 
 import ru.training.karaf.model.Sensor;
 import ru.training.karaf.rest.dto.DTO;
+import ru.training.karaf.rest.dto.FilterParamDTO;
 import ru.training.karaf.rest.dto.SensorDTO;
+import ru.training.karaf.rest.dto.SortParamDTO;
+import ru.training.karaf.view.FilterParam;
 import ru.training.karaf.view.SensorView;
+import ru.training.karaf.view.SortParam;
 
 public class SensorRestServiceImpl implements SensorRestService {
     private SensorView view;
+    @Valid
+    private FilterParamDTO filterParam;
+    @Valid
+    private SortParamDTO sortParam;
 
     public void setView(SensorView view) {
         this.view = view;
@@ -24,12 +35,28 @@ public class SensorRestServiceImpl implements SensorRestService {
     public List<SensorDTO> getAll(
             List<String> by, List<String> order, List<String> field, List<String> cond, List<String> value, int pg, int sz
     ) {
-        return view.getAll(by, order, field, cond, value, pg, sz).stream().map(SensorDTO::new).collect(Collectors.toList());
+        List<FilterParam> filters = new ArrayList<>();
+        List<SortParam> sorts = new ArrayList<>();
+
+        for (int i = 0; i < field.size(); i++) {
+            filterParam = new FilterParamDTO(field.get(i),cond.get(i),value.get(i), view.getType());
+            filters.add(filterParam);
+        }
+        for (int i = 0; i < by.size(); i++) {
+            sortParam = new SortParamDTO(by.get(i),order.get(i),view.getType());
+            sorts.add(sortParam);
+        }
+
+        return view.getAll(filters, sorts, pg, sz).stream().map(SensorDTO::new).collect(Collectors.toList());
     }
 
     @Override
     public DTO<Long> getCount(List<String> field, List<String> cond, List<String> value, int pg, int sz) {
-        return new DTO<>(view.getCount(field, cond, value, pg, sz));
+        List<FilterParam> filters = new ArrayList<>();
+        for (int i = 0; i < field.size(); i++) {
+            filters.add(new FilterParamDTO(field.get(i),cond.get(i),value.get(i),view.getType()));
+        }
+        return new DTO<>(view.getCount(filters, pg, sz));
     }
 
     @Override

@@ -7,12 +7,12 @@ import java.util.Optional;
 import ru.training.karaf.model.Location;
 
 public interface LocationView extends View<Location> {
-    Optional<? extends Location> getByName(String name, String login);
+    Optional<? extends Location> getByName(String name);
 
-    Optional<Object> getPlan(long id, OutputStream outputStream, String login);
+    Optional<Object> getPlan(long id, OutputStream outputStream);
 
-    long setPlan(long id, InputStream inputStream, String type, String login);
+    long setPlan(long id, InputStream inputStream, String type);
 
-    Optional<? extends Location> deletePlan(long id, String login);
+    Optional<? extends Location> deletePlan(long id);
 
 }

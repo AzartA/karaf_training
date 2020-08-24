@@ -2,6 +2,7 @@ package ru.training.karaf.rest.validation;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
+import java.sql.Timestamp;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import javax.validation.constraintvalidation.SupportedValidationTarget;
@@ -51,7 +52,11 @@ public class FilterParamsValidatorImpl implements ConstraintValidator<Conforming
         if (strings.length == 4) {
             //Double.parseDouble(value);
             //ToDo exp notation
-            return type.equals(String.class) || (!cond.matches("!?contains") && value.matches("-?\\d+(?:\\.\\d+)?"));
+            if(cond.matches("!?contains") && !type.equals(String.class)) {
+                return false;
+            }
+            return type.equals(String.class) || type.equals(Timestamp.class) || value.matches("^-?\\d+(?:\\.\\d+)?$");
+
         }
 
         return true;

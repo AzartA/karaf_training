@@ -1,13 +1,19 @@
 package ru.training.karaf.rest;
 
 import ru.training.karaf.model.Unit;
+import ru.training.karaf.rest.dto.ClimateParameterDTO;
 import ru.training.karaf.rest.dto.DTO;
+import ru.training.karaf.rest.dto.FilterParamDTO;
+import ru.training.karaf.rest.dto.SortParamDTO;
 import ru.training.karaf.rest.dto.UnitDTO;
+import ru.training.karaf.view.FilterParam;
+import ru.training.karaf.view.SortParam;
 import ru.training.karaf.view.UnitView;
 
 import javax.validation.ValidationException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -21,41 +27,49 @@ public class UnitRestServiceImpl implements UnitRestService {
         this.view = view;
     }
 
-    @Override
-    public List<UnitDTO> getAll(List<String> by, List<String> order,
-                                    List<String> field, List<String> cond, List<String> value, int pg, int sz,
-                                    String login) {
-       return view.getAll(by, order, field, cond, value, pg, sz).stream().map(UnitDTO::new).collect(Collectors.toList());
-    }
+
 
     @Override
-    public DTO<Long> getCount(List<String> field, List<String> cond, List<String> value, int pg, int sz,
-                         String login) {
-        return new DTO<>(view.getCount(field, cond, value, pg, sz));
-    }
-
-    @Override
-    public UnitDTO create(UnitDTO unit,
-                          String login) {
+    public UnitDTO create(UnitDTO unit) {
         return view.create(unit).map(UnitDTO::new).orElseThrow(() -> new ValidationException("Name is already exist"));
     }
 
     @Override
-    public UnitDTO update(long id, UnitDTO unit,
-                          String login) {
+    public UnitDTO update(long id, UnitDTO unit) {
         Optional<? extends Unit> ent = view.update(id, unit);
         return ent.map(UnitDTO::new).orElseThrow(() -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
     }
 
     @Override
-    public UnitDTO get(long id,
-                       String login) {
+    public UnitDTO get(long id) {
         return view.get(id).map(UnitDTO::new).orElseThrow(() -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
     }
 
     @Override
-    public void delete(long id,
-                       String login) {
+    public void delete(long id) {
         view.delete(id).orElseThrow(() -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
+    }
+
+    @Override
+    public List<UnitDTO> getAll(List<String> by, List<String> order, List<String> field, List<String> cond, List<String> value, int pg, int sz) {
+        List<FilterParam> filters = new ArrayList<>();
+        List<SortParam> sorts = new ArrayList<>();
+
+        for (int i = 0; i < field.size(); i++) {
+            filters.add(new FilterParamDTO(field.get(i),cond.get(i),value.get(i),view.getType()));
+        }
+        for (int i = 0; i < by.size(); i++) {
+            sorts.add(new SortParamDTO(by.get(i),order.get(i),view.getType()));
+        }
+        return view.getAll(filters, sorts,pg, sz).stream().map(UnitDTO::new).collect(Collectors.toList());
+    }
+
+    @Override
+    public DTO<Long> getCount(List<String> field, List<String> cond, List<String> value, int pg, int sz) {
+        List<FilterParam> filters = new ArrayList<>();
+        for (int i = 0; i < field.size(); i++) {
+            filters.add(new FilterParamDTO(field.get(i),cond.get(i),value.get(i),view.getType()));
+        }
+        return new DTO<>(view.getCount(filters, pg, sz));
     }
 }

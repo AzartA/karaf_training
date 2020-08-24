@@ -4,32 +4,35 @@ import java.util.List;
 import java.util.Optional;
 
 import ru.training.karaf.model.Unit;
+import ru.training.karaf.model.UnitDO;
 import ru.training.karaf.repo.UnitRepo;
 import ru.training.karaf.repo.UserRepo;
 
 public class UnitViewImpl implements UnitView {
     private UnitRepo repo;
     private UserRepo auth;
+    private Class<UnitDO> type;
 
     public UnitViewImpl(UnitRepo repo, UserRepo auth) {
         this.repo = repo;
         this.auth = auth;
+        type = UnitDO.class;
     }
 
     @Override
-    public Optional<? extends Unit> getByName(String name, String login) {
+    public Optional<? extends Unit> getByName(String name) {
         return Optional.empty();
     }
 
     @Override
     public List<? extends Unit> getAll(
-            List<String> by, List<String> order, List<String> field, List<String> cond, List<String> value, int pg, int sz
+            List<FilterParam> filters, List<SortParam> sorts, int pg, int sz
     ) {
         return null;
     }
 
     @Override
-    public long getCount(List<String> field, List<String> cond, List<String> value, int pg, int sz) {
+    public long getCount(List<FilterParam> filters, int pg, int sz) {
         return 0;
     }
 
@@ -51,5 +54,10 @@ public class UnitViewImpl implements UnitView {
     @Override
     public Optional<? extends Unit> delete(long id) {
         return Optional.empty();
+    }
+
+    @Override
+    public Class<?> getType() {
+        return type;
     }
 }

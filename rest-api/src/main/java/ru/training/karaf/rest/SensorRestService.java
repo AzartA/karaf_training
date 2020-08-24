@@ -3,6 +3,7 @@ package ru.training.karaf.rest;
 import ru.training.karaf.rest.dto.DTO;
 import ru.training.karaf.rest.dto.SensorDTO;
 import ru.training.karaf.rest.validation.ConformingParams;
+import ru.training.karaf.rest.validation.CountParams;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -24,29 +25,28 @@ import java.util.List;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public interface SensorRestService {
+    String MIN_MSG = "The parameter must be positive";
     @GET
-    //@ConformingParams(message = "There is no such field, or condition is not applicable to the field's type")
+    @CountParams
     List<SensorDTO> getAll(
             @QueryParam("by") List<String> by,
-            //@Pattern(regexp = "^asc|desc$", message = "order must be asc or desc only")
-                @QueryParam("order") List<String> order,
+            @QueryParam("order") List<String> order,
             @QueryParam("field") List<String> field,
-            //@Pattern(regexp = "^[><=]$|^[!<>]=$|^!?contains$", message = "")
-                //@Size(min = 1, max = 9, message = "")
-                @QueryParam("condition") List<String> cond,
+            @QueryParam("condition") List<String> cond,
             @QueryParam("value") List<String> value,
-            @Min(0) @QueryParam("pg") int pg,
-            @Min(0) @QueryParam("sz") int sz
+            @Min(value = 0, message =  "pg must be positive") @QueryParam("pg") int pg,
+            @Min(value = 0 , message = "sz must be positive") @QueryParam("sz") int sz
     );
 
     @GET
     @Path("count")
+    @CountParams
     DTO<Long> getCount(
             @QueryParam("field") List<String> field,
             @QueryParam("condition") List<String> cond,
             @QueryParam("value") List<String> value,
-            @QueryParam("pg") int pg,
-            @QueryParam("sz") int sz
+            @Min(value = 0, message =  "pg must be positive")@QueryParam("pg") int pg,
+            @Min(value = 0, message =  "sz must be positive")@QueryParam("sz") int sz
     );
 
     @POST

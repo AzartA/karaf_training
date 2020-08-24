@@ -1,6 +1,7 @@
 package ru.training.karaf.view;
 
 import ru.training.karaf.model.Measuring;
+import ru.training.karaf.model.MeasuringDO;
 import ru.training.karaf.repo.MeasuringRepo;
 import ru.training.karaf.repo.UserRepo;
 
@@ -10,21 +11,23 @@ import java.util.Optional;
 public class MeasuringViewImpl implements MeasuringView {
     private MeasuringRepo repo;
     private UserRepo auth;
+    private Class<MeasuringDO> type;
 
     public MeasuringViewImpl(MeasuringRepo repo, UserRepo auth) {
         this.repo = repo;
         this.auth = auth;
+        type = MeasuringDO.class;
     }
 
     @Override
     public List<? extends Measuring> getAll(
-            List<String> by, List<String> order, List<String> field, List<String> cond, List<String> value, int pg, int sz
+            List<FilterParam> filters, List<SortParam> sorts, int pg, int sz
     ) {
         return null;
     }
 
     @Override
-    public long getCount(List<String> field, List<String> cond, List<String> value, int pg, int sz) {
+    public long getCount(List<FilterParam> filters, int pg, int sz) {
         return 0;
     }
 
@@ -46,5 +49,10 @@ public class MeasuringViewImpl implements MeasuringView {
     @Override
     public Optional<? extends Measuring> delete(long id) {
         return Optional.empty();
+    }
+
+    @Override
+    public Class<?> getType() {
+        return type;
     }
 }

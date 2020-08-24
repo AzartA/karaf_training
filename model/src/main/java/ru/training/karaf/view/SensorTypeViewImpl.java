@@ -1,6 +1,7 @@
 package ru.training.karaf.view;
 
 import ru.training.karaf.model.SensorType;
+import ru.training.karaf.model.SensorTypeDO;
 import ru.training.karaf.repo.SensorTypeRepo;
 import ru.training.karaf.repo.UserRepo;
 
@@ -10,26 +11,28 @@ import java.util.Optional;
 public class SensorTypeViewImpl implements SensorTypeView {
     private SensorTypeRepo repo;
     private UserRepo auth;
+    private Class<SensorTypeDO> type;
 
     public SensorTypeViewImpl(SensorTypeRepo repo, UserRepo auth) {
         this.repo = repo;
         this.auth = auth;
+        type = SensorTypeDO.class;
     }
 
     @Override
-    public Optional<? extends SensorType> addParams(long id, List<Long> paramsIds, String login) {
+    public Optional<? extends SensorType> addParams(long id, List<Long> paramsIds) {
         return Optional.empty();
     }
 
     @Override
     public List<? extends SensorType> getAll(
-            List<String> by, List<String> order, List<String> field, List<String> cond, List<String> value, int pg, int sz
+            List<FilterParam> filters, List<SortParam> sorts, int pg, int sz
     ) {
         return null;
     }
 
     @Override
-    public long getCount(List<String> field, List<String> cond, List<String> value, int pg, int sz) {
+    public long getCount(List<FilterParam> filters, int pg, int sz) {
         return 0;
     }
 
@@ -51,5 +54,10 @@ public class SensorTypeViewImpl implements SensorTypeView {
     @Override
     public Optional<? extends SensorType> delete(long id) {
         return Optional.empty();
+    }
+
+    @Override
+    public Class<?> getType() {
+        return type;
     }
 }

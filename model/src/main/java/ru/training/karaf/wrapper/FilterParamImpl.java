@@ -1,15 +1,17 @@
 package ru.training.karaf.wrapper;
 
-public class FilterParam {
+import ru.training.karaf.view.FilterParam;
+
+public class FilterParamImpl implements FilterParam {
     private final String COND = "Condition must be one of: '=', '>', '<', '>=', '<=', '!=', 'contains', '!contains'";
     private String field;
     private String cond;
     private String value;
 
-    public FilterParam() {
+    public FilterParamImpl() {
     }
 
-    public <T> FilterParam(String field, String cond, String value, Class<T> type) {
+    public <T> FilterParamImpl(String field, String cond, String value, Class<T> type) {
         this.field = field;
         this.cond = cond;
         this.value = value;
@@ -35,6 +37,8 @@ public class FilterParam {
         return value;
     }
 
+
+
     public void setValue(String value) {
         this.value = value;
     }
@@ -43,10 +47,10 @@ public class FilterParam {
     public boolean equals(Object o) {
         if (this == o)
             return true;
-        if (!(o instanceof FilterParam))
+        if (!(o instanceof FilterParamImpl))
             return false;
 
-        FilterParam that = (FilterParam) o;
+        FilterParamImpl that = (FilterParamImpl) o;
 
         if (!field.equals(that.field))
             return false;

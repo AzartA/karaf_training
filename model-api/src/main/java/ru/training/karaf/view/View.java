@@ -7,10 +7,10 @@ import ru.training.karaf.model.Entity;
 
 public interface View<T extends Entity> {
     List<? extends T> getAll(
-            List<String> by, List<String> order, List<String> field, List<String> cond, List<String> value, int pg, int sz
+            List<FilterParam> filters, List<SortParam> sorts, int pg, int sz
     );
 
-    long getCount(List<String> field, List<String> cond, List<String> value, int pg, int sz);
+    long getCount(List<FilterParam> filters, int pg, int sz);
 
     Optional<? extends T> create(T entity);
 
@@ -19,4 +19,6 @@ public interface View<T extends Entity> {
     Optional<? extends T> get(long id);
 
     Optional<? extends T> delete(long id);
+
+    Class<?> getType();
 }

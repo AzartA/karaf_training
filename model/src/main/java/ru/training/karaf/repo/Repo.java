@@ -16,13 +16,12 @@ import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import javax.validation.ValidationException;
 
 import org.apache.aries.jpa.template.JpaTemplate;
 import ru.training.karaf.model.Entity;
-import ru.training.karaf.wrapper.FilterParam;
+import ru.training.karaf.view.FilterParam;
+import ru.training.karaf.view.SortParam;
 import ru.training.karaf.wrapper.QueryParams;
-import ru.training.karaf.wrapper.SortParam;
 
 public class Repo {
     private final JpaTemplate template;
@@ -78,11 +77,13 @@ public class Repo {
     }
 
     private void pagination(int pg, int sz, TypedQuery<?> query) {
-        //if (pg > 0 && sz > 0) {
-            int offset = (pg - 1) * sz;
-            query.setFirstResult(offset)
-                    .setMaxResults(sz);
-        //}
+        int offset = (pg - 1) * sz;
+        if (pg == 0 ) {
+            offset = 0;
+        }
+        query.setFirstResult(offset)
+                .setMaxResults(sz);
+
     }
 
     private <T> List<Predicate> filtering(
@@ -128,6 +129,23 @@ public class Repo {
 
     private <T> Path<String> getPath(String field, Root<T> root) {
         String[] fieldParts = (field).split("\\.");
+        Class<?> type = root.getJavaType();
+        //verification
+        /*for (String fieldPart : fieldParts) {
+            try {
+                if (fieldPart.endsWith("s")) {
+                    Field fld = type.getDeclaredField(fieldPart);
+                    ParameterizedType pType = (ParameterizedType) fld.getGenericType();
+                    type = (Class<?>) pType.getActualTypeArguments()[0];
+                } else {
+                    type = type.getDeclaredField(fieldPart).getType();
+                }
+            } catch (NoSuchFieldException e) {
+                throw new IllegalArgumentException("There is no such field: "+ fieldPart);
+            }
+        }*/
+
+
         From<String, String> joinPath = null;
         Path<String> path = null;
         boolean[] pattern = new boolean[fieldParts.length];

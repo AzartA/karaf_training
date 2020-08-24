@@ -1,5 +1,9 @@
 package ru.training.karaf.wrapper;
 
+
+import ru.training.karaf.view.FilterParam;
+import ru.training.karaf.view.SortParam;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,5 +53,13 @@ public class QueryParams {
 
     public void addSortParam(SortParam p) {
         sorts.add(p);
+    }
+
+    public void addFilterParams(List<FilterParam> params) {
+        filters.addAll(params);
+    }
+
+    public void addSortParams(List<SortParam> params) {
+        sorts.addAll(params);
     }
 }

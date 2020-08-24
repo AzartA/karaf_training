@@ -2,6 +2,7 @@ package ru.training.karaf.rest;
 
 import java.util.List;
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -16,6 +17,7 @@ import javax.ws.rs.core.MediaType;
 import ru.training.karaf.rest.dto.ClimateParameterDTO;
 import ru.training.karaf.rest.dto.DTO;
 import ru.training.karaf.rest.dto.UnitDTO;
+import ru.training.karaf.rest.validation.CountParams;
 
 @Path("units")
 @Produces(MediaType.APPLICATION_JSON)
@@ -23,45 +25,41 @@ import ru.training.karaf.rest.dto.UnitDTO;
 public interface UnitRestService {
 
     @GET
+    @CountParams
     List<UnitDTO> getAll(
             @QueryParam("by") List<String> by,
             @QueryParam("order") List<String> order,
             @QueryParam("field") List<String> field,
             @QueryParam("condition") List<String> cond,
             @QueryParam("value") List<String> value,
-            @QueryParam("pg") int pg,
-            @QueryParam("sz") int sz,
-            @QueryParam("login") String login
+            @Min(value = 0, message =  "pg must be positive")@QueryParam("pg") int pg,
+            @Min(value = 0, message =  "sz must be positive")@QueryParam("sz") int sz
     );
 
     @GET
     @Path("count")
+    @CountParams
     DTO<Long> getCount(
             @QueryParam("field") List<String> field,
             @QueryParam("condition") List<String> cond,
             @QueryParam("value") List<String> value,
-            @QueryParam("pg") int pg,
-            @QueryParam("sz") int sz,
-            @QueryParam("login") String login
+            @Min(value = 0, message =  "pg must be positive")@QueryParam("pg") int pg,
+            @Min(value = 0, message =  "sz must be positive")@QueryParam("sz") int sz
     );
 
     @POST
-    UnitDTO create(@Valid UnitDTO entity,
-                   @QueryParam("login") String login);
+    UnitDTO create(@Valid UnitDTO entity);
 
     @PUT
     @Path("{id}")
-    UnitDTO update(@PathParam("id") long id, @Valid UnitDTO entity,
-                   @QueryParam("login") String login);
+    UnitDTO update(@PathParam("id") long id, @Valid UnitDTO entity);
 
     @GET
 
     @Path("{id}")
-    UnitDTO get(@PathParam("id") long id,
-                @QueryParam("login") String login);
+    UnitDTO get(@PathParam("id") long id);
 
     @DELETE
     @Path("{id}")
-    void delete(@PathParam("id") long id,
-                @QueryParam("login") String login);
+    void delete(@PathParam("id") long id);
 }

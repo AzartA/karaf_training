@@ -13,7 +13,7 @@ import ru.training.karaf.model.User;
 import ru.training.karaf.model.UserDO;
 import ru.training.karaf.repo.SensorRepo;
 import ru.training.karaf.repo.UserRepo;
-import ru.training.karaf.wrapper.FilterParam;
+import ru.training.karaf.wrapper.FilterParamImpl;
 import ru.training.karaf.wrapper.QueryParams;
 
 public class SensorViewImpl implements SensorView {
@@ -64,17 +64,17 @@ public class SensorViewImpl implements SensorView {
 
     @Override
     public List<? extends Sensor> getAll(
-            List<String> by, List<String> order, List<String> field, List<String> cond, List<String> value, int pg, int sz
+            List<FilterParam> filters, List<SortParam> sorts, int pg, int sz
     ) {
-        FilterParam authInfo = getAuthFilter();
-        QueryParams query =  view.createQueryParams(by, order, field, cond, value, pg, sz, authInfo, type);
+        getAuthFilter().ifPresent(filters::add);
+        QueryParams query =  view.createQueryParams(filters, sorts, pg, sz);
         return repo.getAll(query);
     }
 
     @Override
-    public long getCount(List<String> field, List<String> cond, List<String> value, int pg, int sz) {
-        FilterParam authInfo = getAuthFilter();
-        QueryParams query =  view.createQueryParams(field, cond, value, pg, sz, authInfo, type);
+    public long getCount(List<FilterParam> filters, int pg, int sz) {
+        getAuthFilter().ifPresent(filters::add);
+        QueryParams query =  view.createQueryParams(filters, pg, sz);
         return repo.getCount(query);
     }
 
@@ -110,6 +110,11 @@ public class SensorViewImpl implements SensorView {
         return Optional.empty();
     }
 
+    @Override
+    public Class<?> getType() {
+        return type;
+    }
+
     private boolean ChangingIsAllowed(long id) {
         user = SecurityUtils.getSubject().getPrincipals().oneByType(UserDO.class);
         Set<String> roles = user.getRoles().stream().map(Entity::getName).collect(Collectors.toSet());
@@ -117,13 +122,13 @@ public class SensorViewImpl implements SensorView {
                 user.getSensors().stream().mapToLong(Entity::getId).anyMatch(sId -> sId == id));
     }
 
-    private FilterParam getAuthFilter(){
+    private Optional<? extends FilterParam> getAuthFilter(){
         user = SecurityUtils.getSubject().getPrincipals().oneByType(UserDO.class);
         Set<String> roles = user.getRoles().stream().map(Entity::getName).collect(Collectors.toSet());
         if (!roles.contains("Admin")) {
-            return new FilterParam("users.id","=", Long.toString(user.getId()),type);
+            return Optional.of(new FilterParamImpl("users.id","=", Long.toString(user.getId()),type));
         }
-        return null;
+        return Optional.empty();
     }
 
     private boolean creatingIsAllowed() {

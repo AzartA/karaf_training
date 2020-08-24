@@ -25,7 +25,7 @@ public class UserViewImpl implements UserView {
     }
 
     @Override
-    public Optional<? extends User> addSensors(long id, List<Long> sensorIds, String login) {
+    public Optional<? extends User> addSensors(long id, List<Long> sensorIds) {
         return allIsAllowed()? repo.addSensors(id, sensorIds):Optional.empty();
     }
 
@@ -35,12 +35,12 @@ public class UserViewImpl implements UserView {
     }
 
     @Override
-    public Optional<? extends User> addRoles(long id, List<Long> rolesIds, String login) {
+    public Optional<? extends User> addRoles(long id, List<Long> rolesIds) {
         return allIsAllowed()? repo.addSensors(id, rolesIds):Optional.empty();
     }
 
     @Override
-    public Optional<? extends User> removeRoles(long id, List<Long> rolesIds, String login) {
+    public Optional<? extends User> removeRoles(long id, List<Long> rolesIds) {
         return allIsAllowed()? repo.addSensors(id, rolesIds):Optional.empty();
     }
 
@@ -51,19 +51,19 @@ public class UserViewImpl implements UserView {
 
     @Override
     public List<? extends User> getAll(
-            List<String> by, List<String> order, List<String> field, List<String> cond, List<String> value, int pg, int sz
+            List<FilterParam> filters, List<SortParam> sorts, int pg, int sz
     ) {
         if(allIsAllowed() || gettingIsAllowed()) {
-            QueryParams query = view.createQueryParams(by, order, field, cond, value, pg, sz, null, type);
+            QueryParams query = view.createQueryParams(filters, sorts, pg, sz);
             return repo.getAll(query);
         }
         return Collections.emptyList();
     }
 
     @Override
-    public long getCount(List<String> field, List<String> cond, List<String> value, int pg, int sz) {
+    public long getCount(List<FilterParam> filters, int pg, int sz) {
         if(allIsAllowed() || gettingIsAllowed()) {
-            QueryParams query = view.createQueryParams(field, cond, value, pg, sz, null, type);
+            QueryParams query = view.createQueryParams(filters, pg, sz);
             return repo.getCount(query);
         }
         return 0;
@@ -93,6 +93,11 @@ public class UserViewImpl implements UserView {
             return repo.delete(id);
         }
         return Optional.empty();
+    }
+
+    @Override
+    public Class<?> getType() {
+        return type;
     }
 
     private boolean changingIsAllowed(long id) {

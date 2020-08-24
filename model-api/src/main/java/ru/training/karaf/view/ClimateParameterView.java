@@ -7,9 +7,9 @@ import ru.training.karaf.model.ClimateParameter;
 
 public interface ClimateParameterView extends View<ClimateParameter> {
 
-    Optional<? extends ClimateParameter> addUnits(long id, List<Long> unitIds, String login);
+    Optional<? extends ClimateParameter> addUnits(long id, List<Long> unitIds);
 
    // Optional<? extends ClimateParameter> addSensorTypes(long id, List<Long> typeIds);
 
-    Optional<? extends ClimateParameter> getByName(String name, String login);
+    Optional<? extends ClimateParameter> getByName(String name);
 }
