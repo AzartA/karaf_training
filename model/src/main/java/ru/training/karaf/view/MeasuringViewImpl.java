@@ -1,58 +1,100 @@
 package ru.training.karaf.view;
 
-import ru.training.karaf.model.Measuring;
-import ru.training.karaf.model.MeasuringDO;
-import ru.training.karaf.repo.MeasuringRepo;
-import ru.training.karaf.repo.UserRepo;
-
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import ru.training.karaf.exception.RestrictedException;
+import ru.training.karaf.model.Entity;
+import ru.training.karaf.model.Measuring;
+import ru.training.karaf.model.MeasuringDO;
+import ru.training.karaf.model.User;
+import ru.training.karaf.repo.MeasuringRepo;
+import ru.training.karaf.wrapper.FilterParamImpl;
+import ru.training.karaf.wrapper.QueryParams;
 
 public class MeasuringViewImpl implements MeasuringView {
-    private MeasuringRepo repo;
-    private UserRepo auth;
-    private Class<MeasuringDO> type;
+    private final MeasuringRepo repo;
+    private final Class<MeasuringDO> type;
+    private final ViewUtil view;
 
-    public MeasuringViewImpl(MeasuringRepo repo, UserRepo auth) {
+    public MeasuringViewImpl(MeasuringRepo repo) {
         this.repo = repo;
-        this.auth = auth;
         type = MeasuringDO.class;
+        view = new ViewUtil();
     }
 
     @Override
     public List<? extends Measuring> getAll(
-            List<FilterParam> filters, List<SortParam> sorts, int pg, int sz
+            List<FilterParam> filters, List<SortParam> sorts, int pg, int sz,
+            User currentUser
     ) {
-        return null;
+        getAuthFilter(currentUser).ifPresent(filters::add);
+        QueryParams query =  view.createQueryParams(filters, sorts, pg, sz);
+        return repo.getAll(query);
     }
 
     @Override
-    public long getCount(List<FilterParam> filters, int pg, int sz) {
-        return 0;
+    public long getCount(List<FilterParam> filters, int pg, int sz, User currentUser) {
+        getAuthFilter(currentUser).ifPresent(filters::add);
+        QueryParams query =  view.createQueryParams(filters, pg, sz);
+        return repo.getCount(query);
     }
 
     @Override
-    public Optional<? extends Measuring> create(Measuring entity) {
+    public Optional<? extends Measuring> create(Measuring entity, User currentUser) throws RestrictedException {
         return Optional.empty();
     }
 
     @Override
-    public Optional<? extends Measuring> update(long id, Measuring entity) {
+    public Optional<? extends Measuring> update(long id, Measuring entity, User currentUser) throws RestrictedException {
         return Optional.empty();
     }
 
     @Override
-    public Optional<? extends Measuring> get(long id) {
+    public Optional<? extends Measuring> get(long id, User currentUser) throws RestrictedException {
+        Optional<? extends Measuring> m = repo.get(id);
+        if(m.isPresent() && gettingIsAllowed(m.get().getSensor().getId(),currentUser) ){
+            return m;
+        }
         return Optional.empty();
     }
 
     @Override
-    public Optional<? extends Measuring> delete(long id) {
+    public Optional<? extends Measuring> delete(long id, User currentUser) throws RestrictedException {
+        Optional<? extends Measuring> m = repo.get(id);
+        if(m.isPresent()){
+            if(ChangingIsAllowed(m.get().getSensor().getId(), currentUser)){
+                return repo.delete(id);
+            }
+            throw new RestrictedException("Operation is restricted");
+        }
         return Optional.empty();
     }
 
     @Override
-    public Class<?> getType() {
+    public Class<? extends Entity> getType() {
         return type;
+    }
+
+    private Optional<? extends FilterParam> getAuthFilter(User user){
+        Set<String> roles = user.getRoles().stream().map(Entity::getName).collect(Collectors.toSet());
+        if (!roles.contains("Admin")) {
+            return Optional.of(new FilterParamImpl("sensor.users.id","=", Long.toString(user.getId()),type));
+        }
+        return Optional.empty();
+    }
+
+
+    private boolean gettingIsAllowed(long sensorId, User user) {
+        Set<String> roles = user.getRoles().stream().map(Entity::getName).collect(Collectors.toSet());
+        return !roles.contains("Admin")&&
+                user.getSensors().stream().mapToLong(Entity::getId).anyMatch(sId -> sId == sensorId);
+    }
+    private boolean ChangingIsAllowed(long id, User user) {
+        Set<String> roles = user.getRoles().stream().map(Entity::getName).collect(Collectors.toSet());
+        return roles.contains("Admin") || (roles.contains("Operator") &&
+                user.getSensors().stream().mapToLong(Entity::getId).anyMatch(sId -> sId == id));
     }
 }

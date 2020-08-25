@@ -8,6 +8,7 @@ import org.postgresql.largeobject.LargeObject;
 import org.postgresql.largeobject.LargeObjectManager;
 import ru.training.karaf.model.Location;
 import ru.training.karaf.model.LocationDO;
+import ru.training.karaf.wrapper.QueryParams;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -24,7 +25,7 @@ import java.util.Optional;
 public class LocationRepo {
     private final JpaTemplate template;
     private final Repo repo;
-    private final Class<LocationDO> stdClass = LocationDO.class;
+    private static final Class<LocationDO> CLASS = LocationDO.class;
     private final DataSource dataSource;
 
     public LocationRepo(JpaTemplate template, DataSource dataSource) {
@@ -34,19 +35,13 @@ public class LocationRepo {
     }
 
 
-    public List<? extends Location> getAll(
-            List<String> by, List<String> order, List<String> field, List<String> cond, List<String> value, int pg, int sz,
-            String[] auth
-    ) {
-        return null;//repo.getAll(by, order, field, cond, value, pg, sz, auth, stdClass);
+    public List<? extends Location> getAll(QueryParams query ) {
+        return repo.getAll(query, CLASS);
     }
 
 
-    public long getCount(
-            List<String> field, List<String> cond, List<String> value, int pg, int sz,
-            String[] auth
-    ) {
-        return 0;//repo.getCount(field, cond, value, pg, sz, auth, stdClass);
+    public long getCount(QueryParams query) {
+        return repo.getCount(query, CLASS);
     }
 
 

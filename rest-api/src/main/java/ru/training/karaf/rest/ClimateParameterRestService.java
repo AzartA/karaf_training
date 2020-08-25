@@ -61,10 +61,6 @@ public interface ClimateParameterRestService {
     @Path("{id}")
     ClimateParameterDTO get(@PathParam("id") long id);
 
-    @GET
-    @Path("/name/{name}")
-    ClimateParameterDTO getByName(@PathParam("name") String name);
-
     @DELETE
     @Path("{id}")
     void delete(@PathParam("id") long id);

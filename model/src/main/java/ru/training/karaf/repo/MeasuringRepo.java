@@ -8,11 +8,12 @@ import ru.training.karaf.model.ClimateParameterDO;
 import ru.training.karaf.model.Measuring;
 import ru.training.karaf.model.MeasuringDO;
 import ru.training.karaf.model.SensorDO;
+import ru.training.karaf.wrapper.QueryParams;
 
 public class MeasuringRepo {
     private final JpaTemplate template;
     private final Repo repo;
-    private final Class<MeasuringDO> stdClass = MeasuringDO.class;
+    private static final Class<MeasuringDO> CLASS = MeasuringDO.class;
 
     public MeasuringRepo(JpaTemplate template) {
         this.template = template;
@@ -20,19 +21,13 @@ public class MeasuringRepo {
     }
 
 
-    public List<? extends Measuring> getAll(
-            List<String> by, List<String> order, List<String> field, List<String> cond, List<String> value, int pg, int sz,
-            String[] auth
-    ) {
-        return null;//repo.getAll(by, order, field, cond, value, pg, sz, auth, stdClass);
+    public List<? extends Measuring> getAll(QueryParams query ) {
+        return repo.getAll(query, CLASS);
     }
 
 
-    public long getCount(
-            List<String> field, List<String> cond, List<String> value, int pg, int sz,
-            String[] auth
-    ) {
-        return 0;//repo.getCount(field, cond, value, pg, sz, auth, stdClass);
+    public long getCount(QueryParams query) {
+        return repo.getCount(query, CLASS);
     }
 
 

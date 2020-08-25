@@ -10,6 +10,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -24,7 +25,8 @@ import java.util.stream.Collectors;
 })
 @Entity
 //@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-public class ClimateParameterDO implements ClimateParameter {
+public class ClimateParameterDO implements ClimateParameter, Serializable {
+    private static final long serialVersionUID = 5474563217898L;
     public static final String GET_ALL = "Params.getAll";
     public static final String GET_BY_NAME = "Params.getByName";
     public static final String GET_BY_ID = "Params.getById";

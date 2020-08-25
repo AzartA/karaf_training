@@ -36,7 +36,6 @@
 
     <bean id="sensorView" class="ru.training.karaf.view.SensorViewImpl">
         <argument ref="sensorRepo"/>
-        <argument ref="userRepo"/>
 
     </bean>
     <bean id="userView" class="ru.training.karaf.view.UserViewImpl">
@@ -44,27 +43,21 @@
     </bean>
     <bean id="locationView" class="ru.training.karaf.view.LocationViewImpl">
         <argument ref="locationRepo"/>
-        <argument ref="userRepo"/>
     </bean>
     <bean id="unitView" class="ru.training.karaf.view.UnitViewImpl">
         <argument ref="unitRepo"/>
-        <argument ref="userRepo"/>
     </bean>
     <bean id="paramView" class="ru.training.karaf.view.ClimateParameterViewImpl">
         <argument ref="paramRepo"/>
-        <argument ref="userRepo"/>
     </bean>
     <bean id="typeView" class="ru.training.karaf.view.SensorTypeViewImpl">
         <argument ref="typeRepo"/>
-        <argument ref="userRepo"/>
     </bean>
     <bean id="measuringView" class="ru.training.karaf.view.MeasuringViewImpl">
         <argument ref="measuringRepo"/>
-        <argument ref="userRepo"/>
     </bean>
     <bean id="roleView" class="ru.training.karaf.view.RoleViewImpl">
         <argument ref="roleRepo"/>
-        <argument ref="userRepo"/>
     </bean>
 
     <service ref="userView" interface="ru.training.karaf.view.UserView"/>

@@ -33,7 +33,7 @@
     <bean id="measuringRestServiceBeen" class="ru.training.karaf.rest.MeasuringRestServiceImpl">
         <property name="view" ref="measuringView"/>
     </bean>
-    <bean id="roleRestServiceBeen" class="ru.training.karaf.rest.RoleRestSeviceImpl">
+    <bean id="roleRestServiceBeen" class="ru.training.karaf.rest.RoleRestServiceImpl">
         <property name="view" ref="roleView"/>
     </bean>
 
@@ -78,6 +78,7 @@
             <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider"/>
             <bean class="org.apache.cxf.jaxrs.impl.WebApplicationExceptionMapper"/>
             <bean class="ru.training.karaf.rest.validation.UnknownAccountExceptionMapper"/>
+            <bean class="ru.training.karaf.rest.validation.RestrictedExceptionMapper"/>
             <ref component-id="exceptionMapper"/>
         </jaxrs:providers>
         <jaxrs:features>

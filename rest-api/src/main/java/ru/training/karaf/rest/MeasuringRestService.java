@@ -44,13 +44,13 @@ public interface MeasuringRestService {
             @Min(value = 0, message =  "sz must be positive")@QueryParam("sz") int sz
     );
 
-    @POST
+   /* @POST
     MeasuringDTO create(MeasuringDTO measuring);
 
     @PUT
     @Path("{id}")
     MeasuringDTO update(@PathParam("id") long id, MeasuringDTO measuring);
-
+*/
     @GET
     @Path("{id}")
     MeasuringDTO get(@PathParam("id") long id);

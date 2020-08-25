@@ -1,47 +1,52 @@
 package ru.training.karaf.view;
 
-import org.apache.shiro.SecurityUtils;
+import ru.training.karaf.exception.RestrictedException;
 import ru.training.karaf.model.Entity;
 import ru.training.karaf.model.User;
 import ru.training.karaf.model.UserDO;
 import ru.training.karaf.repo.UserRepo;
+import ru.training.karaf.wrapper.FilterParamImpl;
 import ru.training.karaf.wrapper.QueryParams;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 public class UserViewImpl implements UserView {
-    private UserRepo repo;
-    private Class<UserDO> type;
-    private ViewImpl view;
+    private final UserRepo repo;
+    private final Class<UserDO> type;
+    private final ViewUtil view;
 
     public UserViewImpl(UserRepo repo) {
         this.repo = repo;
-        view = new ViewImpl();
+        view = new ViewUtil();
         type = UserDO.class;
     }
 
     @Override
-    public Optional<? extends User> addSensors(long id, List<Long> sensorIds) {
-        return allIsAllowed()? repo.addSensors(id, sensorIds):Optional.empty();
+    public Optional<? extends User> addSensors(long id, List<Long> sensorIds, User currentUser) throws RestrictedException {
+
+        if (changingIsAllowed(currentUser)) {
+            return repo.addSensors(id, sensorIds);
+        }
+        throw new RestrictedException("Operation is restricted");
     }
 
     @Override
-    public boolean loginIsPresent(String login) {
-       return repo.loginIsPresent(login);
+    public Optional<? extends User> addRoles(long id, List<Long> rolesIds, User currentUser) {
+        if (changingIsAllowed(currentUser)) {
+            return repo.addSensors(id, rolesIds);
+        }
+        throw new RestrictedException("Operation is restricted");
     }
 
     @Override
-    public Optional<? extends User> addRoles(long id, List<Long> rolesIds) {
-        return allIsAllowed()? repo.addSensors(id, rolesIds):Optional.empty();
-    }
-
-    @Override
-    public Optional<? extends User> removeRoles(long id, List<Long> rolesIds) {
-        return allIsAllowed()? repo.addSensors(id, rolesIds):Optional.empty();
+    public Optional<? extends User> removeRoles(long id, List<Long> rolesIds, User currentUser) {
+        if (changingIsAllowed(currentUser)) {
+            return repo.addSensors(id, rolesIds);
+        }
+        throw new RestrictedException("Operation is restricted");
     }
 
     @Override
@@ -51,72 +56,71 @@ public class UserViewImpl implements UserView {
 
     @Override
     public List<? extends User> getAll(
-            List<FilterParam> filters, List<SortParam> sorts, int pg, int sz
+            List<FilterParam> filters, List<SortParam> sorts, int pg, int sz,
+            User currentUser
     ) {
-        if(allIsAllowed() || gettingIsAllowed()) {
-            QueryParams query = view.createQueryParams(filters, sorts, pg, sz);
-            return repo.getAll(query);
+        setAuthFilter(currentUser).ifPresent(filters::add);
+        QueryParams query = view.createQueryParams(filters, sorts, pg, sz);
+        return repo.getAll(query);
+    }
+
+    @Override
+    public long getCount(List<FilterParam> filters, int pg, int sz, User currentUser) {
+        setAuthFilter(currentUser).ifPresent(filters::add);
+        QueryParams query = view.createQueryParams(filters, pg, sz);
+        return repo.getCount(query);
+    }
+
+    @Override
+    public Optional<? extends User> create(User entity, User currentUser) {
+        if (changingIsAllowed(currentUser)) {
+            return Optional.ofNullable(repo.create(entity));
         }
-        return Collections.emptyList();
+        throw new RestrictedException("Operation is restricted");
     }
 
     @Override
-    public long getCount(List<FilterParam> filters, int pg, int sz) {
-        if(allIsAllowed() || gettingIsAllowed()) {
-            QueryParams query = view.createQueryParams(filters, pg, sz);
-            return repo.getCount(query);
+    public Optional<? extends User> update(long id, User entity, User currentUser) {
+        if (changingIsAllowed(currentUser)) {
+            return repo.update(id, entity);
         }
-        return 0;
+        throw new RestrictedException("Operation is restricted");
     }
 
     @Override
-    public Optional<? extends User> create(User entity) {
-        return allIsAllowed()? Optional.ofNullable(repo.create(entity)) :Optional.empty();
-    }
-
-    @Override
-    public Optional<? extends User> update(long id, User entity) {
-        return allIsAllowed()? repo.update(id,entity) :Optional.empty();
-    }
-
-    @Override
-    public Optional<? extends User> get(long id) {
-        if(allIsAllowed() || gettingIsAllowed()) {
+    public Optional<? extends User> get(long id, User currentUser) {
+        if (gettingIsAllowed(id, currentUser)) {
             return repo.get(id);
         }
-        return Optional.empty();// exception
+        throw new RestrictedException("Operation is restricted");
     }
 
     @Override
-    public Optional<? extends User> delete(long id) {
-        if(allIsAllowed()) {
+    public Optional<? extends User> delete(long id, User currentUser) {
+        if (changingIsAllowed(currentUser)) {
             return repo.delete(id);
         }
-        return Optional.empty();
+        throw new RestrictedException("Operation is restricted");
     }
 
     @Override
-    public Class<?> getType() {
+    public Class<? extends Entity> getType() {
         return type;
     }
 
-    private boolean changingIsAllowed(long id) {
-        User user = SecurityUtils.getSubject().getPrincipals().oneByType(UserDO.class);
-        Set<String> roles = user.getRoles().stream().map(Entity::getName).collect(Collectors.toSet());
-        return roles.contains("Admin") || (roles.contains("Operator") &&
-                user.getSensors().stream().mapToLong(Entity::getId).anyMatch(sId -> sId == id));
-    }
-
-
-    private boolean allIsAllowed() {
-        User user = SecurityUtils.getSubject().getPrincipals().oneByType(UserDO.class);
+    private boolean changingIsAllowed(User user) {
         Set<String> roles = user.getRoles().stream().map(Entity::getName).collect(Collectors.toSet());
         return roles.contains("Admin");
     }
 
-    private boolean gettingIsAllowed() {
-        User user = SecurityUtils.getSubject().getPrincipals().oneByType(UserDO.class);
+    private boolean gettingIsAllowed(long id, User user) {
         Set<String> roles = user.getRoles().stream().map(Entity::getName).collect(Collectors.toSet());
-        return roles.contains("Admin") || roles.contains("Operator");
+        return roles.contains("Admin") || roles.contains("Operator") || user.getId() == id;
+    }
+
+    private Optional<FilterParam> setAuthFilter(User user) {
+        Set<String> roles = user.getRoles().stream().map(Entity::getName).collect(Collectors.toSet());
+        return roles.contains("Admin") || roles.contains("Operator")? Optional.empty() :
+                Optional.of(new FilterParamImpl("id", "=",Long.toString(user.getId()),type));
     }
 }

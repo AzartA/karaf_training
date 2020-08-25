@@ -14,7 +14,6 @@ import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.util.tracker.ServiceTracker;
-import ru.training.karaf.rest.dto.UserDTO;
 import ru.training.karaf.view.UserView;
 
 public class Authentication extends AuthorizingRealm {

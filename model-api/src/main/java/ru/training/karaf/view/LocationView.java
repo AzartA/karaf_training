@@ -5,14 +5,14 @@ import java.io.OutputStream;
 import java.util.Optional;
 
 import ru.training.karaf.model.Location;
+import ru.training.karaf.model.User;
 
 public interface LocationView extends View<Location> {
-    Optional<? extends Location> getByName(String name);
 
-    Optional<Object> getPlan(long id, OutputStream outputStream);
+    Optional<Object> getPlan(long id, OutputStream outputStream, User currentUser);
 
-    long setPlan(long id, InputStream inputStream, String type);
+    long setPlan(long id, InputStream inputStream, String type, User currentUser);
 
-    Optional<? extends Location> deletePlan(long id);
+    Optional<? extends Location> deletePlan(long id, User currentUser);
 
 }

@@ -1,5 +1,6 @@
 package ru.training.karaf.model;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -18,7 +19,8 @@ import javax.persistence.Transient;
 
 //@Cacheable(value = false)  // entity without JPA cache
 @Entity
-public class MeasuringDO implements Measuring {
+public class MeasuringDO implements Measuring, Serializable {
+    private static final long serialVersionUID = 5474563217901L;
     @Transient
     private final SimpleDateFormat DATE_TIME_FORMAT = Measuring.DATE_TIME_FORMAT;//new SimpleDateFormat("dd.MM.yyyy hh:mm:ss");
     @Id

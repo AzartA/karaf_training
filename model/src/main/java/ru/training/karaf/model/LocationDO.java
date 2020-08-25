@@ -1,5 +1,6 @@
 package ru.training.karaf.model;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -19,7 +20,8 @@ import javax.persistence.OneToMany;
         @NamedQuery(name = LocationDO.GET_BY_ID, query = "SELECT l FROM LocationDO AS l WHERE l.id = :id"),
         @NamedQuery(name = LocationDO.GET_BY_ID_OR_NAME, query = "SELECT l FROM LocationDO AS l WHERE l.id = :id OR l.name = :name")
 })
-public class LocationDO  implements Location {
+public class LocationDO  implements Location, Serializable {
+    private static final long serialVersionUID = 5474563217895L;
     public static final String GET_ALL = "Locations.getAll";
     public static final String GET_BY_NAME = "Locations.getByName";
     public static final String GET_BY_ID = "Locations.getById";

@@ -10,11 +10,12 @@ import org.apache.aries.jpa.template.JpaTemplate;
 import org.apache.aries.jpa.template.TransactionType;
 import ru.training.karaf.model.Unit;
 import ru.training.karaf.model.UnitDO;
+import ru.training.karaf.wrapper.QueryParams;
 
 public class UnitRepo {
     private final JpaTemplate template;
     private final Repo repo;
-    private final Class<UnitDO> stdClass = UnitDO.class;
+    private static final Class<UnitDO> CLASS = UnitDO.class;
 
     public UnitRepo(JpaTemplate template) {
         this.template = template;
@@ -22,17 +23,13 @@ public class UnitRepo {
     }
 
 
-    public List<? extends Unit> getAll(
-            List<String> by, List<String> order, List<String> field, List<String> cond, List<String> value, int pg, int sz,
-            String[] auth
-    ) {
-        return null;//repo.getAll(by, order, field, cond, value, pg, sz, auth, stdClass);
+    public List<? extends Unit> getAll(QueryParams query ) {
+        return repo.getAll(query, CLASS);
     }
 
 
-    public long getCount(List<String> field, List<String> cond, List<String> value, int pg, int sz,
-                         String[] auth) {
-        return 0;//repo.getCount(field, cond, value, pg, sz, auth, stdClass);
+    public long getCount(QueryParams query) {
+        return repo.getCount(query, CLASS);
     }
 
 

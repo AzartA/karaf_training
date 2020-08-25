@@ -2,67 +2,86 @@ package ru.training.karaf.view;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
+import ru.training.karaf.exception.RestrictedException;
+import ru.training.karaf.model.Entity;
 import ru.training.karaf.model.Role;
 import ru.training.karaf.model.RoleDO;
+import ru.training.karaf.model.User;
 import ru.training.karaf.repo.RoleRepo;
-import ru.training.karaf.repo.UserRepo;
+import ru.training.karaf.wrapper.QueryParams;
 
 public class RoleViewImpl implements RoleView {
-    private RoleRepo repo;
-    private UserRepo auth;
-    private Class<RoleDO> type;
+    private final RoleRepo repo;
+    private final Class<RoleDO> type;
+    private final ViewUtil view;
 
-    public RoleViewImpl(RoleRepo repo, UserRepo auth) {
+    public RoleViewImpl(RoleRepo repo) {
         this.repo = repo;
-        this.auth = auth;
+        this.view = new ViewUtil();
         type = RoleDO.class;
     }
 
     @Override
-    public Optional<? extends Role> addUsers(long id, List<Long> userIds) {
-        return Optional.empty();
+    public Optional<? extends Role> addUsers(long id, List<Long> userIds, User currentUser) {
+        if (allIsAllowed(currentUser)) {
+            return repo.addUsers(id, userIds);
+        }
+        throw new RestrictedException("Operation is restricted");
     }
 
     @Override
-    public Optional<? extends Role> removeUsers(long id, List<Long> userIds) {
-        return Optional.empty();
+    public Optional<? extends Role> removeUsers(long id, List<Long> userIds, User currentUser) {
+        if (allIsAllowed(currentUser)) {
+            return repo.removeUsers(id, userIds);
+        }
+        throw new RestrictedException("Operation is restricted");
     }
 
     @Override
     public List<? extends Role> getAll(
-            List<FilterParam> filters, List<SortParam> sorts, int pg, int sz
+            List<FilterParam> filters, List<SortParam> sorts, int pg, int sz,
+            User currentUser
     ) {
-        return null;
+        QueryParams query =  view.createQueryParams(filters, sorts, pg, sz);
+        return repo.getAll(query);
     }
 
     @Override
-    public long getCount(List<FilterParam> filters, int pg, int sz) {
-        return 0;
+    public long getCount(List<FilterParam> filters, int pg, int sz, User currentUser) {
+        QueryParams query =  view.createQueryParams(filters, pg, sz);
+        return repo.getCount(query);
     }
 
     @Override
-    public Optional<? extends Role> create(Role entity) {
-        return Optional.empty();
+    public Optional<? extends Role> create(Role entity, User currentUser) {
+        throw new RestrictedException("Operation is restricted");
     }
 
     @Override
-    public Optional<? extends Role> update(long id, Role entity) {
-        return Optional.empty();
+    public Optional<? extends Role> update(long id, Role entity, User currentUser) {
+        throw new RestrictedException("Operation is restricted");
     }
 
     @Override
-    public Optional<? extends Role> get(long id) {
-        return Optional.empty();
+    public Optional<? extends Role> get(long id, User currentUser) {
+        return repo.get(id);
     }
 
     @Override
-    public Optional<? extends Role> delete(long id) {
-        return Optional.empty();
+    public Optional<? extends Role> delete(long id, User currentUser) {
+        throw new RestrictedException("Operation is restricted");
     }
 
     @Override
-    public Class<?> getType() {
+    public Class<? extends Entity > getType() {
         return type;
+    }
+
+    private boolean allIsAllowed(User user) {
+        Set<String> roles = user.getRoles().stream().map(Entity::getName).collect(Collectors.toSet());
+        return roles.contains("Admin");
     }
 }

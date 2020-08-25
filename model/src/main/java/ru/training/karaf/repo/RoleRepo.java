@@ -5,6 +5,7 @@ import org.apache.aries.jpa.template.TransactionType;
 import ru.training.karaf.model.Role;
 import ru.training.karaf.model.RoleDO;
 import ru.training.karaf.model.UserDO;
+import ru.training.karaf.wrapper.QueryParams;
 
 import javax.persistence.Query;
 import javax.validation.ValidationException;
@@ -14,7 +15,7 @@ import java.util.Optional;
 public class RoleRepo {
     private final JpaTemplate template;
     private final Repo repo;
-    private final Class<RoleDO> stdClass = RoleDO.class;
+    private static final Class<RoleDO> CLASS = RoleDO.class;
 
     public RoleRepo(JpaTemplate template) {
         this.template = template;
@@ -39,7 +40,7 @@ public class RoleRepo {
     public Optional<? extends Role> addUsers(long id, List<Long> userIds) {
 
         return template.txExpr(TransactionType.Required, em -> {
-            Optional<RoleDO> roleToUpdate = repo.getById(id, em, stdClass);
+            Optional<RoleDO> roleToUpdate = repo.getById(id, em, CLASS);
             roleToUpdate.ifPresent(p -> {
                 p.addUsers(repo.getEntitySetByIds(userIds, em, UserDO.class));
                 em.merge(p);
@@ -51,7 +52,7 @@ public class RoleRepo {
 
     public Optional<? extends Role> removeUsers(long id, List<Long> userIds) {
         return template.txExpr(TransactionType.Required, em -> {
-            Optional<RoleDO> roleToUpdate = repo.getById(id, em, stdClass);
+            Optional<RoleDO> roleToUpdate = repo.getById(id, em, CLASS);
             roleToUpdate.ifPresent(p -> {
                 p.getUsers().removeAll(repo.getEntitySetByIds(userIds, em, UserDO.class));
                 em.merge(p);
@@ -61,23 +62,19 @@ public class RoleRepo {
     }
 
 
-    public List<? extends Role> getAll(
-            List<String> by, List<String> order, List<String> field, List<String> cond, List<String> value, int pg, int sz,
-            String[] auth
-    ) {
-        return null;//repo.getAll(by, order, field, cond, value, pg, sz, auth, stdClass);
+    public List<? extends Role> getAll(QueryParams query ) {
+        return repo.getAll(query, CLASS);
     }
 
 
-    public long getCount(List<String> field, List<String> cond, List<String> value, int pg, int sz,
-                         String[] auth) {
-        return 0;//repo.getCount(field, cond, value, pg, sz, auth, stdClass);
+    public long getCount(QueryParams query) {
+        return repo.getCount(query, CLASS);
     }
 
 
     public Optional<? extends Role> create(Role role) {
         return template.txExpr(em -> {
-            if (!(repo.getByName(role.getName(), em, stdClass).isPresent())) {
+            if (!(repo.getByName(role.getName(), em, CLASS).isPresent())) {
                 RoleDO roleToCreate = new RoleDO(role.getName());
                 em.persist(roleToCreate);
                 roleToCreate.setUsers(repo.getEntitySet(role.getUsers(), em, UserDO.class));
@@ -90,7 +87,7 @@ public class RoleRepo {
 
     public Optional<? extends Role> update(long id, Role role) {
         return template.txExpr(em -> {
-            List<RoleDO> l = repo.getByIdOrName(id, role.getName(), em, stdClass);
+            List<RoleDO> l = repo.getByIdOrName(id, role.getName(), em, CLASS);
             if (l.size() > 1) {
                 throw new ValidationException("This name is already exist");
             }
@@ -109,14 +106,14 @@ public class RoleRepo {
 
 
     public Optional<? extends Role> get(long id) {
-        return template.txExpr(TransactionType.Required, em -> repo.getById(id, em, stdClass));
+        return template.txExpr(TransactionType.Required, em -> repo.getById(id, em, CLASS));
     }
 
 
     public Optional<? extends Role> delete(long id) {
 
 
-        return template.txExpr(em -> repo.getById(id, em, stdClass).map(l -> {
+        return template.txExpr(em -> repo.getById(id, em, CLASS).map(l -> {
             l.getUsers().forEach(u -> u.getRoles().remove(l));
             em.remove(l);
             return l;

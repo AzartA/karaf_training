@@ -1,5 +1,6 @@
 package ru.training.karaf.model;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -16,7 +17,8 @@ import javax.persistence.OneToMany;
 import ru.training.karaf.converter.JsonbCapabilityConverter;
 
 @Entity
-public class SensorTypeDO implements SensorType {
+public class SensorTypeDO implements SensorType, Serializable {
+    private static final long serialVersionUID = 5474563217896L;
     @Id
     @GeneratedValue
     private long id;

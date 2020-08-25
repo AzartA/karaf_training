@@ -5,125 +5,119 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.apache.shiro.SecurityUtils;
+import ru.training.karaf.exception.RestrictedException;
 import ru.training.karaf.model.Entity;
 import ru.training.karaf.model.Sensor;
 import ru.training.karaf.model.SensorDO;
 import ru.training.karaf.model.User;
-import ru.training.karaf.model.UserDO;
 import ru.training.karaf.repo.SensorRepo;
-import ru.training.karaf.repo.UserRepo;
 import ru.training.karaf.wrapper.FilterParamImpl;
 import ru.training.karaf.wrapper.QueryParams;
 
 public class SensorViewImpl implements SensorView {
-    private SensorRepo repo;
-    private UserRepo auth;
-    private Class<SensorDO> type;
-    private ViewImpl view;
-    private User user;
+    private final SensorRepo repo;
+    private final Class<SensorDO> type;
+    private final ViewUtil view;
 
-    public SensorViewImpl(SensorRepo repo, UserRepo auth) {
+    public SensorViewImpl(SensorRepo repo) {
         this.repo = repo;
-        this.auth = auth;
-        view = new ViewImpl();
+        view = new ViewUtil();
         type = SensorDO.class;
     }
 
     @Override
-    public Optional<? extends Sensor> setSensorType(long id, long typeId) {
-        if (ChangingIsAllowed(id)) {
+    public Optional<? extends Sensor> setSensorType(long id, long typeId, User currentUser) {
+        if (changingIsAllowed(id, currentUser)) {
             return repo.setSensorType(id, typeId);
         }
-        return Optional.empty();
+        throw new RestrictedException("Operation is restricted");
     }
 
     @Override
-    public Optional<? extends Sensor> setLocation(long id, long locationId) {
-        if (ChangingIsAllowed(id)) {
+    public Optional<? extends Sensor> setLocation(long id, long locationId, User currentUser) {
+        if (changingIsAllowed(id, currentUser)) {
             return repo.setLocation(id, locationId);
         }
-        return Optional.empty();
+        throw new RestrictedException("Operation is restricted");
     }
 
     @Override
-    public Optional<? extends Sensor> addUsers(long id, List<Long> userIds) {
-        if (ChangingIsAllowed(id)) {
+    public Optional<? extends Sensor> addUsers(long id, List<Long> userIds, User currentUser) {
+        if (changingIsAllowed(id, currentUser)) {
             return repo.addUsers(id, userIds);
         }
-        return Optional.empty();
+        throw new RestrictedException("Operation is restricted");
     }
 
     @Override
-    public Optional<? extends Sensor> setXY(long id, long x, long y) {
-        if (ChangingIsAllowed(id)) {
+    public Optional<? extends Sensor> setXY(long id, long x, long y, User currentUser) {
+        if (changingIsAllowed(id, currentUser)) {
             return repo.setXY(id, x, y);
         }
-        return Optional.empty();
+        throw new RestrictedException("Operation is restricted");
     }
 
     @Override
     public List<? extends Sensor> getAll(
-            List<FilterParam> filters, List<SortParam> sorts, int pg, int sz
+            List<FilterParam> filters, List<SortParam> sorts, int pg, int sz,
+            User currentUser
     ) {
-        getAuthFilter().ifPresent(filters::add);
+        getAuthFilter(currentUser).ifPresent(filters::add);
         QueryParams query =  view.createQueryParams(filters, sorts, pg, sz);
         return repo.getAll(query);
     }
 
     @Override
-    public long getCount(List<FilterParam> filters, int pg, int sz) {
-        getAuthFilter().ifPresent(filters::add);
+    public long getCount(List<FilterParam> filters, int pg, int sz, User currentUser) {
+        getAuthFilter(currentUser).ifPresent(filters::add);
         QueryParams query =  view.createQueryParams(filters, pg, sz);
         return repo.getCount(query);
     }
 
     @Override
-    public Optional<? extends Sensor> create(Sensor entity) {
-        if(creatingIsAllowed()){
+    public Optional<? extends Sensor> create(Sensor entity, User currentUser) {
+        if(creatingIsAllowed(currentUser)){
             return repo.create(entity);
         }
-        return Optional.empty();
+        throw new RestrictedException("Operation is restricted");
     }
 
     @Override
-    public Optional<? extends Sensor> update(long id, Sensor entity) {
-        if (ChangingIsAllowed(id)) {
+    public Optional<? extends Sensor> update(long id, Sensor entity, User currentUser) {
+        if (changingIsAllowed(id, currentUser)) {
             return repo.update(id, entity);
         }
-        return Optional.empty();
+        throw new RestrictedException("Operation is restricted");
     }
 
     @Override
-    public Optional<? extends Sensor> get(long id) {
-        if(allIsAllowed() || gettingIsAllowed(id)) {
+    public Optional<? extends Sensor> get(long id, User currentUser) {
+        if(gettingIsAllowed(id, currentUser)) {
             return repo.get(id);
         }
         return Optional.empty();
     }
 
     @Override
-    public Optional<? extends Sensor> delete(long id) {
-        if (ChangingIsAllowed(id)) {
+    public Optional<? extends Sensor> delete(long id, User currentUser) throws RestrictedException {
+        if (changingIsAllowed(id, currentUser)) {
             return repo.delete(id);
         }
-        return Optional.empty();
+        throw new RestrictedException("Operation is restricted");
     }
 
     @Override
-    public Class<?> getType() {
+    public Class<? extends Entity> getType() {
         return type;
     }
 
-    private boolean ChangingIsAllowed(long id) {
-        user = SecurityUtils.getSubject().getPrincipals().oneByType(UserDO.class);
+    private boolean changingIsAllowed(long id, User user) {
         Set<String> roles = user.getRoles().stream().map(Entity::getName).collect(Collectors.toSet());
         return roles.contains("Admin") || (roles.contains("Operator") &&
                 user.getSensors().stream().mapToLong(Entity::getId).anyMatch(sId -> sId == id));
     }
 
-    private Optional<? extends FilterParam> getAuthFilter(){
-        user = SecurityUtils.getSubject().getPrincipals().oneByType(UserDO.class);
+    private Optional<? extends FilterParam> getAuthFilter(User user){
         Set<String> roles = user.getRoles().stream().map(Entity::getName).collect(Collectors.toSet());
         if (!roles.contains("Admin")) {
             return Optional.of(new FilterParamImpl("users.id","=", Long.toString(user.getId()),type));
@@ -131,20 +125,14 @@ public class SensorViewImpl implements SensorView {
         return Optional.empty();
     }
 
-    private boolean creatingIsAllowed() {
-        user = SecurityUtils.getSubject().getPrincipals().oneByType(UserDO.class);
+    private boolean creatingIsAllowed(User user) {
         Set<String> roles = user.getRoles().stream().map(Entity::getName).collect(Collectors.toSet());
         return roles.contains("Admin") || roles.contains("Operator");
     }
-    private boolean gettingIsAllowed(long id) {
-        user = SecurityUtils.getSubject().getPrincipals().oneByType(UserDO.class);
+    private boolean gettingIsAllowed(long id, User user) {
         Set<String> roles = user.getRoles().stream().map(Entity::getName).collect(Collectors.toSet());
-        return !roles.contains("Admin")&&
+        return roles.contains("Admin") ||
                 user.getSensors().stream().mapToLong(Entity::getId).anyMatch(sId -> sId == id);
     }
-    private boolean allIsAllowed() {
-        user = SecurityUtils.getSubject().getPrincipals().oneByType(UserDO.class);
-        Set<String> roles = user.getRoles().stream().map(Entity::getName).collect(Collectors.toSet());
-        return roles.contains("Admin");
-    }
+
 }

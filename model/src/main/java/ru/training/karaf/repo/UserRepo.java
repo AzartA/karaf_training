@@ -16,8 +16,6 @@ import ru.training.karaf.wrapper.QueryParams;
 
 public class UserRepo {
     private final JpaTemplate template;
-
-
     private final Repo repo;
     private final Class<UserDO> CLASS = UserDO.class;
 

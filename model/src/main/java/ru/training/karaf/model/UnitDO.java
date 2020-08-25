@@ -1,5 +1,6 @@
 package ru.training.karaf.model;
 
+import java.io.Serializable;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.persistence.CascadeType;
@@ -19,7 +20,8 @@ import javax.persistence.NamedQuery;
         @NamedQuery(name = UnitDO.GET_BY_ID_OR_NAME, query = "SELECT u FROM UnitDO AS u WHERE u.id = :id OR u.name = :name")
 })
 @Entity
-public class UnitDO implements Unit {
+public class UnitDO implements Unit, Serializable {
+    private static final long serialVersionUID = 5474563217899L;
     public static final String GET_ALL = "Units.getAll";
     public static final String GET_BY_NAME = "Units.getByName";
     public static final String GET_BY_ID = "Units.getById";

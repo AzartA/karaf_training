@@ -10,12 +10,14 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Entity
-public class SensorDO implements Sensor {
+public class SensorDO implements Sensor, Serializable {
+    private static final long serialVersionUID = 5474563217894L;
     @Id
     @GeneratedValue
     private long id;
