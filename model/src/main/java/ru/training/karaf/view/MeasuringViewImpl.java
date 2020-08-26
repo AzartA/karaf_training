@@ -83,6 +83,11 @@ public class MeasuringViewImpl implements MeasuringView {
         return this.getClass();
     }
 
+    @Override
+    public ViewType get() {
+        return  this;
+    }
+
     private Optional<? extends FilterParam> getAuthFilter(User user){
         Set<String> roles = user.getRoles().stream().map(Entity::getName).collect(Collectors.toSet());
         if (!roles.contains("Admin")) {

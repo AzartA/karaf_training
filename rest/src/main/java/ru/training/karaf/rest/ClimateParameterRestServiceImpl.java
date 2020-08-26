@@ -10,6 +10,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.shiro.SecurityUtils;
 import ru.training.karaf.model.ClimateParameter;
+import ru.training.karaf.model.User;
 import ru.training.karaf.rest.dto.ClimateParameterDTO;
 import ru.training.karaf.rest.dto.DTO;
 import ru.training.karaf.rest.dto.FilterParamDTO;
@@ -25,7 +26,7 @@ import ru.training.karaf.view.ViewType;
 public class ClimateParameterRestServiceImpl implements ClimateParameterRestService {
     private ViewFacade viewFacade;
     private ClimateParameterView view;
-    private UserDTO currentUser;
+    private User currentUser;
 
     public void setViewFacade(ViewFacade viewFacade) {
         this.viewFacade = viewFacade;
@@ -33,7 +34,7 @@ public class ClimateParameterRestServiceImpl implements ClimateParameterRestServ
 
     private void getViewAndUser() {
         view = viewFacade.getView(ClimateParameterView.class);
-        currentUser = SecurityUtils.getSubject().getPrincipals().oneByType(UserDTO.class);
+        currentUser = SecurityUtils.getSubject().getPrincipals().oneByType(User.class);
     }
 
     @Override

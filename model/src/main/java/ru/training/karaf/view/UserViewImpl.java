@@ -130,4 +130,9 @@ public class UserViewImpl implements UserView {
         return roles.contains("Admin") || roles.contains("Operator")? Optional.empty() :
                 Optional.of(new FilterParamImpl("id", "=",Long.toString(user.getId()),type));
     }
+
+    @Override
+    public ViewType get() {
+        return  this;
+    }
 }

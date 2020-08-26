@@ -16,7 +16,7 @@ public class ViewFacadeImpl implements ViewFacade {
         //Optional<ViewType> view = views.stream().filter(v-> v.getServiceClass().isInstance(type)).reduce((v, t)-> v);
         for (ViewType v :views) {
             if(type.isAssignableFrom(v.getServiceClass())){
-                return (T) v;
+                return (T) v.get();
             }
         }
         /*if(view.isPresent()){

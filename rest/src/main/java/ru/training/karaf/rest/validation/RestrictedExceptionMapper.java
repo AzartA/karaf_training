@@ -4,7 +4,9 @@ import ru.training.karaf.exception.RestrictedException;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
+import javax.ws.rs.ext.Provider;
 
+@Provider
 public class RestrictedExceptionMapper implements ExceptionMapper<RestrictedException> {
     @Override
     public Response toResponse(RestrictedException e) {

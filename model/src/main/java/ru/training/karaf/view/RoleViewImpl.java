@@ -85,6 +85,11 @@ public class RoleViewImpl implements RoleView {
         return this.getClass();
     }
 
+    @Override
+    public ViewType get() {
+        return  this;
+    }
+
     private boolean allIsAllowed(User user) {
         Set<String> roles = user.getRoles().stream().map(Entity::getName).collect(Collectors.toSet());
         return roles.contains("Admin");

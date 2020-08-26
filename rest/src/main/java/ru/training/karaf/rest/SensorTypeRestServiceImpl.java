@@ -10,6 +10,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.shiro.SecurityUtils;
 import ru.training.karaf.model.SensorType;
+import ru.training.karaf.model.User;
 import ru.training.karaf.rest.dto.DTO;
 import ru.training.karaf.rest.dto.FilterParamDTO;
 import ru.training.karaf.rest.dto.SensorTypeDTO;
@@ -25,14 +26,14 @@ import ru.training.karaf.view.ViewType;
 
 public class SensorTypeRestServiceImpl implements SensorTypeRestService {
     private SensorTypeView view;
-    private UserDTO currentUser;
+    private User currentUser;
     private ViewFacade viewFacade;
     public void setViewFacade(ViewFacade viewFacade) {
         this.viewFacade = viewFacade;
         }
     private void getViewAndUser() {
         view = viewFacade.getView(SensorTypeView.class);
-        currentUser = SecurityUtils.getSubject().getPrincipals().oneByType(UserDTO.class);
+        currentUser = SecurityUtils.getSubject().getPrincipals().oneByType(User.class);
     }
 
 

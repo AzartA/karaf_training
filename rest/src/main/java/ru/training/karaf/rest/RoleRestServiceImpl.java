@@ -3,6 +3,7 @@ package ru.training.karaf.rest;
 
 import org.apache.shiro.SecurityUtils;
 import ru.training.karaf.model.Role;
+import ru.training.karaf.model.User;
 import ru.training.karaf.rest.dto.DTO;
 import ru.training.karaf.rest.dto.FilterParamDTO;
 import ru.training.karaf.rest.dto.RoleDTO;
@@ -27,7 +28,7 @@ import java.util.stream.Collectors;
 
 public class RoleRestServiceImpl implements  RoleRestService {
     private RoleView view;
-    private UserDTO currentUser;
+    private User currentUser;
     private ViewFacade viewFacade;
 
     public void setViewFacade(ViewFacade viewFacade) {
@@ -36,7 +37,7 @@ public class RoleRestServiceImpl implements  RoleRestService {
 
     private void getViewAndUser() {
         view = viewFacade.getView(RoleView.class);
-        currentUser = SecurityUtils.getSubject().getPrincipals().oneByType(UserDTO.class);
+        currentUser = SecurityUtils.getSubject().getPrincipals().oneByType(User.class);
     }
 
 

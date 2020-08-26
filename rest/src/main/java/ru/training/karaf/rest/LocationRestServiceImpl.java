@@ -13,6 +13,7 @@ import javax.ws.rs.core.StreamingOutput;
 
 import org.apache.shiro.SecurityUtils;
 import ru.training.karaf.model.Location;
+import ru.training.karaf.model.User;
 import ru.training.karaf.rest.dto.DTO;
 import ru.training.karaf.rest.dto.FilterParamDTO;
 import ru.training.karaf.rest.dto.LocationDTO;
@@ -27,7 +28,7 @@ import ru.training.karaf.view.ViewFacade;
 import ru.training.karaf.view.ViewType;
 
 public class LocationRestServiceImpl implements LocationRestService {
-    private UserDTO currentUser;
+    private User currentUser;
     private LocationView view;
     private ViewFacade viewFacade;
 
@@ -37,7 +38,7 @@ public class LocationRestServiceImpl implements LocationRestService {
 
     private void getViewAndUser() {
         view =  viewFacade.getView(LocationView.class);
-        currentUser = SecurityUtils.getSubject().getPrincipals().oneByType(UserDTO.class);
+        currentUser = SecurityUtils.getSubject().getPrincipals().oneByType(User.class);
     }
 
     @Override

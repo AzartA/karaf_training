@@ -2,6 +2,7 @@ package ru.training.karaf.rest;
 
 import org.apache.shiro.SecurityUtils;
 import ru.training.karaf.model.Unit;
+import ru.training.karaf.model.User;
 import ru.training.karaf.rest.dto.DTO;
 import ru.training.karaf.rest.dto.FilterParamDTO;
 import ru.training.karaf.rest.dto.SortParamDTO;
@@ -25,7 +26,7 @@ import java.util.stream.Collectors;
 
 
 public class UnitRestServiceImpl implements UnitRestService {
-    private UserDTO currentUser;
+    private User currentUser;
     private UnitView view;
     private ViewFacade viewFacade;
     public void setViewFacade(ViewFacade viewFacade) {
@@ -33,7 +34,7 @@ public class UnitRestServiceImpl implements UnitRestService {
     }
     private void getViewAndUser() {
         view = viewFacade.getView(UnitView.class);
-        currentUser = SecurityUtils.getSubject().getPrincipals().oneByType(UserDTO.class);
+        currentUser = SecurityUtils.getSubject().getPrincipals().oneByType(User.class);
     }
 
 

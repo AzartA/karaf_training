@@ -7,6 +7,7 @@ import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
 
 import org.apache.shiro.SecurityUtils;
+import ru.training.karaf.model.User;
 import ru.training.karaf.rest.dto.DTO;
 import ru.training.karaf.rest.dto.FilterParamDTO;
 import ru.training.karaf.rest.dto.MeasuringDTO;
@@ -22,7 +23,7 @@ import ru.training.karaf.view.ViewType;
 public class MeasuringRestServiceImpl implements MeasuringRestService {
     private ViewFacade viewFacade;
     private MeasuringView view;
-    private UserDTO currentUser;
+    private User currentUser;
 
     public void setViewFacade(ViewFacade viewFacade) {
         this.viewFacade = viewFacade;
@@ -30,7 +31,7 @@ public class MeasuringRestServiceImpl implements MeasuringRestService {
 
     private void getViewAndUser() {
         view = viewFacade.getView(MeasuringView.class);
-        currentUser = SecurityUtils.getSubject().getPrincipals().oneByType(UserDTO.class);
+        currentUser = SecurityUtils.getSubject().getPrincipals().oneByType(User.class);
     }
 
    /* @Override
