@@ -60,14 +60,23 @@
         <argument ref="roleRepo"/>
     </bean>
 
-    <service ref="userView" interface="ru.training.karaf.view.UserView"/>
-    <service ref="locationView" interface="ru.training.karaf.view.LocationView"/>
-    <service ref="unitView" interface="ru.training.karaf.view.UnitView"/>
-    <service ref="paramView" interface="ru.training.karaf.view.ClimateParameterView"/>
-    <service ref="typeView" interface="ru.training.karaf.view.SensorTypeView"/>
-    <service ref="sensorView" interface="ru.training.karaf.view.SensorView"/>
-    <service ref="measuringView" interface="ru.training.karaf.view.MeasuringView"/>
-    <service ref="roleView" interface="ru.training.karaf.view.RoleView"/>
+    <bean id="viewFacade" class = "ru.training.karaf.view.ViewFacadeImpl">
+        <property name="views">
+            <reference-list interface="ru.training.karaf.view.ViewType"
+                            availability="optional"/>
+        </property>
+    </bean>
+    <service ref="viewFacade" interface="ru.training.karaf.view.ViewFacade"/>
+
+    <service ref="userView" interface="ru.training.karaf.view.ViewType"/>
+    <service ref="locationView" interface="ru.training.karaf.view.ViewType"/>
+    <service ref="unitView" interface="ru.training.karaf.view.ViewType"/>
+    <service ref="paramView" interface="ru.training.karaf.view.ViewType"/>
+    <service ref="typeView" interface="ru.training.karaf.view.ViewType"/>
+    <service ref="sensorView" interface="ru.training.karaf.view.ViewType"/>
+    <service ref="measuringView" interface="ru.training.karaf.view.ViewType"/>
+    <service ref="roleView" interface="ru.training.karaf.view.ViewType"/>
+
 
 
 </blueprint>

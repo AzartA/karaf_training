@@ -6,7 +6,7 @@ import java.util.Optional;
 import ru.training.karaf.model.Sensor;
 import ru.training.karaf.model.User;
 
-public interface SensorView extends View<Sensor> {
+public interface SensorView extends View<Sensor>, ViewType {
     Optional<? extends Sensor> setSensorType(long id, long typeId, User currentUser);
     Optional<? extends Sensor> setLocation(long id, long locationId, User currentUser);
     Optional<? extends Sensor> addUsers(long id, List<Long> userIds, User currentUser);

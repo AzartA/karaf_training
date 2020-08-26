@@ -7,9 +7,10 @@ import ru.training.karaf.model.User;
 import ru.training.karaf.rest.dto.AuthDTO;
 import ru.training.karaf.rest.dto.UserDTO;
 import ru.training.karaf.view.UserView;
+import ru.training.karaf.view.ViewFacade;
 
 public class AuthRestServiceImpl implements AuthRestService {
-    private UserView view;
+    private ViewFacade viewFacade;
     //private Subject currentUser;
 
    /* public User getCurrentUser() {
@@ -17,8 +18,8 @@ public class AuthRestServiceImpl implements AuthRestService {
     }*/
 
 
-    public void setView(UserView view) {
-        this.view = view;
+    public void setViewFacade(ViewFacade viewFacade){
+        this.viewFacade = viewFacade;
     }
 
     @Override
@@ -27,6 +28,6 @@ public class AuthRestServiceImpl implements AuthRestService {
         token.setRememberMe(true);
         Subject currentUser = SecurityUtils.getSubject();
         currentUser.login(token);
-        return view.getByLogin((String) currentUser.getPrincipal()).map(UserDTO::new).get();
+        return viewFacade.getView(UserView.class).getByLogin((String) currentUser.getPrincipal()).map(UserDTO::new).get();
     }
 }

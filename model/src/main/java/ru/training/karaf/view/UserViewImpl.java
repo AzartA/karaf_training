@@ -18,10 +18,12 @@ public class UserViewImpl implements UserView {
     private final Class<UserDO> type;
     private final ViewUtil view;
 
+
     public UserViewImpl(UserRepo repo) {
         this.repo = repo;
         view = new ViewUtil();
         type = UserDO.class;
+
     }
 
     @Override
@@ -106,6 +108,11 @@ public class UserViewImpl implements UserView {
     @Override
     public Class<? extends Entity> getType() {
         return type;
+    }
+
+    @Override
+    public Class<? extends ViewType> getServiceClass() {
+        return this.getClass();
     }
 
     private boolean changingIsAllowed(User user) {

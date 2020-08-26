@@ -7,7 +7,7 @@ import java.util.Optional;
 import ru.training.karaf.model.Location;
 import ru.training.karaf.model.User;
 
-public interface LocationView extends View<Location> {
+public interface LocationView extends View<Location>, ViewType {
 
     Optional<Object> getPlan(long id, OutputStream outputStream, User currentUser);
 

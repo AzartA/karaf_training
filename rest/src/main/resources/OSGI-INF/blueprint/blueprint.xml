@@ -1,46 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
            xmlns:jaxrs="http://cxf.apache.org/blueprint/jaxrs">
-    <reference id="userView" interface="ru.training.karaf.view.UserView"/>
+    <reference id="viewFacade" interface="ru.training.karaf.view.ViewFacade"/>
+    <!--<reference id="userView" interface="ru.training.karaf.view.UserView"/>
     <reference id="unitView" interface="ru.training.karaf.view.UnitView"/>
     <reference id="locationView" interface="ru.training.karaf.view.LocationView"/>
     <reference id="paramView" interface="ru.training.karaf.view.ClimateParameterView"/>
     <reference id="typeView" interface="ru.training.karaf.view.SensorTypeView"/>
     <reference id="sensorView" interface="ru.training.karaf.view.SensorView"/>
     <reference id="measuringView" interface="ru.training.karaf.view.MeasuringView"/>
-    <reference id="roleView" interface="ru.training.karaf.view.RoleView"/>
+    <reference id="roleView" interface="ru.training.karaf.view.RoleView"/>-->
     <!--<reference id="passwordService" interface="ru.training.karaf.rest.auth.AuthPassService"/>-->
 
     <bean id="userRestServiceBean" class="ru.training.karaf.rest.UserRestServiceImpl">
-        <property name="view" ref="userView"/>
+        <property name="viewFacade" ref="viewFacade"/>
         <property name="passwordService" ref="passwordService"/>
     </bean>
     <bean id="locationRestServiceBean" class="ru.training.karaf.rest.LocationRestServiceImpl">
-        <property name="view" ref="locationView"/>
+        <property name="viewFacade" ref="viewFacade"/>
     </bean>
     <bean id="unitRestServiceBean" class="ru.training.karaf.rest.UnitRestServiceImpl">
-        <property name="view" ref="unitView"/>
+        <property name="viewFacade" ref="viewFacade"/>
     </bean>
     <bean id="paramRestServiceBeen" class="ru.training.karaf.rest.ClimateParameterRestServiceImpl">
-        <property name="view" ref="paramView"/>
+        <property name="viewFacade" ref="viewFacade"/>
     </bean>
     <bean id="typeRestServiceBeen" class="ru.training.karaf.rest.SensorTypeRestServiceImpl">
-        <property name="view" ref="typeView"/>
+        <property name="viewFacade" ref="viewFacade"/>
     </bean>
     <bean id="sensorRestServiceBeen" class="ru.training.karaf.rest.SensorRestServiceImpl">
-        <property name="view" ref="sensorView"/>
+        <property name="viewFacade" ref="viewFacade"/>
     </bean>
     <bean id="measuringRestServiceBeen" class="ru.training.karaf.rest.MeasuringRestServiceImpl">
-        <property name="view" ref="measuringView"/>
+        <property name="viewFacade" ref="viewFacade"/>
     </bean>
     <bean id="roleRestServiceBeen" class="ru.training.karaf.rest.RoleRestServiceImpl">
-        <property name="view" ref="roleView"/>
+        <property name="viewFacade" ref="viewFacade"/>
     </bean>
 
     <!--auth-->
     <bean id = "passwordService" class = "ru.training.karaf.rest.auth.AuthPassService"/>
     <bean id="authRestServiceBeen" class="ru.training.karaf.rest.AuthRestServiceImpl">
-        <property name="view" ref="userView"/>
+        <property name="viewFacade" ref="viewFacade"/>
     </bean>
 
     <!-- -->

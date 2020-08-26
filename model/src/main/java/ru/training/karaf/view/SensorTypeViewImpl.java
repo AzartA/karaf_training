@@ -81,6 +81,11 @@ public class SensorTypeViewImpl implements SensorTypeView {
         return type;
     }
 
+    @Override
+    public Class<? extends ViewType> getServiceClass() {
+        return this.getClass();
+    }
+
     private boolean ChangingIsAllowed(User user) {
         Set<String> roles = user.getRoles().stream().map(Entity::getName).collect(Collectors.toSet());
         return roles.contains("Admin") || roles.contains("Operator");

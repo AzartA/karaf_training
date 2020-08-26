@@ -15,13 +15,16 @@ import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.util.tracker.ServiceTracker;
 import ru.training.karaf.view.UserView;
+import ru.training.karaf.view.ViewFacade;
 
 public class Authentication extends AuthorizingRealm {
-    private ServiceTracker<UserView, UserView> tracker;
+
+    private ServiceTracker<ViewFacade, ViewFacade> tracker;
 
     public Authentication() {
-        tracker = new ServiceTracker<>(FrameworkUtil.getBundle(Authentication.class).getBundleContext(),UserView.class,null);
+        tracker = new ServiceTracker<>(FrameworkUtil.getBundle(Authentication.class).getBundleContext(),ViewFacade.class,null);
         tracker.open();
+
     }
 
     @Override
@@ -34,7 +37,7 @@ public class Authentication extends AuthorizingRealm {
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
         String login = (String) authenticationToken.getPrincipal();
-        return tracker.getService().getByLogin(login).map(user -> {
+             return (tracker.getService().getView(UserView.class)).getByLogin(login).map(user -> {
             SimplePrincipalCollection principals = new SimplePrincipalCollection();
             principals.add(user.getLogin(), getName());
             principals.add(user, getName());
