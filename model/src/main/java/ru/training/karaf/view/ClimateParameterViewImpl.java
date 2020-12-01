@@ -35,14 +35,15 @@ public class ClimateParameterViewImpl implements ClimateParameterView {
     @Override
     public List<? extends ClimateParameter> getAll(
             List<FilterParam> filters, List<SortParam> sorts, int pg, int sz,
-            User currentUser) {
-        QueryParams query =  view.createQueryParams(filters, sorts, pg, sz);
+            User currentUser
+    ) {
+        QueryParams query = view.createQueryParams(filters, sorts, pg, sz);
         return repo.getAll(query);
     }
 
     @Override
     public long getCount(List<FilterParam> filters, int pg, int sz, User currentUser) {
-        QueryParams query =  view.createQueryParams(filters, pg, sz);
+        QueryParams query = view.createQueryParams(filters, pg, sz);
         return repo.getCount(query);
     }
 
@@ -87,12 +88,11 @@ public class ClimateParameterViewImpl implements ClimateParameterView {
 
     @Override
     public ViewType get() {
-        return  this;
+        return this;
     }
 
     private boolean ChangingIsAllowed(User user) {
         Set<String> roles = user.getRoles().stream().map(Entity::getName).collect(Collectors.toSet());
         return roles.contains("Admin") || roles.contains("Operator");
     }
-
 }

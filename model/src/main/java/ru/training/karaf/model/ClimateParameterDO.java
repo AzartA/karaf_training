@@ -1,5 +1,11 @@
 package ru.training.karaf.model;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,12 +16,6 @@ import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @NamedQueries({
         @NamedQuery(name = ClimateParameterDO.GET_ALL, query = "SELECT u FROM ClimateParameterDO AS u"),
@@ -24,28 +24,27 @@ import java.util.stream.Collectors;
         @NamedQuery(name = ClimateParameterDO.GET_BY_ID_OR_NAME, query = "SELECT u FROM ClimateParameterDO AS u WHERE u.id = :id OR u.name = :name")
 })
 @Entity
-//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class ClimateParameterDO implements ClimateParameter, Serializable {
     private static final long serialVersionUID = 5474563217898L;
     public static final String GET_ALL = "Params.getAll";
     public static final String GET_BY_NAME = "Params.getByName";
     public static final String GET_BY_ID = "Params.getById";
     public static final String GET_BY_ID_OR_NAME = "Params.getByIdOrName";
-        @Id
+    @Id
     @GeneratedValue
     private long id;
+
     @Column(name = "name", length = 48, nullable = false, unique = true)
     private String name;
-    //@JsonSerialize(using = SetOfEntitiesSerializer.class)
-    //@JsonBackReference
-    //@JsonManagedReference
-    //@JsonIdentityReference(alwaysAsId = true)
+
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "PARAMETER_UNIT_SET")
     private Set<UnitDO> units;
+
     @ManyToMany(mappedBy = "parameters", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Set<SensorTypeDO> sensorTypes;
-    @OneToMany(mappedBy = "parameter", cascade = {CascadeType.ALL}) //{CascadeType.PERSIST, CascadeType.MERGE})
+
+    @OneToMany(mappedBy = "parameter", cascade = {CascadeType.ALL})
     private List<MeasuringDO> measurings;
 
     public ClimateParameterDO() {
@@ -97,30 +96,8 @@ public class ClimateParameterDO implements ClimateParameter, Serializable {
         return unitsAdded && paramAdded;
     }
 
-    public boolean removeUnits(Set<UnitDO> units) {
-        boolean unitsRemoved = this.units.removeAll(units);
-        boolean paramRemoved = units.stream().map(u -> u.getClimateParameters().remove(this)).reduce(true, (a, b) -> a && b);
-        return unitsRemoved && paramRemoved;
-    }
-
-    public boolean addSensorTypes(Set<SensorTypeDO> types) {
-        boolean typesAdded = this.sensorTypes.addAll(types);
-        boolean sensorTypesAdded = types.stream().map(t -> t.getParameters().add(this)).reduce(true, (a, b) -> a && b);
-        return typesAdded && sensorTypesAdded;
-    }
-
-    public boolean removeSensorTypes(Set<SensorTypeDO> types) {
-        boolean typesRemoved = this.sensorTypes.removeAll(types);
-        boolean paramRemoved = types.stream().map(t -> t.getParameters().remove(this)).reduce(true, (a, b) -> a && b);
-        return typesRemoved && paramRemoved;
-    }
-
     public List<MeasuringDO> getMeasurings() {
         return measurings;
-    }
-
-    public void setMeasurings(List<MeasuringDO> measurings) {
-        this.measurings = measurings;
     }
 
     @Override
@@ -145,11 +122,11 @@ public class ClimateParameterDO implements ClimateParameter, Serializable {
         String sensorTypeNames = "[" + sensorTypes.stream().map(SensorType::getName).collect(Collectors.joining(",")) + "]";
         String unitsNames = "[" + units.stream().map(Unit::getName).collect(Collectors.joining(",")) + "]";
 
-        return "ClimateParameterDO{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", sensorTypes=" + sensorTypes +
-                ", units=" + units +
-                '}';
+        return "ClimateParameterDO{"
+                + "id=" + id
+                + ", name='" + name + "'"
+                + ", sensorTypes=" + sensorTypeNames
+                + ", units=" + unitsNames
+                + '}';
     }
 }

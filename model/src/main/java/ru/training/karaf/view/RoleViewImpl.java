@@ -1,10 +1,5 @@
 package ru.training.karaf.view;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import ru.training.karaf.exception.RestrictedException;
 import ru.training.karaf.model.Entity;
 import ru.training.karaf.model.Role;
@@ -12,6 +7,11 @@ import ru.training.karaf.model.RoleDO;
 import ru.training.karaf.model.User;
 import ru.training.karaf.repo.RoleRepo;
 import ru.training.karaf.wrapper.QueryParams;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class RoleViewImpl implements RoleView {
     private final RoleRepo repo;
@@ -45,13 +45,13 @@ public class RoleViewImpl implements RoleView {
             List<FilterParam> filters, List<SortParam> sorts, int pg, int sz,
             User currentUser
     ) {
-        QueryParams query =  view.createQueryParams(filters, sorts, pg, sz);
+        QueryParams query = view.createQueryParams(filters, sorts, pg, sz);
         return repo.getAll(query);
     }
 
     @Override
     public long getCount(List<FilterParam> filters, int pg, int sz, User currentUser) {
-        QueryParams query =  view.createQueryParams(filters, pg, sz);
+        QueryParams query = view.createQueryParams(filters, pg, sz);
         return repo.getCount(query);
     }
 
@@ -76,7 +76,7 @@ public class RoleViewImpl implements RoleView {
     }
 
     @Override
-    public Class<? extends Entity > getType() {
+    public Class<? extends Entity> getType() {
         return type;
     }
 
@@ -87,7 +87,7 @@ public class RoleViewImpl implements RoleView {
 
     @Override
     public ViewType get() {
-        return  this;
+        return this;
     }
 
     private boolean allIsAllowed(User user) {

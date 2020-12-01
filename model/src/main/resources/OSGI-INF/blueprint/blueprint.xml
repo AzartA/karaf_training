@@ -3,7 +3,6 @@
     <reference id="jpaTemplate" interface="org.apache.aries.jpa.template.JpaTemplate" filter="(osgi.unit.name=PU)"/>
     <reference id="datasource" interface="javax.sql.DataSource"
                filter="(osgi.jndi.service.name=jdbc/ru.training.model.model-datasource)"/>
-    <!--<reference id = "shiroUtils" interface="org.apache.shiro.SecurityUtils"/>-->
     <bean id="repo" class="ru.training.karaf.repo.Repo">
         <argument ref="jpaTemplate"/>
     </bean>
@@ -32,11 +31,8 @@
     <bean id="roleRepo" class="ru.training.karaf.repo.RoleRepo" init-method="init">
             <argument ref="jpaTemplate"/>
     </bean>
-
-
     <bean id="sensorView" class="ru.training.karaf.view.SensorViewImpl">
         <argument ref="sensorRepo"/>
-
     </bean>
     <bean id="userView" class="ru.training.karaf.view.UserViewImpl">
         <argument ref="userRepo"/>
@@ -59,7 +55,6 @@
     <bean id="roleView" class="ru.training.karaf.view.RoleViewImpl">
         <argument ref="roleRepo"/>
     </bean>
-
     <bean id="viewFacade" class = "ru.training.karaf.view.ViewFacadeImpl">
         <property name="views">
             <reference-list interface="ru.training.karaf.view.ViewType"
@@ -67,7 +62,6 @@
         </property>
     </bean>
     <service ref="viewFacade" interface="ru.training.karaf.view.ViewFacade"/>
-
     <service ref="userView" interface="ru.training.karaf.view.ViewType"/>
     <service ref="locationView" interface="ru.training.karaf.view.ViewType"/>
     <service ref="unitView" interface="ru.training.karaf.view.ViewType"/>
@@ -76,7 +70,4 @@
     <service ref="sensorView" interface="ru.training.karaf.view.ViewType"/>
     <service ref="measuringView" interface="ru.training.karaf.view.ViewType"/>
     <service ref="roleView" interface="ru.training.karaf.view.ViewType"/>
-
-
-
 </blueprint>

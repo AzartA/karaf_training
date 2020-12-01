@@ -4,7 +4,6 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import java.io.Serializable;
@@ -15,11 +14,14 @@ import java.util.stream.Collectors;
 @Entity
 public class RoleDO implements Role, Serializable {
     private static final long serialVersionUID = 5474563217892L;
+
     @Id
     @GeneratedValue
     private long id;
+
     @Column(name = "name", nullable = false, length = 48, unique = true)
     private String name;
+
     @ManyToMany(mappedBy = "roles", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Set<UserDO> users;
 
@@ -66,10 +68,12 @@ public class RoleDO implements Role, Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
+        if (this == o) {
             return true;
-        if (!(o instanceof RoleDO))
+        }
+        if (!(o instanceof RoleDO)) {
             return false;
+        }
 
         RoleDO roleDO = (RoleDO) o;
 
@@ -84,10 +88,10 @@ public class RoleDO implements Role, Serializable {
     @Override
     public String toString() {
         String userNames = "[" + users.stream().map(UserDO::getName).collect(Collectors.joining(",")) + "]";
-        return "RoleDO{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", users=" + userNames +
-                '}';
+        return "RoleDO{"
+                + "id=" + id
+                + ", name='" + name + '\''
+                + ", users=" + userNames
+                + '}';
     }
 }

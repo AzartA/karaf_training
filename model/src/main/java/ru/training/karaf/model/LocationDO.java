@@ -20,7 +20,7 @@ import javax.persistence.OneToMany;
         @NamedQuery(name = LocationDO.GET_BY_ID, query = "SELECT l FROM LocationDO AS l WHERE l.id = :id"),
         @NamedQuery(name = LocationDO.GET_BY_ID_OR_NAME, query = "SELECT l FROM LocationDO AS l WHERE l.id = :id OR l.name = :name")
 })
-public class LocationDO  implements Location, Serializable {
+public class LocationDO implements Location, Serializable {
     private static final long serialVersionUID = 5474563217895L;
     public static final String GET_ALL = "Locations.getAll";
     public static final String GET_BY_NAME = "Locations.getByName";
@@ -29,13 +29,17 @@ public class LocationDO  implements Location, Serializable {
     @Id
     @GeneratedValue
     private long id;
+
     @Column(name = "name", length = 48, nullable = false, unique = true)
     private String name;
+
     @OneToMany(mappedBy = "location", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Set<SensorDO> sensors;
+
     @Column(columnDefinition = "oid")
     private long planOid;
-    @Column(name = "picturetype", length = 32)
+
+    @Column(name = "picture_type", length = 32)
     private String pictureType;
 
     public LocationDO() {
@@ -66,10 +70,6 @@ public class LocationDO  implements Location, Serializable {
         return sensors;
     }
 
-    public void setSensors(Set<SensorDO> sensors) {
-        this.sensors = sensors;
-    }
-
     public long getPlanOid() {
         return planOid;
     }
@@ -84,12 +84,6 @@ public class LocationDO  implements Location, Serializable {
 
     public void setPictureType(String pictureType) {
         this.pictureType = pictureType;
-    }
-
-    public boolean addSensors(Set<SensorDO> sensors) {
-        boolean unitsAdded = this.sensors.addAll(sensors);
-        sensors.forEach(s -> s.setLocation(this));
-        return unitsAdded;
     }
 
     @Override
@@ -111,11 +105,11 @@ public class LocationDO  implements Location, Serializable {
     @Override
     public String toString() {
         String sensorsNames = sensors.stream().map(Sensor::getName).collect(Collectors.joining(","));
-        return "UserDO [id=" + id +
-                ", name=" + name +
-                ", planOid=" + planOid +
-                ", pictureType=" + pictureType +
-                ", sensorSet=" + sensorsNames +
-                "]";
+        return "UserDO [id=" + id
+                + ", name=" + name
+                + ", planOid=" + planOid
+                + ", pictureType=" + pictureType
+                + ", sensorSet=" + sensorsNames
+                + "]";
     }
 }

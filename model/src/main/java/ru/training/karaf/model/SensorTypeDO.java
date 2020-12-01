@@ -1,9 +1,7 @@
 package ru.training.karaf.model;
 
-import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.stream.Collectors;
+import ru.training.karaf.converter.JsonbCapabilityConverter;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Convert;
@@ -13,24 +11,32 @@ import javax.persistence.Id;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
-
-import ru.training.karaf.converter.JsonbCapabilityConverter;
+import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 public class SensorTypeDO implements SensorType, Serializable {
     private static final long serialVersionUID = 5474563217896L;
+
     @Id
     @GeneratedValue
     private long id;
+
     @Column(length = 48)
     private String name;
+    
     @Convert(converter = JsonbCapabilityConverter.class)
     @Column(columnDefinition = "jsonb")
     private CapabilityImpl capability;
+
     @Column(name = "min_time")
     private int minTime;
+
     @OneToMany(mappedBy = "type", cascade = {CascadeType.ALL})
     private Set<SensorDO> sensors;
+
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "SENSOR_PARAMETER_SET")
     private Set<ClimateParameterDO> parameters;
@@ -85,16 +91,8 @@ public class SensorTypeDO implements SensorType, Serializable {
         return minTime;
     }
 
-    public void setMinTime(int minTime) {
-        this.minTime = minTime;
-    }
-
     public Set<SensorDO> getSensors() {
         return sensors;
-    }
-
-    public void setSensors(Set<SensorDO> sensors) {
-        this.sensors = sensors;
     }
 
     public Set<ClimateParameterDO> getParameters() {
@@ -105,32 +103,14 @@ public class SensorTypeDO implements SensorType, Serializable {
         this.parameters = parameters;
     }
 
-    public boolean addParameters(Set<ClimateParameterDO> parameters) {
-        boolean parametersAdded = this.parameters.addAll(parameters);
-        boolean paramAdded = parameters.stream().map(u -> u.getSensorTypes().add(this)).reduce(true, (a, b) -> a && b);
-        return parametersAdded && paramAdded;
+    public void addParameters(Set<ClimateParameterDO> parameters) {
+        this.parameters.addAll(parameters);
+        parameters.forEach(u -> u.getSensorTypes().add(this));
     }
-
-    public boolean addSensors(Set<SensorDO> sensors) {
-        boolean sensorsAdded = this.sensors.addAll(sensors);
-        sensors.forEach(s -> s.setType(this));
-        return sensorsAdded;
-    }
-
-    /*public boolean removeParameters(Set<? extends ClimateParameter> parameters) {
-        Set<ClimateParameterDO> paramDOSet = (Set<ClimateParameterDO>) parameters;
-        boolean parametersRemoved = this.parameters.removeAll(parameters);
-        boolean paramRemoved = paramDOSet.stream().map(u -> u.getSensorTypes().remove(this)).reduce(true, (a, b) -> a && b);
-        return parametersRemoved && paramRemoved;
-    }*/
 
     @Override
     public CapabilityImpl getCapability() {
         return capability;
-    }
-
-    public void setCapability(CapabilityImpl capability) {
-        this.capability = capability;
     }
 
     @Override
@@ -154,13 +134,13 @@ public class SensorTypeDO implements SensorType, Serializable {
     public String toString() {
         String parameterNames = "[" + parameters.stream().map(ClimateParameter::getName).collect(Collectors.joining(",")) + "]";
         String sensorNames = "[" + sensors.stream().map(Sensor::getName).collect(Collectors.joining(",")) + "]";
-        return "SensorTypeDO{" +
-                "id=" + id +
-                ", name=" + name +
-                ", capability=" + capability.toString() +
-                ", minTime=" + minTime +
-                ", parameters=" + parameterNames +
-                ", sensors=" + sensorNames +
-                '}';
+        return "SensorTypeDO{"
+                + "id=" + id
+                + ", name=" + name
+                + ", capability=" + capability.toString()
+                + ", minTime=" + minTime
+                + ", parameters=" + parameterNames
+                + ", sensors=" + sensorNames
+                + '}';
     }
 }

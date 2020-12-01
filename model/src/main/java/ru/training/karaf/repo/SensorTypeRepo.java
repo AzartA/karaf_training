@@ -1,13 +1,5 @@
 package ru.training.karaf.repo;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-import javax.persistence.EntityManager;
-import javax.validation.ValidationException;
-
 import org.apache.aries.jpa.template.JpaTemplate;
 import org.apache.aries.jpa.template.TransactionType;
 import ru.training.karaf.model.ClimateParameterDO;
@@ -15,6 +7,14 @@ import ru.training.karaf.model.Entity;
 import ru.training.karaf.model.SensorType;
 import ru.training.karaf.model.SensorTypeDO;
 import ru.training.karaf.wrapper.QueryParams;
+
+import javax.persistence.EntityManager;
+import javax.validation.ValidationException;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class SensorTypeRepo {
     private final JpaTemplate template;
@@ -26,28 +26,24 @@ public class SensorTypeRepo {
         repo = new Repo(template);
     }
 
-
     public Optional<? extends SensorType> addParams(long id, List<Long> paramIds) {
         return template.txExpr(TransactionType.Required, em -> {
             Optional<SensorTypeDO> typeToUpdate = repo.getById(id, em, CLASS);
-            typeToUpdate.ifPresent(p -> {
-                p.addParameters(repo.getEntitySetByIds(paramIds, em, ClimateParameterDO.class));
-                em.merge(p);
+            typeToUpdate.ifPresent(sensorTypeDO -> {
+                sensorTypeDO.addParameters(repo.getEntitySetByIds(paramIds, em, ClimateParameterDO.class));
+                em.merge(sensorTypeDO);
             });
             return typeToUpdate;
         });
     }
 
-
-    public List<? extends SensorType> getAll(QueryParams query ) {
+    public List<? extends SensorType> getAll(QueryParams query) {
         return repo.getAll(query, CLASS);
     }
-
 
     public long getCount(QueryParams query) {
         return repo.getCount(query, CLASS);
     }
-
 
     public Optional<? extends SensorType> create(SensorType type) {
         return template.txExpr(em -> {
@@ -61,15 +57,14 @@ public class SensorTypeRepo {
         });
     }
 
-
     public Optional<? extends SensorType> update(long id, SensorType type) {
         return template.txExpr(em -> {
-            List<SensorTypeDO> l = repo.getByIdOrName(id, type.getName(), em, CLASS);
-            if (l.size() > 1) {
+            List<SensorTypeDO> sensorTypes = repo.getByIdOrName(id, type.getName(), em, CLASS);
+            if (sensorTypes.size() > 1) {
                 throw new ValidationException("This name is already exist");
             }
-            if (!l.isEmpty()) {
-                SensorTypeDO typeToUpdate = l.get(0);
+            if (!sensorTypes.isEmpty()) {
+                SensorTypeDO typeToUpdate = sensorTypes.get(0);
                 if (typeToUpdate.getId() == id) {
                     typeToUpdate.update(type);
                     typeToUpdate.setParameters(getParamsById(type, em));
@@ -81,19 +76,16 @@ public class SensorTypeRepo {
         });
     }
 
-
     public Optional<? extends SensorType> get(long id) {
         return template.txExpr(TransactionType.Required, em -> repo.getById(id, em, CLASS));
     }
 
-
     public Optional<? extends SensorType> delete(long id) {
-        return template.txExpr(em -> repo.getById(id, em, CLASS).map(l -> {
-                l.getParameters().forEach(u -> u.getSensorTypes().remove(l));
-                //l.getSensors().forEach(s -> s.setType(null)); //  delete cascade.ALL in SensorTypeDO for this case
-                em.remove(l);
-                return l;
-            })
+        return template.txExpr(em -> repo.getById(id, em, CLASS).map(sensorTypeDO -> {
+                    sensorTypeDO.getParameters().forEach(u -> u.getSensorTypes().remove(sensorTypeDO));
+                    em.remove(sensorTypeDO);
+                    return sensorTypeDO;
+                })
 
         );
     }

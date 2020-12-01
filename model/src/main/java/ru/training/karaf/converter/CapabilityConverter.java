@@ -1,21 +1,21 @@
 package ru.training.karaf.converter;
 
-import ru.training.karaf.model.CapabilityImpl;
-
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 
+import ru.training.karaf.model.CapabilityImpl;
+
 @Converter
 public class CapabilityConverter implements AttributeConverter<CapabilityImpl, String> {
-    private final static String DELIMITER = " | ";
+    private final static String DELIMITER = " : ";
 
     @Override
     public String convertToDatabaseColumn(CapabilityImpl capability) {
-        return capability.getRange() +
-                DELIMITER +
-                capability.getAccuracy() +
-                DELIMITER +
-                capability.getResolution();
+        return capability.getRange()
+                + DELIMITER
+                + capability.getAccuracy()
+                + DELIMITER
+                + capability.getResolution();
     }
 
     @Override

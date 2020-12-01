@@ -91,15 +91,14 @@ public class Repo {
     ) {
         List<Predicate> predicates = new ArrayList<>();
         for (FilterParam filter : filterParams) {
-            Class<?> type = root.getJavaType();
             Path<String> path = getPath(filter.getField(), root);
-            Predicate predicate = getPredicate(filter.getCond(), filter.getValue(), path, type, cb);
+            Predicate predicate = getPredicate(filter.getCond(), filter.getValue(), path, cb);
             predicates.add(predicate);
         }
         return predicates;
     }
 
-    private Predicate getPredicate(String condition, String value, Path<String> path, Class<?> type, CriteriaBuilder cb) {
+    private Predicate getPredicate(String condition, String value, Path<String> path, CriteriaBuilder cb) {
         switch (condition) {
             case ">":
                 return cb.greaterThan(path, value);
@@ -110,15 +109,9 @@ public class Repo {
             case "<=":
                 return cb.lessThanOrEqualTo(path, value);
             case "contains":
-              /*  if (!type.equals(String.class)) {
-                    throw new ValidationException("The condition 'contains' incompatible with type of the field.");
-                }*/
-                return cb.like(path, "%" + value + "%");
+              return cb.like(path, "%" + value + "%");
             case "!contains":
-               /* if (!type.equals(String.class)) {
-                    throw new ValidationException("The condition 'contains' incompatible with type of the field.");
-                }*/
-                return cb.not(cb.like(path, "%" + value + "%"));
+               return cb.not(cb.like(path, "%" + value + "%"));
             case "!=":
                 return cb.not(cb.equal(path, value));
             case "=":
@@ -129,30 +122,12 @@ public class Repo {
 
     private <T> Path<String> getPath(String field, Root<T> root) {
         String[] fieldParts = (field).split("\\.");
-        Class<?> type = root.getJavaType();
-        //verification
-        /*for (String fieldPart : fieldParts) {
-            try {
-                if (fieldPart.endsWith("s")) {
-                    Field fld = type.getDeclaredField(fieldPart);
-                    ParameterizedType pType = (ParameterizedType) fld.getGenericType();
-                    type = (Class<?>) pType.getActualTypeArguments()[0];
-                } else {
-                    type = type.getDeclaredField(fieldPart).getType();
-                }
-            } catch (NoSuchFieldException e) {
-                throw new IllegalArgumentException("There is no such field: "+ fieldPart);
-            }
-        }*/
-
-
         From<String, String> joinPath = null;
         Path<String> path = null;
         boolean[] pattern = new boolean[fieldParts.length];
         for (int j = fieldParts.length - 2; j >= 0; j--) {
             pattern[j] = fieldParts[j].endsWith("s") || pattern[j + 1];
         }
-
         for (int j = 0; j < fieldParts.length; j++) {
             //build path
             if (pattern[j]) {

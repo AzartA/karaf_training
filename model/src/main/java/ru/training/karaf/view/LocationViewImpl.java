@@ -1,12 +1,5 @@
 package ru.training.karaf.view;
 
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import ru.training.karaf.exception.RestrictedException;
 import ru.training.karaf.model.Entity;
 import ru.training.karaf.model.Location;
@@ -14,6 +7,13 @@ import ru.training.karaf.model.LocationDO;
 import ru.training.karaf.model.User;
 import ru.training.karaf.repo.LocationRepo;
 import ru.training.karaf.wrapper.QueryParams;
+
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class LocationViewImpl implements LocationView {
     private final LocationRepo repo;
@@ -55,13 +55,13 @@ public class LocationViewImpl implements LocationView {
             List<FilterParam> filters, List<SortParam> sorts, int pg, int sz,
             User currentUser
     ) {
-        QueryParams query =  view.createQueryParams(filters, sorts, pg, sz);
+        QueryParams query = view.createQueryParams(filters, sorts, pg, sz);
         return repo.getAll(query);
     }
 
     @Override
     public long getCount(List<FilterParam> filters, int pg, int sz, User currentUser) {
-        QueryParams query =  view.createQueryParams(filters, pg, sz);
+        QueryParams query = view.createQueryParams(filters, pg, sz);
         return repo.getCount(query);
     }
 
@@ -106,7 +106,7 @@ public class LocationViewImpl implements LocationView {
 
     @Override
     public ViewType get() {
-        return  this;
+        return this;
     }
 
     private boolean ChangingIsAllowed(User user) {

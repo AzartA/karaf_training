@@ -1,16 +1,16 @@
 package ru.training.karaf.repo;
 
-import java.util.List;
-import java.util.Optional;
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.validation.ValidationException;
-
 import org.apache.aries.jpa.template.JpaTemplate;
 import org.apache.aries.jpa.template.TransactionType;
 import ru.training.karaf.model.Unit;
 import ru.training.karaf.model.UnitDO;
 import ru.training.karaf.wrapper.QueryParams;
+
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.validation.ValidationException;
+import java.util.List;
+import java.util.Optional;
 
 public class UnitRepo {
     private final JpaTemplate template;
@@ -22,19 +22,16 @@ public class UnitRepo {
         repo = new Repo(template);
     }
 
-
-    public List<? extends Unit> getAll(QueryParams query ) {
+    public List<? extends Unit> getAll(QueryParams query) {
         return repo.getAll(query, CLASS);
     }
-
 
     public long getCount(QueryParams query) {
         return repo.getCount(query, CLASS);
     }
 
-
     public Optional<? extends Unit> create(Unit unit) {
-        UnitDO unitToCreate = new UnitDO(unit.getName(),unit.getNotation());
+        UnitDO unitToCreate = new UnitDO(unit.getName(), unit.getNotation());
         return template.txExpr(em -> {
             if (!(getByName(unit.getName(), em).isPresent())) {
                 em.persist(unitToCreate);
@@ -44,15 +41,14 @@ public class UnitRepo {
         });
     }
 
-
     public Optional<? extends Unit> update(long id, Unit unit) {
         return template.txExpr(em -> {
-            List<UnitDO> l = getByIdOrName(id, unit.getName(), em);
-            if (l.size() > 1) {
+            List<UnitDO> units = getByIdOrName(id, unit.getName(), em);
+            if (units.size() > 1) {
                 throw new ValidationException("This name is already exist");
             }
-            if (!l.isEmpty()) {
-                UnitDO unitToUpdate = l.get(0);
+            if (!units.isEmpty()) {
+                UnitDO unitToUpdate = units.get(0);
                 if (unitToUpdate.getId() == id) {
                     unitToUpdate.setName(unit.getName());
                     unitToUpdate.setNotation(unit.getNotation());
@@ -64,22 +60,15 @@ public class UnitRepo {
         });
     }
 
-
     public Optional<? extends Unit> get(long id) {
         return template.txExpr(TransactionType.Required, em -> getById(id, em));
     }
 
-
-    public Optional<? extends Unit> getByName(String name) {
-        return template.txExpr(em -> getByName(name, em));
-    }
-
-
     public Optional<? extends Unit> delete(long id) {
-        return template.txExpr(em -> getById(id, em).map(l -> {
-            l.getClimateParameters().forEach(p -> p.getUnits().remove(l));
-            em.remove(l);
-            return l;
+        return template.txExpr(em -> getById(id, em).map(unitDO -> {
+            unitDO.getClimateParameters().forEach(p -> p.getUnits().remove(unitDO));
+            em.remove(unitDO);
+            return unitDO;
         }));
     }
 

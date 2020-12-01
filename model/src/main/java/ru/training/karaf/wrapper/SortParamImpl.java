@@ -2,15 +2,13 @@ package ru.training.karaf.wrapper;
 
 import ru.training.karaf.view.SortParam;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-
 public class SortParamImpl implements SortParam {
     private String by;
     private String order;
 
     public SortParamImpl() {
     }
+
     public <T> SortParamImpl(String by, String order, Class<T> type) {
         this.by = by;
         this.order = order;
@@ -34,15 +32,18 @@ public class SortParamImpl implements SortParam {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
+        if (this == o) {
             return true;
-        if (!(o instanceof SortParamImpl))
+        }
+        if (!(o instanceof SortParamImpl)) {
             return false;
+        }
 
         SortParamImpl sortParam = (SortParamImpl) o;
 
-        if (!by.equals(sortParam.by))
+        if (!by.equals(sortParam.by)) {
             return false;
+        }
         return order.equals(sortParam.order);
     }
 
@@ -55,10 +56,10 @@ public class SortParamImpl implements SortParam {
 
     @Override
     public String toString() {
-        return "SortParam{" +
-                "by='" + by + '\'' +
-                ", order='" + order + '\'' +
-                '}';
+        return "SortParam{"
+                + "by='" + by + '\''
+                + ", order='" + order + '\''
+                + '}';
     }
 }
 

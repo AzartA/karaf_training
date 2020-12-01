@@ -80,10 +80,10 @@ public class CapabilityImpl implements Serializable, Capability {
 
     @Override
     public String toString() {
-        return "Capability{" +
-                "range='" + range + '\'' +
-                ", accuracy='" + accuracy + '\'' +
-                ", resolution='" + resolution + '\'' +
-                '}';
+        return "Capability{"
+                + "range='" + range + '\''
+                + ", accuracy='" + accuracy + '\''
+                + ", resolution='" + resolution + '\''
+                + '}';
     }
 }

@@ -1,9 +1,5 @@
 package ru.training.karaf.repo;
 
-import java.util.List;
-import java.util.Optional;
-import javax.validation.ValidationException;
-
 import org.apache.aries.jpa.template.JpaTemplate;
 import org.apache.aries.jpa.template.TransactionType;
 import ru.training.karaf.model.LocationDO;
@@ -13,17 +9,21 @@ import ru.training.karaf.model.SensorTypeDO;
 import ru.training.karaf.model.UserDO;
 import ru.training.karaf.wrapper.QueryParams;
 
+import javax.validation.ValidationException;
+import java.util.List;
+import java.util.Optional;
+
 public class SensorRepo {
     private final JpaTemplate template;
     private final Repo repo;
-    private final static  Class<SensorDO> CLASS = SensorDO.class;
+    private final static Class<SensorDO> CLASS = SensorDO.class;
 
     public SensorRepo(JpaTemplate template) {
         this.template = template;
         repo = new Repo(template);
     }
 
-    public List<? extends Sensor> getAll(QueryParams query ) {
+    public List<? extends Sensor> getAll(QueryParams query) {
         return repo.getAll(query, CLASS);
     }
 
@@ -51,12 +51,12 @@ public class SensorRepo {
 
     public Optional<? extends Sensor> update(long id, Sensor sensor) {
         return template.txExpr(em -> {
-            List<SensorDO> l = repo.getByIdOrName(id, sensor.getName(), em, CLASS);
-            if (l.size() > 1) {
+            List<SensorDO> sensors = repo.getByIdOrName(id, sensor.getName(), em, CLASS);
+            if (sensors.size() > 1) {
                 throw new ValidationException("This name is already exist");
             }
-            if (!l.isEmpty()) {
-                SensorDO sensorToUpdate = l.get(0);
+            if (!sensors.isEmpty()) {
+                SensorDO sensorToUpdate = sensors.get(0);
                 if (sensorToUpdate.getId() == id) {
                     sensorToUpdate.setName(sensor.getName());
                     sensorToUpdate.setX(sensor.getX());
@@ -81,17 +81,16 @@ public class SensorRepo {
     }
 
     public Optional<? extends Sensor> delete(long id) {
-        return template.txExpr(em -> repo.getById(id, em, CLASS).map(l -> {
-            if (l.getLocation() != null) {
-                l.getLocation().getSensors().remove(l);
+        return template.txExpr(em -> repo.getById(id, em, CLASS).map(sensorDO -> {
+            if (sensorDO.getLocation() != null) {
+                sensorDO.getLocation().getSensors().remove(sensorDO);
             }
-            if (l.getLocation() != null) {
-                l.getType().getSensors().remove(l);
+            if (sensorDO.getLocation() != null) {
+                sensorDO.getType().getSensors().remove(sensorDO);
             }
-            l.getUsers().forEach(u -> u.getSensors().remove(l));
-            //l.getMeasurings().forEach(s -> s.setSensor(null)); //  delete cascade.ALL in SensorDO for this case
-            em.remove(l);
-            return l;
+            sensorDO.getUsers().forEach(u -> u.getSensors().remove(sensorDO));
+            em.remove(sensorDO);
+            return sensorDO;
         }));
     }
 

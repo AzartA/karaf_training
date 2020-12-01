@@ -37,25 +37,27 @@ public class FilterParamImpl implements FilterParam {
         return value;
     }
 
-
-
     public void setValue(String value) {
         this.value = value;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
+        if (this == o) {
             return true;
-        if (!(o instanceof FilterParamImpl))
+        }
+        if (!(o instanceof FilterParamImpl)) {
             return false;
+        }
 
         FilterParamImpl that = (FilterParamImpl) o;
 
-        if (!field.equals(that.field))
+        if (!field.equals(that.field)) {
             return false;
-        if (!cond.equals(that.cond))
+        }
+        if (!cond.equals(that.cond)) {
             return false;
+        }
         return value.equals(that.value);
     }
 
@@ -69,10 +71,10 @@ public class FilterParamImpl implements FilterParam {
 
     @Override
     public String toString() {
-        return "FilterParam{" +
-                "field='" + field + '\'' +
-                ", cond='" + cond + '\'' +
-                ", value='" + value + '\'' +
-                '}';
+        return "FilterParam{"
+                + "field='" + field + '\''
+                + ", cond='" + cond + '\''
+                + ", value='" + value + '\''
+                + '}';
     }
 }

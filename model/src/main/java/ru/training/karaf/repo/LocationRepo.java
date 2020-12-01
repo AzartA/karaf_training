@@ -34,16 +34,13 @@ public class LocationRepo {
         repo = new Repo(template);
     }
 
-
-    public List<? extends Location> getAll(QueryParams query ) {
+    public List<? extends Location> getAll(QueryParams query) {
         return repo.getAll(query, CLASS);
     }
-
 
     public long getCount(QueryParams query) {
         return repo.getCount(query, CLASS);
     }
-
 
     public Optional<? extends Location> create(Location location) {
         LocationDO locationToCreate = new LocationDO(location.getName());
@@ -56,15 +53,14 @@ public class LocationRepo {
         });
     }
 
-
     public Optional<? extends Location> update(long id, Location location) {
         return template.txExpr(em -> {
-            List<LocationDO> l = getByIdOrName(id, location.getName(), em);
-            if (l.size() > 1) {
+            List<LocationDO> locationDOList = getByIdOrName(id, location.getName(), em);
+            if (locationDOList.size() > 1) {
                 throw new ValidationException("This name is already exist");
             }
-            if (!l.isEmpty()) {
-                LocationDO locationToUpdate = l.get(0);
+            if (!locationDOList.isEmpty()) {
+                LocationDO locationToUpdate = locationDOList.get(0);
                 if (locationToUpdate.getId() == id) {
                     locationToUpdate.setName(location.getName());
                     em.merge(locationToUpdate);
@@ -75,23 +71,16 @@ public class LocationRepo {
         });
     }
 
-
     public Optional<? extends Location> get(long id) {
         return template.txExpr(TransactionType.Required, em -> getById(id, em));
     }
 
-
-    public Optional<? extends Location> getByName(String name) {
-        return template.txExpr(em -> getByName(name, em));
-    }
-
-
     public Optional<LocationDO> delete(long id) {
-        return template.txExpr(em -> getById(id, em).map(l -> {
+        return template.txExpr(em -> getById(id, em).map(locationDO -> {
             deletePlan(id);
-            l.getSensors().forEach(s -> s.setLocation(null));
-            em.remove(l);
-            return l;
+            locationDO.getSensors().forEach(sensor -> sensor.setLocation(null));
+            em.remove(locationDO);
+            return locationDO;
         }));
     }
 
@@ -102,23 +91,19 @@ public class LocationRepo {
                 LargeObjectManager largeObjectManager = conn.unwrap(PGConnection.class).getLargeObjectAPI();
                 long oid = template.txExpr(em -> em.find(LocationDO.class, id)).getPlanOid();
                 LargeObject lob = largeObjectManager.open(oid, LargeObjectManager.READ);
-                //largeObjectManager.delete(oid);
                 IOUtils.copy(lob.getInputStream(), outputStream);
                 lob.close();
                 conn.commit();
                 return Optional.of(new Object());
             } catch (IOException e) {
-                //LOG.error("Exception: {}", e.getMessage());
                 conn.rollback();
             } finally {
                 conn.setAutoCommit(true);
             }
-        } catch (SQLException ex) {
-            //LOG.error("Exception: {}", ex.getMessage());
+        } catch (SQLException ignored) {
         }
         return Optional.empty();
     }
-
 
     public long setPlan(long id, InputStream inputStream, String type) {
         try (Connection conn = dataSource.getConnection()) {
@@ -137,17 +122,14 @@ public class LocationRepo {
                 });
                 return size;
             } catch (IOException ex) {
-                //LOG.error("Exception: {}", ex.getMessage());
                 conn.rollback();
             } finally {
                 conn.setAutoCommit(true);
             }
-        } catch (SQLException ex) {
-            //LOG.error("Exception: {}", ex.getMessage());
+        } catch (SQLException ignored) {
         }
         return -1L;
     }
-
 
     public Optional<? extends Location> deletePlan(long id) {
         try (Connection conn = dataSource.getConnection()) {
@@ -164,9 +146,8 @@ public class LocationRepo {
                 return location;
             }));
         } catch (SQLException ex) {
-            //LOG.error("Exception: {}", ex.getMessage());
+            return Optional.empty();
         }
-        return Optional.empty();
     }
 
     private Optional<LocationDO> getByName(String name, EntityManager em) {

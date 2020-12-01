@@ -23,7 +23,6 @@ import java.util.stream.Collectors;
         @NamedQuery(name = UserDO.GET_BY_LOGIN, query = "SELECT u FROM UserDO AS u WHERE u.login = :login"),
         @NamedQuery(name = UserDO.GET_BY_ID, query = "SELECT u FROM UserDO AS u WHERE u.id = :id"),
         @NamedQuery(name = UserDO.GET_BY_ID_OR_LOGIN, query = "SELECT u FROM UserDO AS u WHERE u.id = :id OR u.login = :login")
-
 })
 public class UserDO implements User, Serializable {
     private static final long serialVersionUID = 5474563217891L;
@@ -31,26 +30,32 @@ public class UserDO implements User, Serializable {
     public static final String GET_BY_LOGIN = "Users.getByLogin";
     public static final String GET_BY_ID = "Users.getById";
     public static final String GET_BY_ID_OR_LOGIN = "Users.getByIdOrLogin";
+
     @Id
     @GeneratedValue
     private long id;
+
     @Column(name = "name", length = 64, nullable = false)
     private String name;
+
     @Column(name = "login", length = 48, nullable = false, unique = true)
     private String login;
+
     @Column(name = "password")
-    private  String password;
+    private String password;
+
     @ElementCollection
     @CollectionTable(name = "user_properties",
             joinColumns = @JoinColumn(name = "user_id"))
     private Set<String> properties = new HashSet<>(4);
+
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "USER_SENSOR_SET")
     private Set<SensorDO> sensors;
+
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "USER_ROLE_SET")
     private Set<RoleDO> roles;
-
 
     public UserDO() {
     }
@@ -129,16 +134,14 @@ public class UserDO implements User, Serializable {
         return rolesAdded && addedRoles;
     }
 
-    public boolean removeRoles(Set<RoleDO> roles){
-        boolean rolesRemoved = this.roles.removeAll(roles);
-        boolean removedRoles = roles.stream().map(s -> s.getUsers().remove(this)).reduce(true, (a, b) -> a && b);
-        return rolesRemoved && removedRoles;
+    public void removeRoles(Set<RoleDO> roles) {
+        this.roles.removeAll(roles);
+        roles.forEach(s -> s.getUsers().remove(this));
     }
 
-    public boolean addSensors(Set<SensorDO> sensors) {
-        boolean sensorAdded = this.sensors.addAll(sensors);
-        boolean usersAdded = sensors.stream().map(s -> s.getUsers().add(this)).reduce(true, (a, b) -> a && b);
-        return usersAdded && sensorAdded;
+    public void addSensors(Set<SensorDO> sensors) {
+        this.sensors.addAll(sensors);
+        sensors.forEach(s -> s.getUsers().add(this));
     }
 
     @Override
@@ -148,8 +151,12 @@ public class UserDO implements User, Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof UserDO)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof UserDO)) {
+            return false;
+        }
         UserDO that = (UserDO) o;
         return id == that.id;
     }
@@ -158,12 +165,12 @@ public class UserDO implements User, Serializable {
     public String toString() {
         String sensorNames = "[" + sensors.stream().map(Sensor::getName).collect(Collectors.joining(",")) + "]";
         String roleNames = "[" + roles.stream().map(RoleDO::getName).collect(Collectors.joining(",")) + "]";
-        return "UserDO [id=" + id +
-                ", firstName=" + name +
-                ", login=" + login +
-                ", properties=" + properties +
-                ", sensors=" + sensorNames +
-                ", roles=" + roleNames +
-                "]";
+        return "UserDO [id=" + id
+                + ", firstName=" + name
+                + ", login=" + login
+                + ", properties=" + properties
+                + ", sensors=" + sensorNames
+                + ", roles=" + roleNames
+                + "]";
     }
 }

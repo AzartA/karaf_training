@@ -42,7 +42,6 @@ public class MeasuringRepo {
                 measuringToCreate.setSensor(repo.getEntityById(measuring.getSensor().getId(), em, SensorDO.class));
             }
             em.flush();
-            //em.setProperty("javax.persistence.cache.retrieveMode", CacheRetrieveMode.BYPASS); // em without JPA cache
             em.refresh(measuringToCreate);
             return Optional.of(measuringToCreate);
         });
@@ -51,16 +50,16 @@ public class MeasuringRepo {
 
     public Optional<? extends Measuring> update(long id, Measuring measuring) {
         return template.txExpr(em -> repo.getById(id, em, MeasuringDO.class)
-                .map(m -> {
-                    m.setValue(measuring.getValue());
+                .map(measuringDO -> {
+                    measuringDO.setValue(measuring.getValue());
                     if (measuring.getSensor() != null) {
-                        m.setSensor(repo.getEntityById(measuring.getSensor().getId(), em, SensorDO.class));
+                        measuringDO.setSensor(repo.getEntityById(measuring.getSensor().getId(), em, SensorDO.class));
                     }
                     if (measuring.getParameter() != null) {
-                        m.setParameter(repo.getEntityById(measuring.getParameter().getId(), em, ClimateParameterDO.class));
+                        measuringDO.setParameter(repo.getEntityById(measuring.getParameter().getId(), em, ClimateParameterDO.class));
                     }
-                    em.merge(m);
-                    return m;
+                    em.merge(measuringDO);
+                    return measuringDO;
                 }));
     }
 
@@ -71,15 +70,15 @@ public class MeasuringRepo {
 
 
     public Optional<? extends Measuring> delete(long id) {
-        return template.txExpr(em -> repo.getById(id, em, MeasuringDO.class).map(l -> {
-                    if (l.getParameter() != null) {
-                        l.getParameter().getMeasurings().remove(l);
+        return template.txExpr(em -> repo.getById(id, em, MeasuringDO.class).map(measuringDO -> {
+                    if (measuringDO.getParameter() != null) {
+                        measuringDO.getParameter().getMeasurings().remove(measuringDO);
                     }
-                    if (l.getSensor() != null) {
-                        l.getSensor().getMeasurings().remove(l);
+                    if (measuringDO.getSensor() != null) {
+                        measuringDO.getSensor().getMeasurings().remove(measuringDO);
                     }
-                    em.remove(l);
-                    return l;
+                    em.remove(measuringDO);
+                    return measuringDO;
                 })
         );
     }

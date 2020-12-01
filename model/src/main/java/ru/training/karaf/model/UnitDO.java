@@ -1,8 +1,5 @@
 package ru.training.karaf.model;
 
-import java.io.Serializable;
-import java.util.Set;
-import java.util.stream.Collectors;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,8 +8,10 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import java.io.Serializable;
+import java.util.Set;
+import java.util.stream.Collectors;
 
-//@JsonIdentityInfo(generator= ObjectIdGenerators.PropertyGenerator.class, property="id")
 @NamedQueries({
         @NamedQuery(name = UnitDO.GET_ALL, query = "SELECT u FROM UnitDO AS u"),
         @NamedQuery(name = UnitDO.GET_BY_NAME, query = "SELECT u FROM UnitDO AS u WHERE u.name = :name"),
@@ -26,16 +25,17 @@ public class UnitDO implements Unit, Serializable {
     public static final String GET_BY_NAME = "Units.getByName";
     public static final String GET_BY_ID = "Units.getById";
     public static final String GET_BY_ID_OR_NAME = "Units.getByIdOrName";
+
     @Id
     @GeneratedValue
     private long id;
+
     @Column(name = "name", length = 48, nullable = false, unique = true)
     private String name;
+
     @Column(name = "notation", length = 32)
     private String notation;
-    // @JsonBackReference
-    // @JsonIdentityReference(alwaysAsId = true)
-    //@JsonSerialize(using = SetOfEntitiesSerializer.class)
+
     @ManyToMany(mappedBy = "units", cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     private Set<ClimateParameterDO> climateParameters;
 
@@ -45,12 +45,6 @@ public class UnitDO implements Unit, Serializable {
     public UnitDO(String name, String notation) {
         this.name = name;
         this.notation = notation;
-    }
-
-    public UnitDO(Unit unit) {
-        this.name = unit.getName();
-        this.notation = unit.getNotation();
-        this.climateParameters = (Set<ClimateParameterDO>) unit.getClimateParameters();
     }
 
     public long getId() {
@@ -107,11 +101,11 @@ public class UnitDO implements Unit, Serializable {
     @Override
     public String toString() {
         String parametersNames = "[" + climateParameters.stream().map(ClimateParameter::getName).collect(Collectors.joining(",")) + "]";
-        return "UnitDO{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", notation='" + notation + '\'' +
-                ", climateParameters=" + parametersNames +
-                '}';
+        return "UnitDO{"
+                + "id=" + id
+                + ", name='" + name + '\''
+                + ", notation='" + notation + '\''
+                + ", climateParameters=" + parametersNames
+                + '}';
     }
 }

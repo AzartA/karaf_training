@@ -18,23 +18,31 @@ import java.util.stream.Collectors;
 @Entity
 public class SensorDO implements Sensor, Serializable {
     private static final long serialVersionUID = 5474563217894L;
+
     @Id
     @GeneratedValue
     private long id;
+
     @Column(name = "name", nullable = false, length = 48, unique = true)
     private String name;
+
     @ManyToOne(optional = false, fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinColumn(name = "location")
     private LocationDO location;
+
     @Column(name = "x")
     private long x;
+
     @Column(name = "y")
     private long y;
+
     @ManyToOne(optional = false, fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinColumn(name = "type")
     private SensorTypeDO type;
+
     @ManyToMany(mappedBy = "sensors", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Set<UserDO> users;
+
     @OneToMany(mappedBy = "sensor", cascade = {CascadeType.ALL})
     private List<MeasuringDO> measurings;
 
@@ -138,12 +146,12 @@ public class SensorDO implements Sensor, Serializable {
     @Override
     public String toString() {
         String userNames = "[" + users.stream().map(User::getName).collect(Collectors.joining(",")) + "]";
-        return "SensorDO{" +
-                "id=" + id +
-                ", name=" + name +
-                ", location=" + (location != null ? location.getName() : "null") +
-                ", type=" + (type != null ? type.getName() : "null") +
-                ", users=" + userNames +
-                '}';
+        return "SensorDO{"
+                + "id=" + id
+                + ", name=" + name
+                + ", location=" + (location != null ? location.getName() : "null")
+                + ", type=" + (type != null ? type.getName() : "null")
+                + ", users=" + userNames
+                + '}';
     }
 }

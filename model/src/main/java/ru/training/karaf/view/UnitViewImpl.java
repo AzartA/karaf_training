@@ -1,10 +1,5 @@
 package ru.training.karaf.view;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import ru.training.karaf.exception.RestrictedException;
 import ru.training.karaf.model.Entity;
 import ru.training.karaf.model.Unit;
@@ -12,6 +7,11 @@ import ru.training.karaf.model.UnitDO;
 import ru.training.karaf.model.User;
 import ru.training.karaf.repo.UnitRepo;
 import ru.training.karaf.wrapper.QueryParams;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class UnitViewImpl implements UnitView {
     private final UnitRepo repo;
@@ -25,16 +25,14 @@ public class UnitViewImpl implements UnitView {
     }
 
     @Override
-    public List<? extends Unit> getAll(
-            List<FilterParam> filters, List<SortParam> sorts, int pg, int sz,
-            User currentUser) {
-        QueryParams query =  view.createQueryParams(filters, sorts, pg, sz);
+    public List<? extends Unit> getAll(List<FilterParam> filters, List<SortParam> sorts, int pg, int sz, User currentUser) {
+        QueryParams query = view.createQueryParams(filters, sorts, pg, sz);
         return repo.getAll(query);
     }
 
     @Override
     public long getCount(List<FilterParam> filters, int pg, int sz, User currentUser) {
-        QueryParams query =  view.createQueryParams(filters, pg, sz);
+        QueryParams query = view.createQueryParams(filters, pg, sz);
         return repo.getCount(query);
     }
 
@@ -79,7 +77,7 @@ public class UnitViewImpl implements UnitView {
 
     @Override
     public ViewType get() {
-        return  this;
+        return this;
     }
 
     private boolean ChangingIsAllowed(User user) {

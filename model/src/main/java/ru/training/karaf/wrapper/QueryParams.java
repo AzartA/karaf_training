@@ -1,10 +1,10 @@
 package ru.training.karaf.wrapper;
 
-
 import ru.training.karaf.view.FilterParam;
 import ru.training.karaf.view.SortParam;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class QueryParams {
@@ -26,10 +26,6 @@ public class QueryParams {
         return filters;
     }
 
-    public void setFilters(List<FilterParam> filters) {
-        this.filters = filters;
-    }
-
     public List<SortParam> getSorts() {
         return sorts;
     }
@@ -47,19 +43,39 @@ public class QueryParams {
         pagination[1] = sz;
     }
 
-    public void addFilterParam(FilterParam p) {
-        filters.add(p);
-    }
-
-    public void addSortParam(SortParam p) {
-        sorts.add(p);
-    }
-
     public void addFilterParams(List<FilterParam> params) {
         filters.addAll(params);
     }
 
     public void addSortParams(List<SortParam> params) {
         sorts.addAll(params);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof QueryParams)) {
+            return false;
+        }
+
+        QueryParams that = (QueryParams) o;
+
+        if (!Arrays.equals(pagination, that.pagination)) {
+            return false;
+        }
+        if (!filters.equals(that.filters)) {
+            return false;
+        }
+        return sorts.equals(that.sorts);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Arrays.hashCode(pagination);
+        result = 31 * result + filters.hashCode();
+        result = 31 * result + sorts.hashCode();
+        return result;
     }
 }

@@ -1,10 +1,5 @@
 package ru.training.karaf.view;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import ru.training.karaf.exception.RestrictedException;
 import ru.training.karaf.model.Entity;
 import ru.training.karaf.model.SensorType;
@@ -12,6 +7,11 @@ import ru.training.karaf.model.SensorTypeDO;
 import ru.training.karaf.model.User;
 import ru.training.karaf.repo.SensorTypeRepo;
 import ru.training.karaf.wrapper.QueryParams;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class SensorTypeViewImpl implements SensorTypeView {
     private final SensorTypeRepo repo;
@@ -33,10 +33,7 @@ public class SensorTypeViewImpl implements SensorTypeView {
     }
 
     @Override
-    public List<? extends SensorType> getAll(
-            List<FilterParam> filters, List<SortParam> sorts, int pg, int sz,
-            User currentUser
-    ) {
+    public List<? extends SensorType> getAll(List<FilterParam> filters, List<SortParam> sorts, int pg, int sz, User currentUser) {
         QueryParams query = view.createQueryParams(filters, sorts, pg, sz);
         return repo.getAll(query);
     }
@@ -88,7 +85,7 @@ public class SensorTypeViewImpl implements SensorTypeView {
 
     @Override
     public ViewType get() {
-        return  this;
+        return this;
     }
 
     private boolean ChangingIsAllowed(User user) {

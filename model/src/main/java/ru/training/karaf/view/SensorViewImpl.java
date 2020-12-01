@@ -1,10 +1,5 @@
 package ru.training.karaf.view;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import ru.training.karaf.exception.RestrictedException;
 import ru.training.karaf.model.Entity;
 import ru.training.karaf.model.Sensor;
@@ -13,6 +8,11 @@ import ru.training.karaf.model.User;
 import ru.training.karaf.repo.SensorRepo;
 import ru.training.karaf.wrapper.FilterParamImpl;
 import ru.training.karaf.wrapper.QueryParams;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class SensorViewImpl implements SensorView {
     private final SensorRepo repo;
@@ -58,25 +58,22 @@ public class SensorViewImpl implements SensorView {
     }
 
     @Override
-    public List<? extends Sensor> getAll(
-            List<FilterParam> filters, List<SortParam> sorts, int pg, int sz,
-            User currentUser
-    ) {
+    public List<? extends Sensor> getAll(List<FilterParam> filters, List<SortParam> sorts, int pg, int sz, User currentUser) {
         getAuthFilter(currentUser).ifPresent(filters::add);
-        QueryParams query =  view.createQueryParams(filters, sorts, pg, sz);
+        QueryParams query = view.createQueryParams(filters, sorts, pg, sz);
         return repo.getAll(query);
     }
 
     @Override
     public long getCount(List<FilterParam> filters, int pg, int sz, User currentUser) {
         getAuthFilter(currentUser).ifPresent(filters::add);
-        QueryParams query =  view.createQueryParams(filters, pg, sz);
+        QueryParams query = view.createQueryParams(filters, pg, sz);
         return repo.getCount(query);
     }
 
     @Override
     public Optional<? extends Sensor> create(Sensor entity, User currentUser) {
-        if(creatingIsAllowed(currentUser)){
+        if (creatingIsAllowed(currentUser)) {
             return repo.create(entity);
         }
         throw new RestrictedException("Operation is restricted");
@@ -92,7 +89,7 @@ public class SensorViewImpl implements SensorView {
 
     @Override
     public Optional<? extends Sensor> get(long id, User currentUser) {
-        if(gettingIsAllowed(id, currentUser)) {
+        if (gettingIsAllowed(id, currentUser)) {
             return repo.get(id);
         }
         return Optional.empty();
@@ -118,19 +115,19 @@ public class SensorViewImpl implements SensorView {
 
     @Override
     public ViewType get() {
-        return  this;
+        return this;
     }
 
-    private boolean changingIsAllowed(long id, User user) {
+    private boolean changingIsAllowed(long sensorId, User user) {
         Set<String> roles = user.getRoles().stream().map(Entity::getName).collect(Collectors.toSet());
         return roles.contains("Admin") || (roles.contains("Operator") &&
-                user.getSensors().stream().mapToLong(Entity::getId).anyMatch(sId -> sId == id));
+                user.getSensors().stream().mapToLong(Entity::getId).anyMatch(sId -> sId == sensorId));
     }
 
-    private Optional<? extends FilterParam> getAuthFilter(User user){
+    private Optional<? extends FilterParam> getAuthFilter(User user) {
         Set<String> roles = user.getRoles().stream().map(Entity::getName).collect(Collectors.toSet());
         if (!roles.contains("Admin")) {
-            return Optional.of(new FilterParamImpl("users.id","=", Long.toString(user.getId()),type));
+            return Optional.of(new FilterParamImpl("users.id", "=", Long.toString(user.getId()), type));
         }
         return Optional.empty();
     }
@@ -139,10 +136,9 @@ public class SensorViewImpl implements SensorView {
         Set<String> roles = user.getRoles().stream().map(Entity::getName).collect(Collectors.toSet());
         return roles.contains("Admin") || roles.contains("Operator");
     }
+
     private boolean gettingIsAllowed(long id, User user) {
         Set<String> roles = user.getRoles().stream().map(Entity::getName).collect(Collectors.toSet());
-        return roles.contains("Admin") ||
-                user.getSensors().stream().mapToLong(Entity::getId).anyMatch(sId -> sId == id);
+        return roles.contains("Admin") || user.getSensors().stream().mapToLong(Entity::getId).anyMatch(sId -> sId == id);
     }
-
 }

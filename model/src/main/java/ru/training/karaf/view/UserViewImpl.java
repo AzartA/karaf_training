@@ -18,17 +18,14 @@ public class UserViewImpl implements UserView {
     private final Class<UserDO> type;
     private final ViewUtil view;
 
-
     public UserViewImpl(UserRepo repo) {
         this.repo = repo;
         view = new ViewUtil();
         type = UserDO.class;
-
     }
 
     @Override
     public Optional<? extends User> addSensors(long id, List<Long> sensorIds, User currentUser) throws RestrictedException {
-
         if (changingIsAllowed(currentUser)) {
             return repo.addSensors(id, sensorIds);
         }
@@ -57,10 +54,7 @@ public class UserViewImpl implements UserView {
     }
 
     @Override
-    public List<? extends User> getAll(
-            List<FilterParam> filters, List<SortParam> sorts, int pg, int sz,
-            User currentUser
-    ) {
+    public List<? extends User> getAll(List<FilterParam> filters, List<SortParam> sorts, int pg, int sz, User currentUser) {
         setAuthFilter(currentUser).ifPresent(filters::add);
         QueryParams query = view.createQueryParams(filters, sorts, pg, sz);
         return repo.getAll(query);
@@ -127,12 +121,12 @@ public class UserViewImpl implements UserView {
 
     private Optional<FilterParam> setAuthFilter(User user) {
         Set<String> roles = user.getRoles().stream().map(Entity::getName).collect(Collectors.toSet());
-        return roles.contains("Admin") || roles.contains("Operator")? Optional.empty() :
-                Optional.of(new FilterParamImpl("id", "=",Long.toString(user.getId()),type));
+        return roles.contains("Admin") || roles.contains("Operator") ? Optional.empty() :
+                Optional.of(new FilterParamImpl("id", "=", Long.toString(user.getId()), type));
     }
 
     @Override
     public ViewType get() {
-        return  this;
+        return this;
     }
 }
