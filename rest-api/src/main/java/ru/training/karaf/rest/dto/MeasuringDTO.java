@@ -3,7 +3,6 @@ package ru.training.karaf.rest.dto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import ru.training.karaf.model.Measuring;
 
-import javax.validation.constraints.Digits;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -11,6 +10,7 @@ import java.util.Date;
 public class MeasuringDTO implements Measuring {
     @JsonIgnore
     private final SimpleDateFormat DATE_TIME_FORMAT = Measuring.DATE_TIME_FORMAT;//new SimpleDateFormat("dd.MM.yyyy hh:mm:ss");
+
     @JsonIgnore
     private String name;
     private long id;
@@ -49,26 +49,14 @@ public class MeasuringDTO implements Measuring {
         return timestamp;
     }
 
-    public void setTimestamp(Timestamp timestamp) {
-        this.timestamp = timestamp;
-    }
-
     @Override
     public EntityDTO getSensor() {
         return sensor;
     }
 
-    public void setSensor(EntityDTO sensor) {
-        this.sensor = sensor;
-    }
-
     @Override
     public EntityDTO getParameter() {
         return parameter;
-    }
-
-    public void setParameter(EntityDTO parameter) {
-        this.parameter = parameter;
     }
 
     @Override

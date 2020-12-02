@@ -1,12 +1,13 @@
 package ru.training.karaf.rest.auth;
 
+import javax.servlet.ServletContext;
+
 import org.apache.shiro.web.env.EnvironmentLoader;
 import org.apache.shiro.web.servlet.ShiroFilter;
 
-import javax.servlet.ServletContext;
-
 public class OurShiroFilter extends ShiroFilter {
     Object webEnv;
+
     @Override
     public void init() throws Exception {
         ServletContext context = getServletContext();
@@ -17,6 +18,5 @@ public class OurShiroFilter extends ShiroFilter {
             context.setAttribute(EnvironmentLoader.ENVIRONMENT_ATTRIBUTE_KEY, webEnv);
         }
         super.init();
-
     }
 }

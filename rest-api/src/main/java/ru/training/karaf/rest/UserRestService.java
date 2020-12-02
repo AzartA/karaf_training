@@ -1,13 +1,6 @@
 package ru.training.karaf.rest;
 
-import org.apache.cxf.jaxrs.ext.PATCH;
-import org.apache.cxf.jaxrs.ext.multipart.Multipart;
-import ru.training.karaf.rest.dto.DTO;
-import ru.training.karaf.rest.dto.RoleDTO;
-import ru.training.karaf.rest.dto.SensorDTO;
-import ru.training.karaf.rest.dto.UserDTO;
-import ru.training.karaf.rest.validation.CountParams;
-
+import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.ws.rs.Consumes;
@@ -20,9 +13,10 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.StreamingOutput;
-import java.io.InputStream;
-import java.util.List;
+
+import ru.training.karaf.rest.dto.DTO;
+import ru.training.karaf.rest.dto.UserDTO;
+import ru.training.karaf.rest.validation.CountParams;
 
 @Path("users")
 @Produces(MediaType.APPLICATION_JSON)
@@ -31,13 +25,14 @@ public interface UserRestService {
 
     @GET
     @CountParams
-    List<UserDTO> getAll(@QueryParam("by") List<String> by,
-                         @QueryParam("order") List<String> order,
-                         @QueryParam("field") List<String> field,
-                         @QueryParam("condition") List<String> cond,
-                         @QueryParam("value") List<String> value,
-                         @Min(value = 0, message =  "pg must be positive")@QueryParam("pg") int pg,
-                         @Min(value = 0, message =  "sz must be positive")@QueryParam("sz") int sz
+    List<UserDTO> getAll(
+            @QueryParam("by") List<String> by,
+            @QueryParam("order") List<String> order,
+            @QueryParam("field") List<String> field,
+            @QueryParam("condition") List<String> cond,
+            @QueryParam("value") List<String> value,
+            @Min(value = 0, message = "pg must be positive") @QueryParam("pg") int pg,
+            @Min(value = 0, message = "sz must be positive") @QueryParam("sz") int sz
     );
 
     @GET
@@ -47,8 +42,8 @@ public interface UserRestService {
             @QueryParam("field") List<String> field,
             @QueryParam("condition") List<String> cond,
             @QueryParam("value") List<String> value,
-            @Min(value = 0, message =  "pg must be positive")@QueryParam("pg") int pg,
-            @Min(value = 0, message =  "sz must be positive")@QueryParam("sz") int sz
+            @Min(value = 0, message = "pg must be positive") @QueryParam("pg") int pg,
+            @Min(value = 0, message = "sz must be positive") @QueryParam("sz") int sz
     );
 
     @POST
@@ -56,9 +51,7 @@ public interface UserRestService {
 
     @PUT
     @Path("{id}")
-    //@NotNull(message = "This login is already exist")
-    UserDTO update(@PathParam("id") long id, @Valid  UserDTO user);
-
+    UserDTO update(@PathParam("id") long id, @Valid UserDTO user);
 
     @GET
     @Path("{id}")
@@ -79,5 +72,4 @@ public interface UserRestService {
     @DELETE
     @Path("{id}/roles")
     UserDTO deleteRoles(@PathParam("id") long id, @QueryParam("rId") List<Long> roleIds);
-
 }

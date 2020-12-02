@@ -15,13 +15,10 @@ import ru.training.karaf.rest.dto.ClimateParameterDTO;
 import ru.training.karaf.rest.dto.DTO;
 import ru.training.karaf.rest.dto.FilterParamDTO;
 import ru.training.karaf.rest.dto.SortParamDTO;
-import ru.training.karaf.rest.dto.UserDTO;
 import ru.training.karaf.view.ClimateParameterView;
 import ru.training.karaf.view.FilterParam;
-import ru.training.karaf.view.LocationView;
 import ru.training.karaf.view.SortParam;
 import ru.training.karaf.view.ViewFacade;
-import ru.training.karaf.view.ViewType;
 
 public class ClimateParameterRestServiceImpl implements ClimateParameterRestService {
     private ViewFacade viewFacade;
@@ -39,7 +36,8 @@ public class ClimateParameterRestServiceImpl implements ClimateParameterRestServ
 
     @Override
     public List<ClimateParameterDTO> getAll(
-            List<String> by, List<String> order, List<String> field, List<String> cond, List<String> value, int pg, int sz
+            List<String> by, List<String> order, List<String> field,
+            List<String> cond, List<String> value, int pg, int sz
     ) {
         getViewAndUser();
         List<FilterParam> filters = new ArrayList<>();
@@ -65,26 +63,20 @@ public class ClimateParameterRestServiceImpl implements ClimateParameterRestServ
     }
 
     @Override
-    public ClimateParameterDTO create(
-            ClimateParameterDTO parameter
-    ) {
+    public ClimateParameterDTO create(ClimateParameterDTO parameter) {
         getViewAndUser();
         return view.create(parameter, currentUser).map(ClimateParameterDTO::new).orElseThrow(() -> new ValidationException("Name is already exist"));
     }
 
     @Override
-    public ClimateParameterDTO update(
-            long id, ClimateParameterDTO parameter
-    ) {
+    public ClimateParameterDTO update(long id, ClimateParameterDTO parameter) {
         getViewAndUser();
         Optional<? extends ClimateParameter> l = view.update(id, parameter, currentUser);
         return l.map(ClimateParameterDTO::new).orElseThrow(() -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
     }
 
     @Override
-    public ClimateParameterDTO addUnits(
-            long id, List<Long> unitIds
-    ) {
+    public ClimateParameterDTO addUnits(long id, List<Long> unitIds) {
         getViewAndUser();
         return view.addUnits(id, unitIds, currentUser).map(ClimateParameterDTO::new).orElseThrow(() ->
                 new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));

@@ -2,15 +2,6 @@
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
            xmlns:jaxrs="http://cxf.apache.org/blueprint/jaxrs">
     <reference id="viewFacade" interface="ru.training.karaf.view.ViewFacade"/>
-    <!--<reference id="userView" interface="ru.training.karaf.view.UserView"/>
-    <reference id="unitView" interface="ru.training.karaf.view.UnitView"/>
-    <reference id="locationView" interface="ru.training.karaf.view.LocationView"/>
-    <reference id="paramView" interface="ru.training.karaf.view.ClimateParameterView"/>
-    <reference id="typeView" interface="ru.training.karaf.view.SensorTypeView"/>
-    <reference id="sensorView" interface="ru.training.karaf.view.SensorView"/>
-    <reference id="measuringView" interface="ru.training.karaf.view.MeasuringView"/>
-    <reference id="roleView" interface="ru.training.karaf.view.RoleView"/>-->
-    <!--<reference id="passwordService" interface="ru.training.karaf.rest.auth.AuthPassService"/>-->
 
     <bean id="userRestServiceBean" class="ru.training.karaf.rest.UserRestServiceImpl">
         <property name="viewFacade" ref="viewFacade"/>
@@ -57,10 +48,7 @@
         <property name="provider" ref="beanValidationProvider"/>
     </bean>
 
-    <!--<bean id="exceptionMapper" class="org.apache.cxf.jaxrs.validation.ValidationExceptionMapper"/>-->
     <bean id="exceptionMapper" class="ru.training.karaf.rest.validation.ValidationExceptionMapperWithMassages"/>
-
-
 
     <!-- CXF -->
     <jaxrs:server id="restServer" address="/rest">

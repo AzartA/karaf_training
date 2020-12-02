@@ -1,5 +1,12 @@
 package ru.training.karaf.rest;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+import javax.validation.ValidationException;
+import javax.ws.rs.NotFoundException;
+import javax.ws.rs.core.Response;
+
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.credential.DefaultPasswordService;
 import ru.training.karaf.model.User;
@@ -8,18 +15,9 @@ import ru.training.karaf.rest.dto.FilterParamDTO;
 import ru.training.karaf.rest.dto.SortParamDTO;
 import ru.training.karaf.rest.dto.UserDTO;
 import ru.training.karaf.view.FilterParam;
-import ru.training.karaf.view.LocationView;
 import ru.training.karaf.view.SortParam;
 import ru.training.karaf.view.UserView;
 import ru.training.karaf.view.ViewFacade;
-import ru.training.karaf.view.ViewType;
-
-import javax.validation.ValidationException;
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.core.Response;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class UserRestServiceImpl implements UserRestService {
     private DefaultPasswordService passwordService;
@@ -30,6 +28,7 @@ public class UserRestServiceImpl implements UserRestService {
     public void setViewFacade(ViewFacade viewFacade) {
         this.viewFacade = viewFacade;
     }
+
     public void setPasswordService(DefaultPasswordService passwordService) {
         this.passwordService = passwordService;
     }
@@ -54,8 +53,6 @@ public class UserRestServiceImpl implements UserRestService {
 
         return view.getAll(filters, sorts, pg, sz, currentUser).stream().map(UserDTO::new).collect(Collectors.toList());
     }
-
-
 
     @Override
     public DTO<Long> getCount(List<String> field, List<String> cond, List<String> value, int pg, int sz) {
@@ -116,6 +113,4 @@ public class UserRestServiceImpl implements UserRestService {
         return view.removeRoles(id, roleIds, currentUser).map(UserDTO::new).orElseThrow(() ->
                 new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
     }
-
-
 }

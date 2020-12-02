@@ -10,6 +10,7 @@ public class ErrorsDTO {
     public ErrorsDTO(List<String> errors) {
         this.errors = errors;
     }
+
     public ErrorsDTO(String error) {
         errors = new ArrayList<>();
         errors.add(error);

@@ -1,19 +1,19 @@
 package ru.training.karaf.rest.validation;
 
-import org.apache.cxf.common.logging.LogUtils;
-import org.apache.cxf.jaxrs.utils.JAXRSUtils;
-import org.apache.cxf.jaxrs.validation.ValidationExceptionMapper;
-
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
+
+import org.apache.cxf.common.logging.LogUtils;
+import org.apache.cxf.jaxrs.utils.JAXRSUtils;
+import org.apache.cxf.jaxrs.validation.ValidationExceptionMapper;
 
 public class ValidationExceptionMapperWithMassages extends ValidationExceptionMapper {
 
@@ -24,7 +24,7 @@ public class ValidationExceptionMapperWithMassages extends ValidationExceptionMa
 
         List<String> responseText = new ArrayList<>();
 
-        Response.Status errorStatus = Response.Status.BAD_REQUEST; //.INTERNAL_SERVER_ERROR;
+        Response.Status errorStatus = Response.Status.BAD_REQUEST;
         if (exception instanceof ConstraintViolationException) {
             final ConstraintViolationException constraint = (ConstraintViolationException) exception;
 
@@ -33,9 +33,6 @@ public class ValidationExceptionMapperWithMassages extends ValidationExceptionMa
                     .peek(LOG::warning)
                     .collect(Collectors.toList()));
 
-            //if (!(constraint instanceof ResponseConstraintViolationException)) {
-            //errorStatus = Response.Status.BAD_REQUEST;
-            // }
             return buildResponse(errorStatus, responseText);
         }
         responseText.add(exception.getMessage());
@@ -52,13 +49,6 @@ public class ValidationExceptionMapperWithMassages extends ValidationExceptionMa
     }
 
     private String buildErrorMessage(ConstraintViolation<?> violation) {
-        return /*"Value "
-                + (violation.getInvalidValue() != null ? "'" + violation.getInvalidValue().toString() + "'" : "(null)")
-                + " of " + violation.getRootBeanClass().getSimpleName()
-                + "." + violation.getPropertyPath()
-                + ": " + */
-                violation.getMessage();
+        return violation.getMessage();
     }
-
-
 }

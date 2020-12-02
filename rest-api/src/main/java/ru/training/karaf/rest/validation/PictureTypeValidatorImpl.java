@@ -1,10 +1,10 @@
 package ru.training.karaf.rest.validation;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
 
 public class PictureTypeValidatorImpl implements ConstraintValidator<PictureType, String> {
     @Override

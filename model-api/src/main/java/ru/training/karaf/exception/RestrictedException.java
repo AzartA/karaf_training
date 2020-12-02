@@ -1,6 +1,6 @@
 package ru.training.karaf.exception;
 
-public class RestrictedException extends RuntimeException{
+public class RestrictedException extends RuntimeException {
     public RestrictedException() {
         super();
     }

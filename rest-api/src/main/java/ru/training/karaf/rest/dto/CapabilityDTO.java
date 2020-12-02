@@ -37,31 +37,23 @@ public class CapabilityDTO implements Capability {
         return resolution;
     }
 
-    public void setRange(String range) {
-        this.range = range;
-    }
-
-    public void setAccuracy(String accuracy) {
-        this.accuracy = accuracy;
-    }
-
-    public void setResolution(String resolution) {
-        this.resolution = resolution;
-    }
-
     @Override
     public boolean equals(Object o) {
-        if (this == o)
+        if (this == o) {
             return true;
-        if (!(o instanceof CapabilityDTO))
+        }
+        if (!(o instanceof CapabilityDTO)) {
             return false;
+        }
 
         CapabilityDTO that = (CapabilityDTO) o;
 
-        if (range != null ? !range.equals(that.range) : that.range != null)
+        if (range != null ? !range.equals(that.range) : that.range != null) {
             return false;
-        if (accuracy != null ? !accuracy.equals(that.accuracy) : that.accuracy != null)
+        }
+        if (accuracy != null ? !accuracy.equals(that.accuracy) : that.accuracy != null) {
             return false;
+        }
         return resolution != null ? resolution.equals(that.resolution) : that.resolution == null;
     }
 

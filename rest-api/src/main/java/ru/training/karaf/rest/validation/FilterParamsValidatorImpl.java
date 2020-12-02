@@ -45,21 +45,16 @@ public class FilterParamsValidatorImpl implements ConstraintValidator<Conforming
                     type = type.getDeclaredField(fieldPart).getType();
                 }
             } catch (NoSuchFieldException e) {
-                //throw new IllegalArgumentException("There is no such field: "+ fieldParts[j]);
                 return false;
             }
         }
         if (strings.length == 4) {
-            //Double.parseDouble(value);
-            //ToDo exp notation
-            if(cond.matches("!?contains") && !type.equals(String.class)) {
+            if (cond.matches("!?contains") && !type.equals(String.class)) {
                 return false;
             }
             return type.equals(String.class) || type.equals(Timestamp.class) || value.matches("^-?\\d+(?:\\.\\d+)?$");
-
         }
 
         return true;
     }
-
 }

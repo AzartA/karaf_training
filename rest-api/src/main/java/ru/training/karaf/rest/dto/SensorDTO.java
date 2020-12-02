@@ -1,6 +1,5 @@
 package ru.training.karaf.rest.dto;
 
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -10,7 +9,7 @@ public class SensorDTO extends EntityDTO implements Sensor {
     private long x;
     private long y;
     private EntityDTO location;
-    private EntityDTO type;//SensorTypeDTO type;
+    private EntityDTO type;
     private Set<EntityDTO> users;
 
     public SensorDTO() {
@@ -30,17 +29,9 @@ public class SensorDTO extends EntityDTO implements Sensor {
         return x;
     }
 
-    public void setX(long x) {
-        this.x = x;
-    }
-
     @Override
     public long getY() {
         return y;
-    }
-
-    public void setY(long y) {
-        this.y = y;
     }
 
     @Override
@@ -48,18 +39,10 @@ public class SensorDTO extends EntityDTO implements Sensor {
         return location;
     }
 
-    public void setLocation(EntityDTO location) {
-        this.location = location;
-    }
-
     @Override
     public EntityDTO getType() {
         return type;
     }
-    /*@Override
-    public SensorTypeDTO getType() {
-        return type;
-    }*/
 
     public void setType(SensorTypeDTO type) {
         this.type = type;
@@ -68,10 +51,6 @@ public class SensorDTO extends EntityDTO implements Sensor {
     @Override
     public Set<EntityDTO> getUsers() {
         return users;
-    }
-
-    public void setUsers(Set<EntityDTO> users) {
-        this.users = users;
     }
 
     @Override

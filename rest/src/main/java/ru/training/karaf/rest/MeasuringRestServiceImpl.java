@@ -12,13 +12,10 @@ import ru.training.karaf.rest.dto.DTO;
 import ru.training.karaf.rest.dto.FilterParamDTO;
 import ru.training.karaf.rest.dto.MeasuringDTO;
 import ru.training.karaf.rest.dto.SortParamDTO;
-import ru.training.karaf.rest.dto.UserDTO;
 import ru.training.karaf.view.FilterParam;
 import ru.training.karaf.view.MeasuringView;
-import ru.training.karaf.view.RoleView;
 import ru.training.karaf.view.SortParam;
 import ru.training.karaf.view.ViewFacade;
-import ru.training.karaf.view.ViewType;
 
 public class MeasuringRestServiceImpl implements MeasuringRestService {
     private ViewFacade viewFacade;
@@ -33,17 +30,6 @@ public class MeasuringRestServiceImpl implements MeasuringRestService {
         view = viewFacade.getView(MeasuringView.class);
         currentUser = SecurityUtils.getSubject().getPrincipals().oneByType(User.class);
     }
-
-   /* @Override
-    public MeasuringDTO create(MeasuringDTO type) {
-        return view.create(type).map(MeasuringDTO::new).orElse(null);
-    }
-
-    @Override
-    public MeasuringDTO update(long id, MeasuringDTO type) {
-        Optional<? extends Measuring> l = view.update(id, type);
-        return l.map(MeasuringDTO::new).orElseThrow(() -> new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
-    }*/
 
     @Override
     public MeasuringDTO get(long id) {

@@ -34,8 +34,8 @@ public interface LocationRestService {
             @QueryParam("field") List<String> field,
             @QueryParam("condition") List<String> cond,
             @QueryParam("value") List<String> value,
-            @Min(value = 0, message =  "pg must be positive")@QueryParam("pg") int pg,
-            @Min(value = 0, message =  "sz must be positive")@QueryParam("sz") int sz
+            @Min(value = 0, message = "pg must be positive") @QueryParam("pg") int pg,
+            @Min(value = 0, message = "sz must be positive") @QueryParam("sz") int sz
     );
 
     @GET
@@ -45,8 +45,8 @@ public interface LocationRestService {
             @QueryParam("field") List<String> field,
             @QueryParam("condition") List<String> cond,
             @QueryParam("value") List<String> value,
-            @Min(value = 0, message =  "pg must be positive")@QueryParam("pg") int pg,
-            @Min(value = 0, message =  "sz must be positive")@QueryParam("sz") int sz
+            @Min(value = 0, message = "pg must be positive") @QueryParam("pg") int pg,
+            @Min(value = 0, message = "sz must be positive") @QueryParam("sz") int sz
     );
 
     @POST
@@ -74,7 +74,7 @@ public interface LocationRestService {
     DTO<Long> putPlan(
             @PathParam("id") long id, @Multipart("plan") InputStream plan,
             @PictureType(message = "Picture type {type} isn't allowed.")
-                @Multipart("type") String type
+            @Multipart("type") String type
     );
 
     @DELETE

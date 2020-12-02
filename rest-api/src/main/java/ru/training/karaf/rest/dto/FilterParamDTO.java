@@ -1,19 +1,22 @@
 package ru.training.karaf.rest.dto;
 
-import ru.training.karaf.rest.validation.ConformingParams;
-import ru.training.karaf.view.FilterParam;
-
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import ru.training.karaf.rest.validation.ConformingParams;
+import ru.training.karaf.view.FilterParam;
+
 public class FilterParamDTO implements FilterParam {
     private static final String COND = "Condition must be one of: '=', '>', '<', '>=', '<=', '!=', 'contains', '!contains'";
+
     @NotNull
     private String field;
+
     @Pattern(regexp = "^[><=]$|^[!<>]=$|^!?contains$", message = COND)
     @Size(min = 1, max = 9, message = COND)
     private String cond;
+
     @NotNull
     private String value;
 
@@ -59,17 +62,21 @@ public class FilterParamDTO implements FilterParam {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
+        if (this == o) {
             return true;
-        if (!(o instanceof FilterParamDTO))
+        }
+        if (!(o instanceof FilterParamDTO)) {
             return false;
+        }
 
         FilterParamDTO that = (FilterParamDTO) o;
 
-        if (!field.equals(that.field))
+        if (!field.equals(that.field)) {
             return false;
-        if (!cond.equals(that.cond))
+        }
+        if (!cond.equals(that.cond)) {
             return false;
+        }
         return value.equals(that.value);
     }
 

@@ -1,10 +1,10 @@
 package ru.training.karaf.rest.validation;
 
-import ru.training.karaf.exception.RestrictedException;
-
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
+
+import ru.training.karaf.exception.RestrictedException;
 
 @Provider
 public class RestrictedExceptionMapper implements ExceptionMapper<RestrictedException> {

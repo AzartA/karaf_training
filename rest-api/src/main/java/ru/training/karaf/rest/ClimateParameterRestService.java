@@ -1,14 +1,10 @@
 package ru.training.karaf.rest;
 
-import ru.training.karaf.rest.dto.ClimateParameterDTO;
-import ru.training.karaf.rest.dto.DTO;
-import ru.training.karaf.rest.validation.CountParams;
-
+import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
-import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -17,7 +13,10 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
-import java.util.List;
+
+import ru.training.karaf.rest.dto.ClimateParameterDTO;
+import ru.training.karaf.rest.dto.DTO;
+import ru.training.karaf.rest.validation.CountParams;
 
 @Path("params")
 @Produces(MediaType.APPLICATION_JSON)
@@ -31,8 +30,8 @@ public interface ClimateParameterRestService {
             @QueryParam("field") List<String> field,
             @QueryParam("condition") List<String> cond,
             @QueryParam("value") List<String> value,
-            @Min(value = 0, message =  "pg must be positive")@QueryParam("pg") int pg,
-            @Min(value = 0, message =  "sz must be positive")@QueryParam("sz") int sz
+            @Min(value = 0, message = "pg must be positive") @QueryParam("pg") int pg,
+            @Min(value = 0, message = "sz must be positive") @QueryParam("sz") int sz
     );
 
     @GET
@@ -42,8 +41,8 @@ public interface ClimateParameterRestService {
             @QueryParam("field") List<String> field,
             @QueryParam("condition") List<String> cond,
             @QueryParam("value") List<String> value,
-            @Min(value = 0, message =  "pg must be positive")@QueryParam("pg") int pg,
-            @Min(value = 0, message =  "sz must be positive")@QueryParam("sz") int sz
+            @Min(value = 0, message = "pg must be positive") @QueryParam("pg") int pg,
+            @Min(value = 0, message = "sz must be positive") @QueryParam("sz") int sz
     );
 
     @POST

@@ -22,9 +22,8 @@ public class Authentication extends AuthorizingRealm {
     private ServiceTracker<ViewFacade, ViewFacade> tracker;
 
     public Authentication() {
-        tracker = new ServiceTracker<>(FrameworkUtil.getBundle(Authentication.class).getBundleContext(),ViewFacade.class,null);
+        tracker = new ServiceTracker<>(FrameworkUtil.getBundle(Authentication.class).getBundleContext(), ViewFacade.class, null);
         tracker.open();
-
     }
 
     @Override
@@ -37,7 +36,7 @@ public class Authentication extends AuthorizingRealm {
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
         String login = (String) authenticationToken.getPrincipal();
-             return (tracker.getService().getView(UserView.class)).getByLogin(login).map(user -> {
+        return (tracker.getService().getView(UserView.class)).getByLogin(login).map(user -> {
             SimplePrincipalCollection principals = new SimplePrincipalCollection();
             principals.add(user.getLogin(), getName());
             principals.add(user, getName());

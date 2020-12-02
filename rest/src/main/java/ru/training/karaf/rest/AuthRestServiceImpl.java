@@ -3,7 +3,6 @@ package ru.training.karaf.rest;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
-import ru.training.karaf.model.User;
 import ru.training.karaf.rest.dto.AuthDTO;
 import ru.training.karaf.rest.dto.UserDTO;
 import ru.training.karaf.view.UserView;
@@ -11,14 +10,8 @@ import ru.training.karaf.view.ViewFacade;
 
 public class AuthRestServiceImpl implements AuthRestService {
     private ViewFacade viewFacade;
-    //private Subject currentUser;
 
-   /* public User getCurrentUser() {
-        return currentUser.getPrincipals().oneByType(User.class);
-    }*/
-
-
-    public void setViewFacade(ViewFacade viewFacade){
+    public void setViewFacade(ViewFacade viewFacade) {
         this.viewFacade = viewFacade;
     }
 

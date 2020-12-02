@@ -16,12 +16,10 @@ import ru.training.karaf.rest.dto.DTO;
 import ru.training.karaf.rest.dto.FilterParamDTO;
 import ru.training.karaf.rest.dto.SensorDTO;
 import ru.training.karaf.rest.dto.SortParamDTO;
-import ru.training.karaf.rest.dto.UserDTO;
 import ru.training.karaf.view.FilterParam;
 import ru.training.karaf.view.SensorView;
 import ru.training.karaf.view.SortParam;
 import ru.training.karaf.view.ViewFacade;
-import ru.training.karaf.view.ViewType;
 
 public class SensorRestServiceImpl implements SensorRestService {
     private ViewFacade viewFacade;
@@ -43,9 +41,7 @@ public class SensorRestServiceImpl implements SensorRestService {
 
     @Override
 
-    public List<SensorDTO> getAll(
-            List<String> by, List<String> order, List<String> field, List<String> cond, List<String> value, int pg, int sz
-    ) {
+    public List<SensorDTO> getAll(List<String> by, List<String> order, List<String> field, List<String> cond, List<String> value, int pg, int sz) {
         getViewAndUser();
         List<FilterParam> filters = new ArrayList<>();
         List<SortParam> sorts = new ArrayList<>();
@@ -87,18 +83,14 @@ public class SensorRestServiceImpl implements SensorRestService {
     }
 
     @Override
-    public SensorDTO setLocation(
-            long id, long locationId
-    ) {
+    public SensorDTO setLocation(long id, long locationId) {
         getViewAndUser();
         return view.setLocation(id, locationId, currentUser).map(SensorDTO::new).orElseThrow(() ->
                 new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));
     }
 
     @Override
-    public SensorDTO setSensorType(
-            long id, long typeId
-    ) {
+    public SensorDTO setSensorType(long id, long typeId) {
         getViewAndUser();
         return view.setSensorType(id, typeId, currentUser).map(SensorDTO::new).orElseThrow(() ->
                 new NotFoundException(Response.status(Response.Status.NOT_FOUND).build()));

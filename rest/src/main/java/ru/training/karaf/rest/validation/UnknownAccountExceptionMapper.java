@@ -1,9 +1,9 @@
 package ru.training.karaf.rest.validation;
 
-import org.apache.shiro.authc.UnknownAccountException;
-
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
+
+import org.apache.shiro.authc.UnknownAccountException;
 
 public class UnknownAccountExceptionMapper implements ExceptionMapper<UnknownAccountException> {
     @Override

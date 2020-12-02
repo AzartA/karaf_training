@@ -1,27 +1,23 @@
 package ru.training.karaf.rest.dto;
 
+import java.util.Set;
+import java.util.stream.Collectors;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.hibernate.validator.constraints.Length;
-import ru.training.karaf.model.ClimateParameter;
 import ru.training.karaf.model.Unit;
-import ru.training.karaf.rest.serializer.SetOfEntSerializer;
-
-import java.util.Set;
-import java.util.stream.Collectors;
 
 public class UnitDTO implements Unit {
     private long id;
+
     @NotNull(message = "Name should be present")
     @Pattern(regexp = "^(\\S+)[A-Za-z0-9_ -]*$", message = "Name must start with 3 letters min; can contain letters, digits, space or _ only.")
     @Length(min = 3, max = 48, message = "Name length must be from 3 to 48 symbols")
     private String name;
+
     private String notation;
 
-   // @JsonSerialize(using = SetOfEntSerializer.class)
     private Set<EntityDTO> climateParameters;
 
     public UnitDTO() {
@@ -37,13 +33,8 @@ public class UnitDTO implements Unit {
         this.id = unit.getId();
         this.name = unit.getName();
         this.notation = unit.getNotation();
-        /*this.climateParameters = unit.getClimateParameters().stream()
-                .map(p -> new ClimateParameterDTO(p.getId(), p.getName())).collect(Collectors.toSet());
-         */
         this.climateParameters = unit.getClimateParameters().stream()
                 .map(EntityDTO::new).collect(Collectors.toSet());
-
-        //this.climateParameters = (Set<ClimateParameterDTO>) unit.getClimateParameters();
     }
 
     @Override
@@ -69,17 +60,9 @@ public class UnitDTO implements Unit {
         return notation;
     }
 
-    public void setNotation(String notation) {
-        this.notation = notation;
-    }
-
     @Override
     public Set<EntityDTO> getClimateParameters() {
         return climateParameters;
-    }
-
-    public void setClimateParameters(Set<EntityDTO> climateParameters) {
-        this.climateParameters = climateParameters;
     }
 
     @Override

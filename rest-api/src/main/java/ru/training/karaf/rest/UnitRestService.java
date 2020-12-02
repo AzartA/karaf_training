@@ -14,7 +14,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
-import ru.training.karaf.rest.dto.ClimateParameterDTO;
 import ru.training.karaf.rest.dto.DTO;
 import ru.training.karaf.rest.dto.UnitDTO;
 import ru.training.karaf.rest.validation.CountParams;
@@ -32,8 +31,8 @@ public interface UnitRestService {
             @QueryParam("field") List<String> field,
             @QueryParam("condition") List<String> cond,
             @QueryParam("value") List<String> value,
-            @Min(value = 0, message =  "pg must be positive")@QueryParam("pg") int pg,
-            @Min(value = 0, message =  "sz must be positive")@QueryParam("sz") int sz
+            @Min(value = 0, message = "pg must be positive") @QueryParam("pg") int pg,
+            @Min(value = 0, message = "sz must be positive") @QueryParam("sz") int sz
     );
 
     @GET
@@ -43,8 +42,8 @@ public interface UnitRestService {
             @QueryParam("field") List<String> field,
             @QueryParam("condition") List<String> cond,
             @QueryParam("value") List<String> value,
-            @Min(value = 0, message =  "pg must be positive")@QueryParam("pg") int pg,
-            @Min(value = 0, message =  "sz must be positive")@QueryParam("sz") int sz
+            @Min(value = 0, message = "pg must be positive") @QueryParam("pg") int pg,
+            @Min(value = 0, message = "sz must be positive") @QueryParam("sz") int sz
     );
 
     @POST

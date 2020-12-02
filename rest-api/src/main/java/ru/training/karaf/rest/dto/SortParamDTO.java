@@ -1,10 +1,10 @@
 package ru.training.karaf.rest.dto;
 
-import ru.training.karaf.rest.validation.ConformingParams;
-import ru.training.karaf.view.SortParam;
-
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+
+import ru.training.karaf.rest.validation.ConformingParams;
+import ru.training.karaf.view.SortParam;
 
 public class SortParamDTO implements SortParam {
     @NotNull
@@ -14,6 +14,7 @@ public class SortParamDTO implements SortParam {
 
     public SortParamDTO() {
     }
+
     @ConformingParams(message = "There is no such field")
     public <T> SortParamDTO(String by, String order, Class<T> type) {
         this.by = by;
@@ -42,15 +43,18 @@ public class SortParamDTO implements SortParam {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
+        if (this == o) {
             return true;
-        if (!(o instanceof SortParamDTO))
+        }
+        if (!(o instanceof SortParamDTO)) {
             return false;
+        }
 
         SortParamDTO that = (SortParamDTO) o;
 
-        if (!by.equals(that.by))
+        if (!by.equals(that.by)) {
             return false;
+        }
         return order.equals(that.order);
     }
 

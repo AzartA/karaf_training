@@ -1,9 +1,9 @@
 package ru.training.karaf.rest.dto;
 
-import ru.training.karaf.model.SensorType;
-
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import ru.training.karaf.model.SensorType;
 
 public class SensorTypeDTO extends EntityDTO implements SensorType {
     private CapabilityDTO capability;
@@ -15,12 +15,12 @@ public class SensorTypeDTO extends EntityDTO implements SensorType {
     }
 
     public SensorTypeDTO(long id, String name) {
-        super(id,name);
+        super(id, name);
     }
 
     public SensorTypeDTO(SensorType type) {
         super(type);
-        capability = type.getCapability()==null?null:new CapabilityDTO(type.getCapability());
+        capability = type.getCapability() == null ? null : new CapabilityDTO(type.getCapability());
         minTime = type.getMinTime();
         parameters = type.getParameters().stream().map(EntityDTO::new).collect(Collectors.toSet());
         sensors = type.getSensors().stream().map(EntityDTO::new).collect(Collectors.toSet());
@@ -58,16 +58,14 @@ public class SensorTypeDTO extends EntityDTO implements SensorType {
         return sensors;
     }
 
-    public void setSensors(Set<EntityDTO> sensors) {
-        this.sensors = sensors;
-    }
-
     @Override
     public boolean equals(Object o) {
-        if (this == o)
+        if (this == o) {
             return true;
-        if (!(o instanceof SensorTypeDTO))
+        }
+        if (!(o instanceof SensorTypeDTO)) {
             return false;
+        }
         return super.equals(o);
     }
 

@@ -1,7 +1,5 @@
 package ru.training.karaf.rest.dto;
 
-import javax.validation.constraints.Size;
-
 public class AuthDTO {
     private String login;
     private String password;
@@ -32,15 +30,18 @@ public class AuthDTO {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
+        if (this == o) {
             return true;
-        if (!(o instanceof AuthDTO))
+        }
+        if (!(o instanceof AuthDTO)) {
             return false;
+        }
 
         AuthDTO authDTO = (AuthDTO) o;
 
-        if (!login.equals(authDTO.login))
+        if (!login.equals(authDTO.login)) {
             return false;
+        }
         return password != null ? password.equals(authDTO.password) : authDTO.password == null;
     }
 

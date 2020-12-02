@@ -1,6 +1,5 @@
 package ru.training.karaf.rest.dto;
 
-import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.validation.constraints.NotNull;
@@ -9,12 +8,9 @@ import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import ru.training.karaf.model.Entity;
-import ru.training.karaf.model.Sensor;
 import ru.training.karaf.model.UniqueFieldEntity;
 import ru.training.karaf.model.User;
-import ru.training.karaf.rest.validation.UniqueKey;
 
-//@UniqueKey(field = "login", message = "Login is already exist")
 public class UserDTO implements User, UniqueFieldEntity {
     private long id;
     @NotNull(message = "Login should be present")
@@ -62,10 +58,6 @@ public class UserDTO implements User, UniqueFieldEntity {
         return login;
     }
 
-    public void setLogin(String login) {
-        this.login = login;
-    }
-
     public String getName() {
         return name;
     }
@@ -86,17 +78,9 @@ public class UserDTO implements User, UniqueFieldEntity {
         return sensors;
     }
 
-    public void setSensors(Set<EntityDTO> sensors) {
-        this.sensors = sensors;
-    }
-
     @Override
     public Set<EntityDTO> getRoles() {
         return roles;
-    }
-
-    public void setRoles(Set<EntityDTO> roles) {
-        this.roles = roles;
     }
 
     @Override

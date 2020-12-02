@@ -1,10 +1,10 @@
 package ru.training.karaf.rest.validation;
 
-import org.hibernate.validator.HibernateValidator;
-
+import java.util.List;
 import javax.validation.ValidationProviderResolver;
 import javax.validation.spi.ValidationProvider;
-import java.util.List;
+
+import org.hibernate.validator.HibernateValidator;
 
 import static java.util.Collections.singletonList;
 

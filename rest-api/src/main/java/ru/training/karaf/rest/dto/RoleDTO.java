@@ -1,10 +1,9 @@
 package ru.training.karaf.rest.dto;
 
-import ru.training.karaf.model.Entity;
-import ru.training.karaf.model.Role;
-
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import ru.training.karaf.model.Role;
 
 public class RoleDTO extends EntityDTO implements Role {
     private Set<EntityDTO> users;
@@ -20,10 +19,6 @@ public class RoleDTO extends EntityDTO implements Role {
     @Override
     public Set<EntityDTO> getUsers() {
         return users;
-    }
-
-    public void setUsers(Set<EntityDTO> users) {
-        this.users = users;
     }
 
     @Override

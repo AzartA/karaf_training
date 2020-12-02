@@ -18,14 +18,11 @@ import ru.training.karaf.rest.dto.DTO;
 import ru.training.karaf.rest.dto.FilterParamDTO;
 import ru.training.karaf.rest.dto.LocationDTO;
 import ru.training.karaf.rest.dto.SortParamDTO;
-import ru.training.karaf.rest.dto.UserDTO;
 import ru.training.karaf.rest.validation.ErrorsDTO;
 import ru.training.karaf.view.FilterParam;
 import ru.training.karaf.view.LocationView;
-import ru.training.karaf.view.MeasuringView;
 import ru.training.karaf.view.SortParam;
 import ru.training.karaf.view.ViewFacade;
-import ru.training.karaf.view.ViewType;
 
 public class LocationRestServiceImpl implements LocationRestService {
     private User currentUser;
@@ -37,7 +34,7 @@ public class LocationRestServiceImpl implements LocationRestService {
     }
 
     private void getViewAndUser() {
-        view =  viewFacade.getView(LocationView.class);
+        view = viewFacade.getView(LocationView.class);
         currentUser = SecurityUtils.getSubject().getPrincipals().oneByType(User.class);
     }
 
